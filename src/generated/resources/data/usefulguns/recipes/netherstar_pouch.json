@@ -1,0 +1,26 @@
+{
+  "type": "usefulguns:pouch_upgrade",
+  "pattern": [
+    "III",
+    "IPI",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "P": {
+      "item": "usefulguns:netherite_pouch",
+      "type": "usefulguns:nbt_target"
+    },
+    "I": {
+      "tag": "forge:nether_stars"
+    },
+    "B": {
+      "item": "minecraft:end_rod"
+    }
+  },
+  "result": {
+    "item": "usefulguns:netherstar_pouch"
+  }
+}

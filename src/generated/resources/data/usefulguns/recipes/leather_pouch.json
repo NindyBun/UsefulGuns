@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TLT",
+    "LCL",
+    "SLS"
+  ],
+  "key": {
+    "L": {
+      "tag": "forge:leather"
+    },
+    "T": {
+      "item": "minecraft:tripwire_hook"
+    },
+    "C": {
+      "tag": "forge:chests"
+    },
+    "S": {
+      "tag": "forge:string"
+    }
+  },
+  "result": {
+    "item": "usefulguns:leather_pouch"
+  }
+}

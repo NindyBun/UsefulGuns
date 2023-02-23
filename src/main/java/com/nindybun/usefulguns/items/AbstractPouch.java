@@ -120,7 +120,7 @@ public class AbstractPouch extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);
-        if (/*flag.isAdvanced() && */stack.getTag() != null && stack.getTag().contains("UUID")) {
+        if (flag.isAdvanced() && stack.getTag() != null && stack.getTag().contains("UUID")) {
             UUID uuid = stack.getTag().getUUID("UUID");
             tooltip.add(new StringTextComponent("ID: " + uuid.toString().substring(0, 8)).withStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
         }

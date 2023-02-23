@@ -1,0 +1,26 @@
+{
+  "type": "usefulguns:pouch_upgrade",
+  "pattern": [
+    "III",
+    "IPI",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "P": {
+      "item": "usefulguns:iron_pouch",
+      "type": "usefulguns:nbt_target"
+    },
+    "I": {
+      "tag": "forge:ingots/gold"
+    },
+    "B": {
+      "tag": "forge:storage_blocks/gold"
+    }
+  },
+  "result": {
+    "item": "usefulguns:gold_pouch"
+  }
+}

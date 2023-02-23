@@ -1,0 +1,26 @@
+{
+  "type": "usefulguns:pouch_upgrade",
+  "pattern": [
+    "III",
+    "IPI",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "P": {
+      "item": "usefulguns:obsidian_pouch",
+      "type": "usefulguns:nbt_target"
+    },
+    "I": {
+      "tag": "forge:ingots/netherite"
+    },
+    "B": {
+      "tag": "forge:storage_blocks/netherite"
+    }
+  },
+  "result": {
+    "item": "usefulguns:netherite_pouch"
+  }
+}

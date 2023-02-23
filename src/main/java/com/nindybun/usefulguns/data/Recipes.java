@@ -10,6 +10,7 @@ import net.minecraft.data.*;
 import net.minecraft.item.Items;
 import net.minecraftforge.common.Tags;
 
+import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
@@ -23,7 +24,7 @@ public class Recipes extends RecipeProvider {
     }
 
     @Override
-    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+    protected void buildShapelessRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
         InventoryChangeTrigger.Instance nul = has(Items.AIR);
         ShapedRecipeBuilder.shaped(ModItems.LEATHER_POUCH.get())
                 .pattern("TLT")
