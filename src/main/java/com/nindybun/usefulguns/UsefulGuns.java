@@ -1,24 +1,53 @@
 package com.nindybun.usefulguns;
 
 import com.nindybun.usefulguns.data.Generator;
+import com.nindybun.usefulguns.events.ClientEvents;
+import com.nindybun.usefulguns.events.ClientStuff;
+import com.nindybun.usefulguns.gui.BulletRadialMenu;
+import com.nindybun.usefulguns.items.bullets.AbstractBullet;
+import com.nindybun.usefulguns.items.guns.AbstractGun;
+import com.nindybun.usefulguns.modRegistries.ModEntities;
+import com.nindybun.usefulguns.network.PacketHandler;
 import com.nindybun.usefulguns.util.RecipeUnlocker;
 import com.nindybun.usefulguns.crafting.TargetNBTIngredient;
 import com.nindybun.usefulguns.gui.PouchScreen;
 import com.nindybun.usefulguns.modRegistries.ModContainers;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.settings.KeyBindingMap;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
+
+import javax.swing.text.JTextComponent;
+
+import java.awt.im.InputContext;
+
+import static net.minecraft.client.util.InputMappings.Type.KEYSYM;
+import static net.minecraft.client.util.InputMappings.Type.MOUSE;
 
 @Mod(UsefulGuns.MOD_ID)
 public class UsefulGuns
@@ -33,22 +62,32 @@ public class UsefulGuns
         ModItems.ITEMS.register(modEventBus);
         ModContainers.CONTAINERS.register(modEventBus);
         ModRecipes.RECIPES.register(modEventBus);
+        ModEntities.ENTITY.register(modEventBus);
         modEventBus.addListener(Generator::gatherData);
 
         RecipeUnlocker.register(MOD_ID, MinecraftForge.EVENT_BUS, 1);
 
         modEventBus.addListener(this::setup);
         modEventBus.addListener(this::doClientStuff);
+        modEventBus.addListener(this::loadComplete);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> CraftingHelper.register(TargetNBTIngredient.Serializer.NAME, TargetNBTIngredient.SERIALIZER));
+        PacketHandler.register();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         ScreenManager.register(ModContainers.POUCH_CONTAINER.get(), PouchScreen::new);
+        //MinecraftForge.EVENT_BUS.register(new ClientEvents());
+    }
+
+    public void loadComplete(FMLLoadCompleteEvent event){
+        event.enqueueWork(() -> {
+            if (FMLEnvironment.dist == Dist.CLIENT) ClientEvents.init();
+        });
     }
 
     public static ItemGroup itemGroup = new ItemGroup(UsefulGuns.MOD_ID) {

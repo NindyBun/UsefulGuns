@@ -14,7 +14,7 @@ public class PouchData {
     private PouchTypes type;
     private final PouchHandler inventory;
     private final LazyOptional<IItemHandler> optional;
-    public final Metadata meta = new Metadata();
+    //public final Metadata meta = new Metadata();
 
     public LazyOptional<IItemHandler> getOptional() {
         return optional;
@@ -28,7 +28,7 @@ public class PouchData {
         return type;
     }
 
-    public void updateAccessRecords(String player, long time) {
+    /*public void updateAccessRecords(String player, long time) {
         if (meta.firstAccessedTime == 0){
             meta.firstAccessedTime = time;
             meta.firstAccessedPlayer = player;
@@ -36,7 +36,7 @@ public class PouchData {
 
         meta.setLastAccessedTime(time);
         meta.setLastAccessedPlayer(player);
-    }
+    }*/
 
     public PouchData(UUID uuid, PouchTypes type){
         this.uuid = uuid;
@@ -57,8 +57,8 @@ public class PouchData {
         inventory.deserializeNBT(nbt.getCompound("Inventory"));
         optional = LazyOptional.of(() -> inventory);
 
-        if (nbt.contains("Metadata"))
-            meta.deserializeNBT(nbt.getCompound("Metadata"));
+        /*if (nbt.contains("Metadata"))
+            meta.deserializeNBT(nbt.getCompound("Metadata"));*/
     }
 
     public UUID getUuid(){
@@ -86,13 +86,13 @@ public class PouchData {
         nbt.putUUID("UUID", uuid);
         nbt.putInt("Type", type.ordinal());
         nbt.put("Inventory", inventory.serializeNBT());
-        nbt.put("Metadata", meta.serializeNBT());
+        //nbt.put("Metadata", meta.serializeNBT());
 
         return nbt;
     }
 
 
-    public static class Metadata implements INBTSerializable<CompoundNBT> {
+    /*public static class Metadata implements INBTSerializable<CompoundNBT> {
 
         private String firstAccessedPlayer = "";
 
@@ -142,7 +142,7 @@ public class PouchData {
             lastAccessedPlayer = nbt.getString("lastPlayer");
             lastAccessedTime = nbt.getLong("lastTime");
         }
-    }
+    }*/
 
 
 }

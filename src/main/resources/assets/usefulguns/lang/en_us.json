@@ -7,5 +7,18 @@
   "item.usefulguns.diamond_pouch": "Diamond Ammo Pouch",
   "item.usefulguns.obsidian_pouch": "Obsidian Ammo Pouch",
   "item.usefulguns.netherite_pouch": "Netherite Ammo Pouch",
-  "item.usefulguns.netherstar_pouch": "Nether Star Ammo Pouch"
+  "item.usefulguns.netherstar_pouch": "Nether Star Ammo Pouch",
+
+  "item.usefulguns.iron_pistol": "Iron Pistol",
+
+  "tooltip.usefulguns.shift": "§7Hold §fSHIFT§7 for stats§r",
+  "tooltip.usefulguns.gun.damage.flat": "§2Damage: §f+%s§r",
+  "tooltip.usefulguns.gun.damage.mult": "§2Damage: §fx%s§r",
+  "tooltip.usefulguns.gun.damage.both": "§2Damage: §fx%s +%s§r",
+  "tooltip.usefulguns.gun.damage.flat.modified": "§dDamage: §f+%s§r",
+  "tooltip.usefulguns.gun.damage.mult.modified": "§dDamage: §fx%s§r",
+  "tooltip.usefulguns.gun.damage.both.modified": "§dDamage: §fx%s +%s§r",
+  "tooltip.usefulguns.gun.firerate": "§2Fire delay: §f%d§7 RPM§r",
+  "tooltip.usefulguns.gun.firerate.modified": "§dFire delay: §f%d§7 RPM§r",
+  "tooltip.usefulguns.gun.ignore_invulnerability": "Projectiles ignore invulnerability time"
 }

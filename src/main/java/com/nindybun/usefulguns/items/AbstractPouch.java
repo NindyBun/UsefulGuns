@@ -39,9 +39,14 @@ public class AbstractPouch extends Item {
     private final PouchTypes type;
 
     public AbstractPouch(String name, PouchTypes type) {
-        super(ModItems.ITEM_GROUP.stacksTo(1).fireResistant());
+        super(type.ordinal() <= PouchTypes.DIAMOND.ordinal() ? ModItems.ITEM_GROUP.stacksTo(1) : ModItems.ITEM_GROUP.stacksTo(1).fireResistant());
         this.name = name;
         this.type = type;
+    }
+
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        return getType(stack) == PouchTypes.NETHERSTAR;
     }
 
     public static PouchTypes getType(ItemStack stack){
@@ -103,7 +108,7 @@ public class AbstractPouch extends Item {
             PouchTypes itemType = ((AbstractPouch) pouch.getItem()).type;
             UUID uuid = data.getUuid();
 
-            data.updateAccessRecords(player.getName().getString(), System.currentTimeMillis());
+            //data.updateAccessRecords(player.getName().getString(), System.currentTimeMillis());
 
             if (data.getType().ordinal() < itemType.ordinal())
                 data.upgrade(itemType);
@@ -124,6 +129,8 @@ public class AbstractPouch extends Item {
             UUID uuid = stack.getTag().getUUID("UUID");
             tooltip.add(new StringTextComponent("ID: " + uuid.toString().substring(0, 8)).withStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
         }
+        if (stack.getItem().isFireResistant())
+            tooltip.add(new StringTextComponent("Fire Resistant!").withStyle(TextFormatting.GOLD));
     }
 
     @Nullable

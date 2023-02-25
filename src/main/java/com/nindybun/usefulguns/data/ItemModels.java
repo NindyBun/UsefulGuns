@@ -5,7 +5,9 @@ import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class ItemModels extends ItemModelProvider {
@@ -16,6 +18,15 @@ public class ItemModels extends ItemModelProvider {
     @Override
     protected void registerModels() {
         registerPouchs();
+        registerGuns();
+    }
+
+    private void registerGuns(){
+        simpleItem(ModItems.IRON_GUN.get()).transforms()
+                .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).translation(0, 0.5f, -1).rotation(0, -90, 0).scale(1).end()
+                .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).translation(0, 0.5f, -1).rotation(0, 90, 0).scale(1).end()
+                .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).translation(0, 2.5f, 0).rotation(0, -90, 0).scale(1).end()
+                .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).translation(0, 2.5f, 0).rotation(0, 90, 0).scale(1).end();
     }
 
     private void registerPouchs(){
@@ -28,8 +39,8 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.NETHERSTAR_POUCH.get());
     }
 
-    private void simpleItem(Item item){
+    private ItemModelBuilder simpleItem(Item item){
         String name = item.getRegistryName().getPath();
-        singleTexture(name, mcLoc("item/handheld"), "layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name));
+        return singleTexture(name, mcLoc("item/handheld"), "layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name));
     }
 }
