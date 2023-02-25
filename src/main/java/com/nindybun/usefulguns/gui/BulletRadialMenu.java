@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -60,20 +61,24 @@ public class BulletRadialMenu extends Screen {
     }
 
     public static List<ItemStack> getBulletsInPouch(PlayerEntity player, ItemStack pouch){
-        PouchData data = AbstractPouch.getData(pouch);
-        /*PouchTypes itemType = AbstractPouch.getType(pouch);
+        /*PouchData data = AbstractPouch.getData(pouch);
+        PouchTypes itemType = AbstractPouch.getType(pouch);
         data.updateAccessRecords(player.getName().getString(), System.currentTimeMillis());
         if (data.getType().ordinal() < itemType.ordinal())
             data.upgrade(itemType);*/
 
-        PouchHandler handler = (PouchHandler) AbstractPouch.getData(pouch).getHandler();
+        LazyOptional<IItemHandler> optional = pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         List<ItemStack> itemStacks = new ArrayList<>();
-        for (int i = 0; i < handler.getSlots(); i++){
-            if (handler.getStackInSlot(i) != ItemStack.EMPTY){
-                if (!doesContainInList(itemStacks, handler.getStackInSlot(i)))
-                    itemStacks.add(handler.getStackInSlot(i));
+        if (optional.isPresent()){
+            IItemHandler handler = optional.resolve().get();
+            for (int i = 0; i < handler.getSlots(); i++){
+                if (handler.getStackInSlot(i) != ItemStack.EMPTY){
+                    if (!doesContainInList(itemStacks, handler.getStackInSlot(i)))
+                        itemStacks.add(handler.getStackInSlot(i));
+                }
             }
         }
+
         return itemStacks;
     }
 
