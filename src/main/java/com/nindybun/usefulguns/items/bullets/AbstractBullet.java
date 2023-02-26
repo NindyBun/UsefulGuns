@@ -19,12 +19,9 @@ public class AbstractBullet extends Item{
 
     public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter){
         BulletEntity entity = new BulletEntity(world, shooter);
+        entity.setDamage(damage);
+        entity.setEffectsFromItem(stack);
         return entity;
     }
-
-    public void consume(ItemStack stack , PouchHandler handler){
-
-    }
-
 
 }

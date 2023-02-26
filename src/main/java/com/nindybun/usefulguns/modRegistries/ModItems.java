@@ -3,6 +3,8 @@ package com.nindybun.usefulguns.modRegistries;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.PouchTypes;
+import com.nindybun.usefulguns.items.bullets.AbstractBullet;
+import com.nindybun.usefulguns.items.bullets.TippedBullet;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
@@ -12,6 +14,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ModItems {
     public static final Item.Properties ITEM_GROUP = new Item.Properties().tab(UsefulGuns.itemGroup);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, UsefulGuns.MOD_ID);
+
+    public static final RegistryObject<Item> TIPPED_BULLET = ITEMS.register("tipped_bullet", () -> new TippedBullet(6));
+
+    public static final RegistryObject<Item> FLINT_BULLET = ITEMS.register("flint_bullet", () -> new AbstractBullet(5));
 
     public static final RegistryObject<Item> IRON_GUN = ITEMS.register("iron_pistol", () -> new AbstractGun(0, 1, 16, 14));
 
