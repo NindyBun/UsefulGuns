@@ -13,5 +13,6 @@ public class Generator {
 
         generator.addProvider(new Recipes(generator));
         generator.addProvider(new ItemModels(generator, existingFileHelper));
+        generator.addProvider(new Lang(generator, UsefulGuns.MOD_ID, "en_us"));
     }
 }

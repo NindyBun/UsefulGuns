@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "C C",
+    "CGC",
+    "CFC"
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:ingots/iron"
+    },
+    "G": {
+      "tag": "forge:gunpowder"
+    },
+    "F": {
+      "item": "minecraft:flint"
+    }
+  },
+  "result": {
+    "item": "usefulguns:bullet_casing",
+    "count": 8
+  }
+}

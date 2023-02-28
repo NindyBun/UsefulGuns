@@ -21,7 +21,7 @@ import java.util.List;
 
 public class TippedBullet extends AbstractBullet{
     public TippedBullet(int damage) {
-        super(damage);
+        super(damage, 0);
     }
 
     @Override

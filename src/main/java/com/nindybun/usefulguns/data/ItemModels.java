@@ -10,6 +10,8 @@ import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import javax.jws.soap.SOAPBinding;
+
 public class ItemModels extends ItemModelProvider {
     public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper){
         super(generator, UsefulGuns.MOD_ID, existingFileHelper);
@@ -19,6 +21,16 @@ public class ItemModels extends ItemModelProvider {
     protected void registerModels() {
         registerPouchs();
         registerGuns();
+        registerBullets();
+    }
+
+    private void registerBullets(){
+        withExistingParent(ModItems.TIPPED_BULLET.get().getRegistryName().getPath(), mcLoc("item/handheld"))
+                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/bullet_head"))
+                .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/bullet_base"));
+        simpleItem(ModItems.FLINT_BULLET.get());
+        withExistingParent(ModItems.BULLET_CASING.get().getRegistryName().getPath(), mcLoc("item/handheld"))
+                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/bullet_base"));
     }
 
     private void registerGuns(){

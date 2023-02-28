@@ -10,14 +10,15 @@ import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.lwjgl.system.CallbackI;
 
 public class ModItems {
     public static final Item.Properties ITEM_GROUP = new Item.Properties().tab(UsefulGuns.itemGroup);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, UsefulGuns.MOD_ID);
 
-    public static final RegistryObject<Item> TIPPED_BULLET = ITEMS.register("tipped_bullet", () -> new TippedBullet(6));
-
-    public static final RegistryObject<Item> FLINT_BULLET = ITEMS.register("flint_bullet", () -> new AbstractBullet(5));
+    public static final RegistryObject<Item> TIPPED_BULLET = ITEMS.register("tipped_bullet", () -> new TippedBullet(5));
+    public static final RegistryObject<Item> FLINT_BULLET = ITEMS.register("flint_bullet", () -> new AbstractBullet(5, 0));
+    public static final RegistryObject<Item> BULLET_CASING = ITEMS.register("bullet_casing", () -> new Item(ITEM_GROUP.stacksTo(64)));
 
     public static final RegistryObject<Item> IRON_GUN = ITEMS.register("iron_pistol", () -> new AbstractGun(0, 1, 16, 14));
 

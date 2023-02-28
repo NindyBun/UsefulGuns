@@ -1,6 +1,7 @@
 package com.nindybun.usefulguns.data;
 
 import com.google.gson.JsonObject;
+import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.crafting.TargetNBTIngredient;
 import com.nindybun.usefulguns.crafting.WrappedRecipe;
 import com.nindybun.usefulguns.modRegistries.ModItems;
@@ -8,9 +9,13 @@ import com.nindybun.usefulguns.modRegistries.ModRecipes;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.*;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
@@ -26,6 +31,19 @@ public class Recipes extends RecipeProvider {
     @Override
     protected void buildShapelessRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
         InventoryChangeTrigger.Instance nul = has(Items.AIR);
+
+        CustomRecipe.special(ModRecipes.TIPPED_BULLET_RECIPE.get()).save(consumer, "tipped_bullet");
+
+        ShapedRecipeBuilder.shaped(ModItems.BULLET_CASING.get(), 8)
+                .pattern("C C")
+                .pattern("CGC")
+                .pattern("CFC")
+                .define('C', Tags.Items.INGOTS_IRON)
+                .define('G', Tags.Items.GUNPOWDER)
+                .define('F', Items.FLINT)
+                .unlockedBy("", nul)
+                .save(consumer);
+
         ShapedRecipeBuilder.shaped(ModItems.LEATHER_POUCH.get())
                 .pattern("TLT")
                 .pattern("LCL")
@@ -104,5 +122,40 @@ public class Recipes extends RecipeProvider {
                 .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
     }
 
+}
 
+class CustomRecipe {
+    private final SpecialRecipeSerializer<?> serializer;
+
+    public CustomRecipe(SpecialRecipeSerializer<?> p_i50786_1_) {
+        this.serializer = p_i50786_1_;
+    }
+
+    public static CustomRecipe special(SpecialRecipeSerializer<?> p_218656_0_) {
+        return new CustomRecipe(p_218656_0_);
+    }
+
+    public void save(Consumer<IFinishedRecipe> p_200499_1_, final String p_200499_2_) {
+        p_200499_1_.accept(new IFinishedRecipe() {
+            public void serializeRecipeData(JsonObject p_218610_1_) {
+            }
+
+            public IRecipeSerializer<?> getType() {
+                return CustomRecipe.this.serializer;
+            }
+
+            public ResourceLocation getId() {
+                return new ResourceLocation(UsefulGuns.MOD_ID, p_200499_2_);
+            }
+
+            @Nullable
+            public JsonObject serializeAdvancement() {
+                return null;
+            }
+
+            public ResourceLocation getAdvancementId() {
+                return new ResourceLocation("");
+            }
+        });
+    }
 }

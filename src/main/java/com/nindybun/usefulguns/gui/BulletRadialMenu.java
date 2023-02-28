@@ -84,7 +84,7 @@ public class BulletRadialMenu extends Screen {
 
     public static boolean doesContainInList(List<ItemStack> list, ItemStack itemStack){
         for (ItemStack stack : list){
-            if (stack.equals(itemStack, false))
+            if (stack.copy().split(1).equals(itemStack.copy().split(1), false))
                 return true;
         }
         return false;

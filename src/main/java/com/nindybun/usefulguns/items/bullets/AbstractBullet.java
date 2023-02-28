@@ -11,15 +11,18 @@ import net.minecraft.world.World;
 
 public class AbstractBullet extends Item{
     private int damage;
+    private int pierceLevel;
 
-    public AbstractBullet(int damage) {
+    public AbstractBullet(int damage, int pierceLevel) {
         super(ModItems.ITEM_GROUP.stacksTo(64));
         this.damage = damage;
+        this.pierceLevel = pierceLevel;
     }
 
     public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter){
         BulletEntity entity = new BulletEntity(world, shooter);
         entity.setDamage(damage);
+        entity.setPierceLevel((byte)pierceLevel);
         entity.setEffectsFromItem(stack);
         return entity;
     }

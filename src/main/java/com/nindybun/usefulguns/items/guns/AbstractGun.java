@@ -61,6 +61,7 @@ public class AbstractGun extends Item {
                 for (int i = 0; i < handler.getSlots(); i++){
                     ItemStack stack = handler.getStackInSlot(i).copy().split(1);
                     if (bulletInfo.equals(stack, false)) {
+                        shoot(world, playerEntity, gun, handler.getStackInSlot(i));
                         handler.getStackInSlot(i).shrink(1);
                         break;
                     }
@@ -76,6 +77,8 @@ public class AbstractGun extends Item {
         BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammmo, player);
         bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);
         bulletEntity.setDamage(bulletEntity.getDamage());
+        bulletEntity.setPierceLevel(bulletEntity.getPierceLevel());
+        world.addFreshEntity(bulletEntity);
     }
 
     @Override
@@ -95,7 +98,7 @@ public class AbstractGun extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         ItemStack bulletInfo = ItemStack.of(stack.getOrCreateTag().getCompound("Bullet_Info"));
-        if (bulletInfo != ItemStack.EMPTY) tooltip.add(new StringTextComponent("Selected Bullet: ").append(bulletInfo.getHoverName()).withStyle(TextFormatting.AQUA));
+        if (bulletInfo != ItemStack.EMPTY) tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".selected_bullet").append(new StringTextComponent(bulletInfo.getHoverName().getString()).withStyle(TextFormatting.WHITE)));
 
         if (Screen.hasShiftDown()){
             double damageMultiplier = getDamageMultipier(stack);
