@@ -14,6 +14,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.client.audio.SoundSource;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -107,7 +108,7 @@ public class AbstractGun extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         ItemStack bulletInfo = ItemStack.of(stack.getOrCreateTag().getCompound("Bullet_Info"));
-        if (bulletInfo != ItemStack.EMPTY) tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".selected_bullet").append(new StringTextComponent(bulletInfo.getHoverName().getString()).withStyle(TextFormatting.WHITE)));
+        if (bulletInfo.getItem() != Items.AIR) tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".selected_bullet").append(new StringTextComponent(bulletInfo.getHoverName().getString()).withStyle(TextFormatting.WHITE)));
 
         if (Screen.hasShiftDown()){
             double damageMultiplier = getDamageMultipier(stack);
@@ -157,7 +158,5 @@ public class AbstractGun extends Item {
     public static boolean ignoresInvulnerability(ItemStack stack){
         return ((AbstractGun)stack.getItem()).ignoreInvulnerability;
     }
-
-
 
 }

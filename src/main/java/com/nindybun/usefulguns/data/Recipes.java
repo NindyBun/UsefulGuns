@@ -33,6 +33,53 @@ public class Recipes extends RecipeProvider {
         InventoryChangeTrigger.Instance nul = has(Items.AIR);
 
         CustomRecipe.special(ModRecipes.TIPPED_BULLET_RECIPE.get()).save(consumer, "tipped_bullet");
+        CustomRecipe.special(ModRecipes.SPLASH_BULLET_RECIPE.get()).save(consumer, "splash_bullet");
+        CustomRecipe.special(ModRecipes.LINGERING_BULLET_RECIPE.get()).save(consumer, "lingering_bullet");
+
+        ShapelessRecipeBuilder.shapeless(ModItems.FLINT_BULLET.get())
+                .requires(Items.FLINT)
+                .requires(ModItems.BULLET_CASING.get())
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(ModItems.IRON_BULLET.get())
+                .requires(Tags.Items.NUGGETS_IRON)
+                .requires(ModItems.BULLET_CASING.get())
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.GLASS_BULLET.get(), 8)
+                .pattern("BBB")
+                .pattern("BGB")
+                .pattern("BBB")
+                .define('G', Tags.Items.GLASS)
+                .define('B', ModItems.BULLET_CASING.get())
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.IRON_GUN.get())
+                .pattern("IC ")
+                .pattern("BIF")
+                .pattern(" SI")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('B', Items.STONE_BUTTON)
+                .define('C', ModItems.BULLET_CASING.get())
+                .define('F', Items.FLINT_AND_STEEL)
+                .define('S', Items.STICK)
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.GOLD_GUN.get())
+                .pattern("IC ")
+                .pattern("BIF")
+                .pattern(" SI")
+                .define('I', Tags.Items.INGOTS_GOLD)
+                .define('B', Items.STONE_BUTTON)
+                .define('C', ModItems.BULLET_CASING.get())
+                .define('F', Items.FLINT_AND_STEEL)
+                .define('S', Items.STICK)
+                .unlockedBy("", nul)
+                .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModItems.BULLET_CASING.get(), 8)
                 .pattern("C C")

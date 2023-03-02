@@ -9,10 +9,7 @@ import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -26,6 +23,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.BucketItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -39,6 +37,7 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.*;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -50,17 +49,21 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jline.utils.Colors;
+import org.lwjgl.system.CallbackI;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class BulletEntity extends AbstractArrowEntity {
     private double damage = 1;
     private boolean ignoreInvulnerability = false;
     private int pierceLevel = 0;
     private boolean isShrapnel = false;
+    private ItemStack item = ItemStack.EMPTY;
     private int ticksSinceFired;
     private static final DataParameter<Integer> ID_EFFECT_COLOR = EntityDataManager.defineId(BulletEntity.class, DataSerializers.INT);
     private Potion potion = Potions.EMPTY;
@@ -69,6 +72,7 @@ public class BulletEntity extends AbstractArrowEntity {
     private static final double STOP_TRESHOLD = 0.01;
     private IntOpenHashSet piercingIgnoreEntityIds;
     private List<Entity> piercedAndKilledEntities;
+    private final Predicate<LivingEntity> WATER_SENSITIVE = LivingEntity::isSensitiveToWater;
 
     public BulletEntity(EntityType<? extends BulletEntity> entityType, World world) {
         super(entityType, world);
@@ -81,17 +85,23 @@ public class BulletEntity extends AbstractArrowEntity {
     public void setDamage(double damage){
         this.damage = damage;
     }
-
+    public double getDamage(){
+        return this.damage;
+    }
+    
     public void setIsShrapnel(boolean isShrapnel){
         this.isShrapnel = isShrapnel;
     }
-
     public boolean getIsShrapnel(){
         return this.isShrapnel;
     }
-
-    public double getDamage(){
-        return this.damage;
+    
+    public void setBullet(ItemStack item){
+        this.item = item;
+    }
+    
+    public ItemStack getBullet(){
+        return this.item;
     }
 
     public void setEffectsFromItem(ItemStack bullet){
@@ -194,62 +204,182 @@ public class BulletEntity extends AbstractArrowEntity {
         return (byte) this.pierceLevel;
     }
 
+    private void applyWater() {
+        AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
+        List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb, WATER_SENSITIVE);
+        if (!list.isEmpty()) {
+            for(LivingEntity livingentity : list) {
+                double d0 = this.distanceToSqr(livingentity);
+                if (d0 < 16.0D && livingentity.isSensitiveToWater()) {
+                    livingentity.hurt(DamageSource.indirectMagic(livingentity, this.getOwner()), 1.0F);
+                }
+            }
+        }
+
+    }
+
+    private void applySplash(Potion potion, @Nullable Entity p_213888_2_, Vector3d pos) {
+        AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
+        List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
+        if (!list.isEmpty()) {
+            for(LivingEntity livingentity : list) {
+                if (livingentity.isAffectedByPotions()) {
+                    double d0 = pos.distanceToSqr(new Vector3d(livingentity.getX(), livingentity.getY(), livingentity.getZ()));
+                    if (d0 < 16.0D) {
+                        double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
+                        if (livingentity == p_213888_2_) {
+                            d1 = 1.0D;
+                        }
+                        for(EffectInstance effectinstance : potion.getEffects()) {
+                            Effect effect = effectinstance.getEffect();
+                            if (effect.isInstantenous()) {
+                                effect.applyInstantenousEffect(this, this.getOwner(), livingentity, effectinstance.getAmplifier(), d1);
+                            } else {
+                                int i = (int)(d1 * (double)Math.max(effectinstance.getDuration() / 4, 1));
+                                if (i > 20) {
+                                    livingentity.addEffect(new EffectInstance(effect, i, effectinstance.getAmplifier(), effectinstance.isAmbient(), effectinstance.isVisible()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private void makeAreaOfEffectCloud(Potion potion, Vector3d pos) {
+        AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(this.level, pos.x, pos.y, pos.z);
+        Entity entity = this.getOwner();
+        if (entity instanceof LivingEntity) {
+            areaeffectcloudentity.setOwner((LivingEntity)entity);
+        }
+        areaeffectcloudentity.setRadius(3.0F);
+        areaeffectcloudentity.setRadiusOnUse(-0.5F);
+        areaeffectcloudentity.setWaitTime(10);
+        areaeffectcloudentity.setRadiusPerTick(-areaeffectcloudentity.getRadius() / (float)areaeffectcloudentity.getDuration());
+        areaeffectcloudentity.setFixedColor(PotionUtils.getColor(potion));
+        for (EffectInstance effectInstance : potion.getEffects()){
+            areaeffectcloudentity.addEffect(new EffectInstance(effectInstance.getEffect(), Math.max(effectInstance.getDuration() / 16, 1)));
+        }
+        this.level.addFreshEntity(areaeffectcloudentity);
+    }
+
+    private Item isLingeringOrSplash() {
+        if (this.getBullet().getItem() == ModItems.LINGERING_BULLET.get())
+            return Items.LINGERING_POTION;
+        else if (this.getBullet().getItem() == ModItems.SPLASH_BULLET.get())
+            return Items.SPLASH_POTION;
+        return null;
+    }
+
+    private void dowseFire(BlockPos p_184542_1_, Direction p_184542_2_) {
+        BlockState blockstate = this.level.getBlockState(p_184542_1_);
+        if (blockstate.is(BlockTags.FIRE)) {
+            this.level.removeBlock(p_184542_1_, false);
+        } else if (CampfireBlock.isLitCampfire(blockstate)) {
+            this.level.levelEvent((PlayerEntity)null, 1009, p_184542_1_, 0);
+            CampfireBlock.dowse(this.level, p_184542_1_, blockstate);
+            this.level.setBlockAndUpdate(p_184542_1_, blockstate.setValue(CampfireBlock.LIT, Boolean.valueOf(false)));
+        }
+
+    }
+
     @Override
     protected void onHitBlock(BlockRayTraceResult rayTrace) {
         super.onHitBlock(rayTrace);
-        if (!getIsShrapnel() && !this.level.isClientSide){
-            BlockPos blockPos = rayTrace.getBlockPos();
-            BlockState blockState = this.level.getBlockState(blockPos);
-            SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
-            Minecraft.getInstance().level.playLocalSound(blockPos, soundType.getBreakSound(), SoundCategory.NEUTRAL,  0.8F, random.nextFloat() * 0.1F + 0.9F, false);
-            IParticleData particleData = ParticleTypes.CRIT;
-            Vector3d vector3d = rayTrace.getLocation();
-            for(int i1 = 0; i1 < 8; ++i1) {
-                Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+        if (!this.level.isClientSide){
+            if (this.isLingeringOrSplash() != null){
+                ItemStack itemstack = this.getBullet();
+                Potion potion = PotionUtils.getPotion(itemstack);
+                List<EffectInstance> list = PotionUtils.getMobEffects(itemstack);
+                boolean flag = potion == Potions.WATER && list.isEmpty();
+                Direction direction = rayTrace.getDirection();
+                BlockPos blockpos = rayTrace.getBlockPos();
+                BlockPos blockpos1 = blockpos.relative(direction);
+                if (flag) {
+                    this.dowseFire(blockpos1, direction);
+                    this.dowseFire(blockpos1.relative(direction.getOpposite()), direction);
+                    for(Direction direction1 : Direction.Plane.HORIZONTAL) {
+                        this.dowseFire(blockpos1.relative(direction1), direction1);
+                    }
+                }
+                this.remove();
+            }else if (!getIsShrapnel()){
+                BlockPos blockPos = rayTrace.getBlockPos();
+                BlockState blockState = this.level.getBlockState(blockPos);
+                SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
+                Minecraft.getInstance().level.playLocalSound(blockPos, soundType.getBreakSound(), SoundCategory.NEUTRAL,  0.8F, random.nextFloat() * 0.1F + 0.9F, false);
+                IParticleData particleData = ParticleTypes.CRIT;
+                Vector3d vector3d = rayTrace.getLocation();
+                for(int i1 = 0; i1 < 8; ++i1) {
+                    Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+                }
+                this.remove();
             }
         }
-        this.remove();
     }
 
     @Override
     protected void onHit(RayTraceResult rayTrace) {
         super.onHit(rayTrace);
-        if (!getIsShrapnel())
-            return;
-        AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
-        List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
-        Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY ? ((EntityRayTraceResult)rayTrace).getEntity() : null;
-        Entity owner = this.getOwner();
-        if (!list.isEmpty()) {
-            for(LivingEntity livingentity : list) {
-                double d0 = this.distanceToSqr(livingentity);
-                if (d0 < 16.0D) {
-                    double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
-                    if (livingentity == hitEntity) {
-                        d1 = 1.0D;
-                    }
-                    DamageSource damagesource;
-                    if (owner == null) {
-                        damagesource = (new IndirectEntityDamageSource("arrow", this, this)).setProjectile();
-                    } else {
-                        damagesource = (new IndirectEntityDamageSource("arrow", this, owner)).setProjectile();
-                        if (owner instanceof LivingEntity) {
-                            ((LivingEntity)owner).setLastHurtMob(livingentity);
+        if (getIsShrapnel()){
+            if (!this.level.isClientSide) {
+                AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
+                List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
+                Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
+                Entity owner = this.getOwner();
+                if (!list.isEmpty()) {
+                    for (LivingEntity livingentity : list) {
+                        double d0 = rayTrace.getLocation().distanceToSqr(new Vector3d(livingentity.getX(), livingentity.getY(), livingentity.getZ()));
+                        if (d0 < 16.0D) {
+                            double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
+                            if (livingentity == hitEntity) {
+                                d1 = 1.0D;
+                            }
+                            DamageSource damagesource;
+                            if (owner == null) {
+                                damagesource = (new IndirectEntityDamageSource("arrow", this, this)).setProjectile();
+                            } else {
+                                damagesource = (new IndirectEntityDamageSource("arrow", this, owner)).setProjectile();
+                                if (owner instanceof LivingEntity) {
+                                    ((LivingEntity) owner).setLastHurtMob(livingentity);
+                                }
+                            }
+                            livingentity.hurt(damagesource, (float) (d1 * getDamage()));
                         }
                     }
-                    livingentity.hurt(damagesource, (float) (d1*getDamage()));
                 }
+                BlockPos blockPos = new BlockPos(rayTrace.getLocation());
+                Minecraft.getInstance().level.playLocalSound(blockPos, SoundEvents.SPLASH_POTION_BREAK, SoundCategory.NEUTRAL, 0.8F, random.nextFloat() * 0.1F + 0.9F, false);
+                IParticleData particleData = ParticleTypes.CRIT;
+                Vector3d vector3d = rayTrace.getLocation();
+                for (int i1 = 0; i1 < 8; ++i1) {
+                    Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+                }
+                this.remove();
             }
         }
 
-        BlockPos blockPos = new BlockPos(rayTrace.getLocation());
-        Minecraft.getInstance().level.playLocalSound(blockPos, SoundEvents.SPLASH_POTION_BREAK, SoundCategory.NEUTRAL, 0.8F, random.nextFloat() * 0.1F + 0.9F, false);
-        IParticleData particleData = ParticleTypes.CRIT;
-        Vector3d vector3d = rayTrace.getLocation();
-        for(int i1 = 0; i1 < 8; ++i1) {
-            Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+        if (this.isLingeringOrSplash() != null){
+            if (!this.level.isClientSide){
+                ItemStack itemstack = this.getBullet();
+                Potion potion = PotionUtils.getPotion(itemstack);
+                List<EffectInstance> list = PotionUtils.getMobEffects(itemstack);
+                boolean flag = potion == Potions.WATER && list.isEmpty();
+                if (flag)
+                    this.applyWater();
+                else if (!list.isEmpty())
+                    if (this.isLingeringOrSplash() == Items.LINGERING_POTION)
+                        this.makeAreaOfEffectCloud(potion, rayTrace.getLocation());
+                    else
+                        this.applySplash(potion, rayTrace.getType() == RayTraceResult.Type.ENTITY ? ((EntityRayTraceResult)rayTrace).getEntity() : null, rayTrace.getLocation());
+
+                int i = potion.hasInstantEffects() ? 2007 : 2002;
+                this.level.levelEvent(i, new BlockPos(rayTrace.getLocation()), PotionUtils.getColor(itemstack));
+                this.remove();
+            }
         }
-        this.remove();
     }
 
     @Override
@@ -258,8 +388,21 @@ public class BulletEntity extends AbstractArrowEntity {
         Entity owner = this.getOwner();
         Entity entity = entityHit.getEntity();
 
-        if (getIsShrapnel())
+        if (this.getIsShrapnel())
             return;
+        else if (this.isLingeringOrSplash() != null){
+            DamageSource damagesource;
+            if (owner == null) {
+                damagesource = (new IndirectEntityDamageSource("arrow", this, this)).setProjectile();
+            } else {
+                damagesource = (new IndirectEntityDamageSource("arrow", this, owner)).setProjectile();
+                if (owner instanceof LivingEntity) {
+                    ((LivingEntity)owner).setLastHurtMob(entity);
+                }
+            }
+            entity.hurt(damagesource, (float)getDamage());
+            return;
+        }
 
         if (this.getPierceLevel() > 0) {
             if (this.piercingIgnoreEntityIds == null) {

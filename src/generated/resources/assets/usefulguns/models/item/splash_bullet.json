@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "usefulguns:items/glass_bullet_head",
+    "layer1": "usefulguns:items/glass_bullet"
+  }
+}

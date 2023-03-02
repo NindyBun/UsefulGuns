@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:flint"
+    },
+    {
+      "item": "usefulguns:bullet_casing"
+    }
+  ],
+  "result": {
+    "item": "usefulguns:flint_bullet"
+  }
+}

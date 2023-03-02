@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "BGB",
+    "BBB"
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:glass"
+    },
+    "B": {
+      "item": "usefulguns:bullet_casing"
+    }
+  },
+  "result": {
+    "item": "usefulguns:glass_bullet",
+    "count": 8
+  }
+}

@@ -35,6 +35,8 @@ public class ClientStuff {
     @SubscribeEvent
     public static void registerItemColors(ColorHandlerEvent.Item event){
         event.getItemColors().register(new TippedBulletColor(), ModItems.TIPPED_BULLET.get());
+        event.getItemColors().register(new TippedBulletColor(), ModItems.SPLASH_BULLET.get());
+        event.getItemColors().register(new TippedBulletColor(), ModItems.LINGERING_BULLET.get());
     }
 
 }

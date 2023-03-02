@@ -11,6 +11,8 @@ import com.nindybun.usefulguns.network.PacketHandler;
 import com.nindybun.usefulguns.util.RecipeUnlocker;
 import com.nindybun.usefulguns.crafting.TargetNBTIngredient;
 import com.nindybun.usefulguns.gui.PouchScreen;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -21,6 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.settings.KeyBindingMap;
 import net.minecraftforge.common.MinecraftForge;
@@ -96,3 +99,4 @@ public class UsefulGuns
     };
 
 }
+
