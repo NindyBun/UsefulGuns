@@ -88,13 +88,6 @@ public class BulletCountRender {
         double yoffset = 8+3;
         renderer.renderAndDecorateItem(bulletInfo, (int)xoffset, (int) (winH-yoffset));
         renderer.renderGuiItemDecorations(font, bulletInfo, (int)xoffset, (int) (winH-yoffset), "");
-
-        /*net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(bulletInfo);
-        net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(event.getMatrixStack(),
-                bulletInfo.getTooltipLines(player, Minecraft.getInstance().options.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL),
-                5, (int)winH-5, (int)winW, (int)winH, -1, font);
-        net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();*/
-
         RenderSystem.popMatrix();
         RenderHelper.turnOff();
 
