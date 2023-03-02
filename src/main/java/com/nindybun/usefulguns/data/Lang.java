@@ -3,6 +3,7 @@ package com.nindybun.usefulguns.data;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.events.ClientEvents;
 import com.nindybun.usefulguns.modRegistries.ModItems;
+import com.nindybun.usefulguns.modRegistries.ModSounds;
 import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -20,6 +21,8 @@ public class Lang extends LanguageProvider {
 
         add("key.usefulguns.radialmenu_key", "Bullet Radial Menu");
         add("key.categories.usefulguns", "Useful Guns");
+        add("subtitles.usefulguns.pistol.shoot", "Pistol Fired");
+        add("subtitles.usefulguns.pistol.dry", "Pistol Dry Fired");
 
         add(ModItems.LEATHER_POUCH.get(), "Leather Ammo Pouch");
         add(ModItems.IRON_POUCH.get(), "Iron Ammo Pouch");
@@ -34,6 +37,14 @@ public class Lang extends LanguageProvider {
         add(ModItems.BULLET_CASING.get(), "Bullet Casing");
         add(ModItems.FLINT_BULLET.get(), "Flint Bullet");
         add(ModItems.TIPPED_BULLET.get(), "Tipped Bullet");
+        add(ModItems.IRON_BULLET.get(), "Iron Bullet");
+        add(ModItems.GLASS_BULLET.get(), "Glass Bullet");
+
+        add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.empty", "Uncraftable Tipped Bullet");
+        add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.water", "Bullet of Splashing");
+        add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.mundane", "Tipped Bullet");
+        add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.thick", "Tipped Bullet");
+        add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.awkward", "Tipped Bullet");
 
         add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.night_vision", "Bullet of Night Vision");
         add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.invisibility", "Bullet of Invisibility");

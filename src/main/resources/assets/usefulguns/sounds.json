@@ -1,0 +1,16 @@
+{
+  "pistol.shoot": {
+    "category": "players",
+    "subtitle": "subtitles.usefulguns.pistol.shoot",
+    "sounds": [
+      "usefulguns:pistol_fired"
+    ]
+  },
+  "pistol.dry": {
+    "category": "players",
+    "subtitle": "subtitles.usefulguns.pistol.dry",
+    "sounds": [
+      "usefulguns:dry_fired"
+    ]
+  }
+}

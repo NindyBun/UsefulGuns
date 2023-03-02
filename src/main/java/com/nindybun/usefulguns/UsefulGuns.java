@@ -6,14 +6,11 @@ import com.nindybun.usefulguns.events.ClientStuff;
 import com.nindybun.usefulguns.gui.BulletRadialMenu;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
-import com.nindybun.usefulguns.modRegistries.ModEntities;
+import com.nindybun.usefulguns.modRegistries.*;
 import com.nindybun.usefulguns.network.PacketHandler;
 import com.nindybun.usefulguns.util.RecipeUnlocker;
 import com.nindybun.usefulguns.crafting.TargetNBTIngredient;
 import com.nindybun.usefulguns.gui.PouchScreen;
-import com.nindybun.usefulguns.modRegistries.ModContainers;
-import com.nindybun.usefulguns.modRegistries.ModItems;
-import com.nindybun.usefulguns.modRegistries.ModRecipes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -63,6 +60,7 @@ public class UsefulGuns
         ModContainers.CONTAINERS.register(modEventBus);
         ModRecipes.RECIPES.register(modEventBus);
         ModEntities.ENTITY.register(modEventBus);
+        ModSounds.SOUNDS.register(modEventBus);
         modEventBus.addListener(Generator::gatherData);
 
         RecipeUnlocker.register(MOD_ID, MinecraftForge.EVENT_BUS, 1);

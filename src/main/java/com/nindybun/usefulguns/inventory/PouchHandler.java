@@ -34,6 +34,6 @@ public class PouchHandler extends ItemStackHandler {
             throw new IllegalArgumentException("Invalid slot number: " + slot);
         if (stack.getItem() instanceof AbstractBullet)
             return true;
-        return true;
+        return false;
     }
 }

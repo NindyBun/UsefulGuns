@@ -18,7 +18,7 @@ public class Util {
 
     public static ItemStack locateAndGetPouch(PlayerEntity player){
         NonNullList<ItemStack> inventory = player.inventory.items;
-        ItemStack pouch = null;
+        ItemStack pouch = ItemStack.EMPTY;
         if (inventory.size() != 0)
             for (ItemStack stack : inventory) {
                 if (!stack.isEmpty() && stack.getItem() instanceof AbstractPouch){

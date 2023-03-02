@@ -8,7 +8,10 @@ import com.nindybun.usefulguns.inventory.PouchManager;
 import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.modRegistries.ModItems;
+import com.nindybun.usefulguns.modRegistries.ModSounds;
 import com.nindybun.usefulguns.util.Util;
+import net.minecraft.block.SoundType;
+import net.minecraft.client.audio.SoundSource;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -53,21 +56,27 @@ public class AbstractGun extends Item {
         ItemStack pouch = Util.locateAndGetPouch(playerEntity);
         if (pouch == null)
             return ActionResult.fail(gun);
-        ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info")).split(1);
+        boolean fired = false;
         if (!world.isClientSide){
-           LazyOptional<IItemHandler> optional = pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info")).split(1);
+            LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional()/*pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)*/;
             if (optional.isPresent()) {
                 IItemHandler handler = optional.resolve().get();
                 for (int i = 0; i < handler.getSlots(); i++){
                     ItemStack stack = handler.getStackInSlot(i).copy().split(1);
                     if (bulletInfo.equals(stack, false)) {
                         shoot(world, playerEntity, gun, handler.getStackInSlot(i));
-                        handler.getStackInSlot(i).shrink(1);
+                        handler.extractItem(i, 1, false);
+                        fired = true;
                         break;
                     }
                 }
             }
         }
+        if (fired)
+            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSounds.PISTOL.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+        else
+            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSounds.DRY_FIRED.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
         playerEntity.getCooldowns().addCooldown(this, getFireDelay(gun));
         return ActionResult.consume(gun);
     }
@@ -83,7 +92,7 @@ public class AbstractGun extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean held) {
-        //An annoying hack to update the pouch so that the radial menu can see
+        //An annoying hack to update the pouch so that the radial menu can see among other classes
         super.inventoryTick(stack, world, entity, slot, held);
         PlayerEntity player = null;
         if (entity instanceof PlayerEntity) player = (PlayerEntity) entity;

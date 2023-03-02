@@ -12,11 +12,13 @@ import net.minecraft.world.World;
 public class AbstractBullet extends Item{
     private int damage;
     private int pierceLevel;
+    private boolean isShrapnel;
 
-    public AbstractBullet(int damage, int pierceLevel) {
+    public AbstractBullet(int damage, int pierceLevel, boolean isShrapnel) {
         super(ModItems.ITEM_GROUP.stacksTo(64));
         this.damage = damage;
         this.pierceLevel = pierceLevel;
+        this.isShrapnel = isShrapnel;
     }
 
     public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter){
@@ -24,6 +26,7 @@ public class AbstractBullet extends Item{
         entity.setDamage(damage);
         entity.setPierceLevel((byte)pierceLevel);
         entity.setEffectsFromItem(stack);
+        entity.setIsShrapnel(isShrapnel);
         return entity;
     }
 

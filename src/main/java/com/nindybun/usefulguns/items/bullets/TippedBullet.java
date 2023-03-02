@@ -20,8 +20,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class TippedBullet extends AbstractBullet{
-    public TippedBullet(int damage) {
-        super(damage, 0);
+    public TippedBullet(int damage, int pierceLevel, boolean isShrapnel) {
+        super(damage, pierceLevel, isShrapnel);
     }
 
     @Override

@@ -9,7 +9,16 @@ import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,11 +35,10 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SChangeGameStatePacket;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
+import net.minecraft.potion.*;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -39,7 +47,9 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.jline.utils.Colors;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,6 +60,7 @@ public class BulletEntity extends AbstractArrowEntity {
     private double damage = 1;
     private boolean ignoreInvulnerability = false;
     private int pierceLevel = 0;
+    private boolean isShrapnel = false;
     private int ticksSinceFired;
     private static final DataParameter<Integer> ID_EFFECT_COLOR = EntityDataManager.defineId(BulletEntity.class, DataSerializers.INT);
     private Potion potion = Potions.EMPTY;
@@ -69,6 +80,14 @@ public class BulletEntity extends AbstractArrowEntity {
 
     public void setDamage(double damage){
         this.damage = damage;
+    }
+
+    public void setIsShrapnel(boolean isShrapnel){
+        this.isShrapnel = isShrapnel;
+    }
+
+    public boolean getIsShrapnel(){
+        return this.isShrapnel;
     }
 
     public double getDamage(){
@@ -176,8 +195,60 @@ public class BulletEntity extends AbstractArrowEntity {
     }
 
     @Override
-    protected void onHitBlock(BlockRayTraceResult blockHit) {
-        super.onHitBlock(blockHit);
+    protected void onHitBlock(BlockRayTraceResult rayTrace) {
+        super.onHitBlock(rayTrace);
+        if (!getIsShrapnel() && !this.level.isClientSide){
+            BlockPos blockPos = rayTrace.getBlockPos();
+            BlockState blockState = this.level.getBlockState(blockPos);
+            SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
+            Minecraft.getInstance().level.playLocalSound(blockPos, soundType.getBreakSound(), SoundCategory.NEUTRAL,  0.8F, random.nextFloat() * 0.1F + 0.9F, false);
+            IParticleData particleData = ParticleTypes.CRIT;
+            Vector3d vector3d = rayTrace.getLocation();
+            for(int i1 = 0; i1 < 8; ++i1) {
+                Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+            }
+        }
+        this.remove();
+    }
+
+    @Override
+    protected void onHit(RayTraceResult rayTrace) {
+        super.onHit(rayTrace);
+        if (!getIsShrapnel())
+            return;
+        AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
+        List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
+        Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY ? ((EntityRayTraceResult)rayTrace).getEntity() : null;
+        Entity owner = this.getOwner();
+        if (!list.isEmpty()) {
+            for(LivingEntity livingentity : list) {
+                double d0 = this.distanceToSqr(livingentity);
+                if (d0 < 16.0D) {
+                    double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
+                    if (livingentity == hitEntity) {
+                        d1 = 1.0D;
+                    }
+                    DamageSource damagesource;
+                    if (owner == null) {
+                        damagesource = (new IndirectEntityDamageSource("arrow", this, this)).setProjectile();
+                    } else {
+                        damagesource = (new IndirectEntityDamageSource("arrow", this, owner)).setProjectile();
+                        if (owner instanceof LivingEntity) {
+                            ((LivingEntity)owner).setLastHurtMob(livingentity);
+                        }
+                    }
+                    livingentity.hurt(damagesource, (float) (d1*getDamage()));
+                }
+            }
+        }
+
+        BlockPos blockPos = new BlockPos(rayTrace.getLocation());
+        Minecraft.getInstance().level.playLocalSound(blockPos, SoundEvents.SPLASH_POTION_BREAK, SoundCategory.NEUTRAL, 0.8F, random.nextFloat() * 0.1F + 0.9F, false);
+        IParticleData particleData = ParticleTypes.CRIT;
+        Vector3d vector3d = rayTrace.getLocation();
+        for(int i1 = 0; i1 < 8; ++i1) {
+            Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+        }
         this.remove();
     }
 
@@ -186,6 +257,9 @@ public class BulletEntity extends AbstractArrowEntity {
         super.onHitEntity(entityHit);
         Entity owner = this.getOwner();
         Entity entity = entityHit.getEntity();
+
+        if (getIsShrapnel())
+            return;
 
         if (this.getPierceLevel() > 0) {
             if (this.piercingIgnoreEntityIds == null) {
@@ -257,7 +331,7 @@ public class BulletEntity extends AbstractArrowEntity {
 
     @Override
     protected float getWaterInertia() {
-        return 0.86f;
+        return 0.78f;
     }
 
     @Override

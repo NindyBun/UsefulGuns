@@ -67,7 +67,7 @@ public class BulletRadialMenu extends Screen {
         if (data.getType().ordinal() < itemType.ordinal())
             data.upgrade(itemType);*/
 
-        LazyOptional<IItemHandler> optional = pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional()/*pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)*/;
         List<ItemStack> itemStacks = new ArrayList<>();
         if (optional.isPresent()){
             IItemHandler handler = optional.resolve().get();

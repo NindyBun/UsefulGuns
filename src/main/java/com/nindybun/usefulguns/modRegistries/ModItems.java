@@ -6,7 +6,9 @@ import com.nindybun.usefulguns.items.PouchTypes;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.items.bullets.TippedBullet;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
+import com.sun.org.apache.xalan.internal.res.XSLTErrorResources_zh_TW;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,8 +18,10 @@ public class ModItems {
     public static final Item.Properties ITEM_GROUP = new Item.Properties().tab(UsefulGuns.itemGroup);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, UsefulGuns.MOD_ID);
 
-    public static final RegistryObject<Item> TIPPED_BULLET = ITEMS.register("tipped_bullet", () -> new TippedBullet(5));
-    public static final RegistryObject<Item> FLINT_BULLET = ITEMS.register("flint_bullet", () -> new AbstractBullet(5, 0));
+    public static final RegistryObject<Item> GLASS_BULLET = ITEMS.register("glass_bullet", () -> new AbstractBullet(6, 0, true));
+    public static final RegistryObject<Item> TIPPED_BULLET = ITEMS.register("tipped_bullet", () -> new TippedBullet(5, 0, false));
+    public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new AbstractBullet(6, 0, false));
+    public static final RegistryObject<Item> FLINT_BULLET = ITEMS.register("flint_bullet", () -> new AbstractBullet(5, 0, false));
     public static final RegistryObject<Item> BULLET_CASING = ITEMS.register("bullet_casing", () -> new Item(ITEM_GROUP.stacksTo(64)));
 
     public static final RegistryObject<Item> IRON_GUN = ITEMS.register("iron_pistol", () -> new AbstractGun(0, 1, 16, 14));
