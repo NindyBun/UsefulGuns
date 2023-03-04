@@ -33,15 +33,17 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class AbstractGun extends Item {
     private final int bonusDamage;
     private final double damageMultiplier;
     private final int fireDelay;
-    private final double projectileSpeed = 3;
+    private double projectileSpeed = 3;
     private final int enchantability;
     private final boolean ignoreInvulnerability = false;
-    private final SoundEvent fireSound = SoundEvents.BLAZE_SHOOT;
+    private Supplier<SoundEvent> fireSound = ModSounds.PISTOL::get;
+    private Supplier<SoundEvent> drySound = ModSounds.DRY_FIRED::get;
 
     public AbstractGun(int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
         super(ModItems.ITEM_GROUP.stacksTo(1));
@@ -51,44 +53,51 @@ public class AbstractGun extends Item {
         this.enchantability = enchantability;
     }
 
+    public AbstractGun projectileSpeed(int projectileSpeed){
+        this.projectileSpeed = projectileSpeed;
+        return this;
+    }
+
+    public AbstractGun fireSound(Supplier<SoundEvent> fireSound){
+        this.fireSound = fireSound;
+        return this;
+    }
+
+    public boolean shoot(LazyOptional<IItemHandler> optional, ItemStack ammo, World world, PlayerEntity player, ItemStack gun){
+        if (optional.isPresent()) {
+            IItemHandler handler = optional.resolve().get();
+            for (int i = 0; i < handler.getSlots(); i++){
+                ItemStack stack = handler.getStackInSlot(i).copy().split(1);
+                if (ammo.equals(stack, false)) {
+                    AbstractBullet abstractBullet = (AbstractBullet) (ammo.getItem() instanceof AbstractBullet ? ammo.getItem() : ModItems.FLINT_BULLET);
+                    BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player);
+                    bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);
+                    bulletEntity.setDamage(bulletEntity.getDamage()+this.damageMultiplier*this.bonusDamage);
+                    world.addFreshEntity(bulletEntity);
+                    handler.extractItem(i, 1, false);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
         ItemStack gun = playerEntity.getItemInHand(hand);
         ItemStack pouch = Util.locateAndGetPouch(playerEntity);
         if (pouch == null)
             return ActionResult.fail(gun);
-        boolean fired = false;
         if (!world.isClientSide){
-            ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info")).split(1);
-            LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional()/*pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)*/;
-            if (optional.isPresent()) {
-                IItemHandler handler = optional.resolve().get();
-                for (int i = 0; i < handler.getSlots(); i++){
-                    ItemStack stack = handler.getStackInSlot(i).copy().split(1);
-                    if (bulletInfo.equals(stack, false)) {
-                        shoot(world, playerEntity, gun, handler.getStackInSlot(i));
-                        handler.extractItem(i, 1, false);
-                        fired = true;
-                        break;
-                    }
-                }
-            }
+            ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
+            LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
+            if (shoot(optional, bulletInfo, world, playerEntity, gun))
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+            else
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
         }
-        if (fired)
-            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSounds.PISTOL.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
-        else
-            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSounds.DRY_FIRED.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
-        playerEntity.getCooldowns().addCooldown(this, getFireDelay(gun));
+         playerEntity.getCooldowns().addCooldown(this, getFireDelay(gun));
         return ActionResult.consume(gun);
-    }
-
-    private void shoot(World world, PlayerEntity player, ItemStack gun, ItemStack ammmo){
-        AbstractBullet abstractBullet = (AbstractBullet) (ammmo.getItem() instanceof AbstractBullet ? ammmo.getItem() : ModItems.FLINT_BULLET);
-        BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammmo, player);
-        bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);
-        bulletEntity.setDamage(bulletEntity.getDamage());
-        bulletEntity.setPierceLevel(bulletEntity.getPierceLevel());
-        world.addFreshEntity(bulletEntity);
     }
 
     @Override

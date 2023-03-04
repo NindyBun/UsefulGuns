@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -63,11 +64,11 @@ public class BulletCountRender {
     public static void renderBulletCount(RenderGameOverlayEvent.Post event, PlayerEntity player, ItemStack gun, ItemStack pouch){
         FontRenderer font = Minecraft.getInstance().font;
         ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
-        ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info")).copy().split(1);
+        ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
+        if (bulletInfo.getItem() == Items.AIR)
+            return;
         int selectedBulletCount = 0;
-
         PouchData data = AbstractPouch.getData(pouch);
-
         if (data.getOptional().isPresent()) {
             IItemHandler handler = data.getOptional().resolve().get();
             for (int i = 0; i < handler.getSlots(); i++){
@@ -77,10 +78,8 @@ public class BulletCountRender {
                 }
             }
         }
-
         double winW = event.getWindow().getGuiScaledWidth();
         double winH = event.getWindow().getGuiScaledHeight();
-
         RenderHelper.turnBackOn();
         RenderSystem.pushMatrix();
         RenderSystem.translatef(-8, -8, 0);
@@ -90,7 +89,6 @@ public class BulletCountRender {
         renderer.renderGuiItemDecorations(font, bulletInfo, (int)xoffset, (int) (winH-yoffset), "");
         RenderSystem.popMatrix();
         RenderHelper.turnOff();
-
         font.draw(event.getMatrixStack(), ">> " + selectedBulletCount, (float) xoffset+12, (float) (winH-yoffset-3), Color.WHITE.getRGB());
     }
 }

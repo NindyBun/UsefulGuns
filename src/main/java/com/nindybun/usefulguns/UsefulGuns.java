@@ -59,11 +59,11 @@ public class UsefulGuns
     public UsefulGuns() {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModSounds.SOUNDS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModContainers.CONTAINERS.register(modEventBus);
         ModRecipes.RECIPES.register(modEventBus);
         ModEntities.ENTITY.register(modEventBus);
-        ModSounds.SOUNDS.register(modEventBus);
         modEventBus.addListener(Generator::gatherData);
 
         RecipeUnlocker.register(MOD_ID, MinecraftForge.EVENT_BUS, 1);

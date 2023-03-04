@@ -34,6 +34,7 @@ public class Lang extends LanguageProvider {
 
         add(ModItems.IRON_GUN.get(), "Iron Pistol");
         add(ModItems.GOLD_GUN.get(), "Gold Pistol");
+        add(ModItems.DIAMOND_SNIPER.get(), "Diamond Sniper");
 
         add(ModItems.BULLET_CASING.get(), "Bullet Casing");
         add(ModItems.FLINT_BULLET.get(), "Flint Bullet");

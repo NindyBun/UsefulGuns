@@ -12,6 +12,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, UsefulGuns.MOD_ID);
 
+    public static final RegistryObject<SoundEvent> SNIPER = SOUNDS.register("sniper.shoot", () -> new SoundEvent(new ResourceLocation(UsefulGuns.MOD_ID, "sniper.shoot")));
+
     public static final RegistryObject<SoundEvent> PISTOL = SOUNDS.register("pistol.shoot", () -> new SoundEvent(new ResourceLocation(UsefulGuns.MOD_ID, "pistol.shoot")));
     public static final RegistryObject<SoundEvent> DRY_FIRED = SOUNDS.register("pistol.dry", () -> new SoundEvent(new ResourceLocation(UsefulGuns.MOD_ID, "pistol.dry")));
 
