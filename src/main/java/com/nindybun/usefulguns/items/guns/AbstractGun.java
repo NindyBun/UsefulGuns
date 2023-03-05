@@ -72,7 +72,7 @@ public class AbstractGun extends Item {
                     AbstractBullet abstractBullet = (AbstractBullet) (ammo.getItem() instanceof AbstractBullet ? ammo.getItem() : ModItems.FLINT_BULLET);
                     BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player);
                     bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);
-                    bulletEntity.setDamage(bulletEntity.getDamage()+this.damageMultiplier*this.bonusDamage);
+                    bulletEntity.setDamage((bulletEntity.getDamage()+this.bonusDamage)*this.damageMultiplier);
                     world.addFreshEntity(bulletEntity);
                     handler.extractItem(i, 1, false);
                     return true;
@@ -90,6 +90,8 @@ public class AbstractGun extends Item {
             return ActionResult.fail(gun);
         if (!world.isClientSide){
             ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
+            if (bulletInfo.getItem() == Items.AIR)
+                return ActionResult.fail(gun);
             LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
             if (shoot(optional, bulletInfo, world, playerEntity, gun))
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);

@@ -1,0 +1,88 @@
+{
+  "loader": "forge:separate-perspective",
+  "base": {
+    "parent": "minecraft:item/handheld",
+    "textures": {
+      "layer0": "usefulguns:items/diamond_sniper"
+    },
+    "display": {
+      "thirdperson_righthand": {
+        "rotation": [
+          0,
+          -90,
+          0
+        ],
+        "translation": [
+          0,
+          0.5,
+          -6
+        ],
+        "scale": [
+          2,
+          2,
+          1
+        ]
+      },
+      "thirdperson_lefthand": {
+        "rotation": [
+          0,
+          90,
+          0
+        ],
+        "translation": [
+          0,
+          0.5,
+          -6
+        ],
+        "scale": [
+          2,
+          2,
+          1
+        ]
+      },
+      "firstperson_righthand": {
+        "rotation": [
+          0,
+          -90,
+          0
+        ],
+        "translation": [
+          0,
+          3,
+          0
+        ],
+        "scale": [
+          2,
+          2,
+          1
+        ]
+      },
+      "firstperson_lefthand": {
+        "rotation": [
+          0,
+          90,
+          0
+        ],
+        "translation": [
+          0,
+          3,
+          0
+        ],
+        "scale": [
+          2,
+          2,
+          1
+        ]
+      }
+    }
+  },
+  "gui_light": "front",
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "usefulguns:items/flint_bullet"
+      }
+    }
+  }
+}
