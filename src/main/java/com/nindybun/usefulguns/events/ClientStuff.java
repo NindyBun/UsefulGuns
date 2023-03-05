@@ -39,7 +39,6 @@ public class ClientStuff {
         event.getItemColors().register(new TippedBulletColor(), ModItems.TIPPED_BULLET.get());
         event.getItemColors().register(new TippedBulletColor(), ModItems.SPLASH_BULLET.get());
         event.getItemColors().register(new TippedBulletColor(), ModItems.LINGERING_BULLET.get());
-        event.getItemColors().register((p_getColor_1_, p_getColor_2_) -> Color.GRAY.hashCode(), ModItems.IRON_GUN.get());
     }
 
 }
