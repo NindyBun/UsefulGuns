@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.awt.*;
 import java.awt.image.ColorModel;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 
@@ -37,6 +39,7 @@ public class ClientStuff {
         event.getItemColors().register(new TippedBulletColor(), ModItems.TIPPED_BULLET.get());
         event.getItemColors().register(new TippedBulletColor(), ModItems.SPLASH_BULLET.get());
         event.getItemColors().register(new TippedBulletColor(), ModItems.LINGERING_BULLET.get());
+        event.getItemColors().register((p_getColor_1_, p_getColor_2_) -> Color.GRAY.hashCode(), ModItems.IRON_GUN.get());
     }
 
 }
