@@ -81,7 +81,7 @@
     "gui": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "usefulguns:items/diamond_marksman_class"
+        "layer0": "usefulguns:items/diamond_marksman_class_dark"
       }
     }
   }
