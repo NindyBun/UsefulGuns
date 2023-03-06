@@ -1,4 +1,32 @@
 {
+  "gunner.shoot": {
+    "category": "players",
+    "subtitle": "subtitles.usefulguns.gunner.shoot",
+    "sounds": [
+      "usefulguns:submachine"
+    ]
+  },
+  "shotgun.shoot": {
+    "category": "players",
+    "subtitle": "subtitles.usefulguns.shotgun.shoot",
+    "sounds": [
+      "usefulguns:shotgun"
+    ]
+  },
+  "rifle.shoot": {
+    "category": "players",
+    "subtitle": "subtitles.usefulguns.rifle.shoot",
+    "sounds": [
+      "usefulguns:rifle"
+    ]
+  },
+  "sniper.shoot": {
+    "category": "players",
+    "subtitle": "subtitles.usefulguns.sniper.shoot",
+    "sounds": [
+      "usefulguns:sniper"
+    ]
+  },
   "pistol.shoot": {
     "category": "players",
     "subtitle": "subtitles.usefulguns.pistol.shoot",
