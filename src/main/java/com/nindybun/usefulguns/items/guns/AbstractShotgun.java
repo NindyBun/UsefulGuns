@@ -1,15 +1,21 @@
 package com.nindybun.usefulguns.items.guns;
 
+import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.entities.BulletEntity;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.items.bullets.ShotgunBullet;
 import com.nindybun.usefulguns.modRegistries.ModItems;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 
 public class AbstractShotgun extends AbstractGun{
@@ -39,4 +45,8 @@ public class AbstractShotgun extends AbstractGun{
         return -1;
     }
 
+    @Override
+    protected void addExtraTooltip(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip) {
+        tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID + ".shotgun.shoot"));
+    }
 }

@@ -29,7 +29,7 @@ public class ShotgunBullet extends AbstractBullet{
     @Override
     public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter) {
         BulletEntity entity = super.createProjectile(world, stack, shooter);
-        entity.setIgnoreInvulnerability(amount > 1 && stack.getItem() != ModItems.DRAGONS_BREATH_BULLET.get() ? true : false);
+        entity.setIgnoreInvulnerability(amount > 1 ? true : false);
         if (stack.getItem() == ModItems.DRAGONS_BREATH_BULLET.get())
             entity.setFire(true);
         if (stack.getItem() == ModItems.DRAGONS_FIREBALL_BULLET.get())

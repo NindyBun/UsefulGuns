@@ -5,6 +5,7 @@ import com.nindybun.usefulguns.events.ClientEvents;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModSounds;
 import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -40,6 +41,7 @@ public class Lang extends LanguageProvider {
         add(ModItems.GOLD_GUN.get(), "Gold Pistol");
         add(ModItems.DIAMOND_SNIPER.get(), "Diamond Sniper");
         add(ModItems.DIAMOND_SHOTGUN.get(), "Diamond Shotgun");
+        add(ModItems.DIAMOND_MINIGUN.get(), "Diamond Minigun");
 
         add(ModItems.BULLET_CASING.get(), "Bullet Casing");
         add(ModItems.FLINT_BULLET.get(), "Flint Bullet");
@@ -117,6 +119,8 @@ public class Lang extends LanguageProvider {
         add(ModItems.LINGERING_BULLET.get().getDescriptionId()+".effect.turtle_master", "Lingering Bullet of the Turtle Master");
         add(ModItems.LINGERING_BULLET.get().getDescriptionId()+".effect.slow_falling", "Lingering Bullet of Slow Falling");
 
+        add("tooltip.usefulguns.shotgun.shoot", "Shoots multiple projectiles");
+        add("tooltip.usefulguns.machinegun.shoot", "Slows down the user");
         add("tooltip.usefulguns.shift", "\u00A77Hold \u00A7fSHIFT\u00A77 for stats\u00A7r");
         add("tooltip.usefulguns.selected_bullet", "\u00A73Selected bullet: ");
         add("tooltip.usefulguns.bullet.damage", "\u00A72Damage: \u00A7f+%s\u00A7r");

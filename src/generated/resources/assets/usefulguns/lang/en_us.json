@@ -2,6 +2,7 @@
   "item.usefulguns.birdshot_bullet": "BirdShot",
   "item.usefulguns.buckshot_bullet": "BuckShot",
   "item.usefulguns.bullet_casing": "Bullet Casing",
+  "item.usefulguns.diamond_minigun": "Diamond Minigun",
   "item.usefulguns.diamond_pouch": "Diamond Ammo Pouch",
   "item.usefulguns.diamond_shotgun": "Diamond Shotgun",
   "item.usefulguns.diamond_sniper": "Diamond Sniper",
@@ -101,6 +102,8 @@
   "tooltip.usefulguns.gun.firerate": "\u00A72Fire delay: \u00A7f%d\u00A77 RPM\u00A7r",
   "tooltip.usefulguns.gun.firerate.modified": "\u00A7dFire delay: \u00A7f%d\u00A77 RPM\u00A7r",
   "tooltip.usefulguns.gun.ignore_invulnerability": "Projectiles ignore invulnerability time",
+  "tooltip.usefulguns.machinegun.shoot": "Slows down the user",
   "tooltip.usefulguns.selected_bullet": "\u00A73Selected bullet: ",
-  "tooltip.usefulguns.shift": "\u00A77Hold \u00A7fSHIFT\u00A77 for stats\u00A7r"
+  "tooltip.usefulguns.shift": "\u00A77Hold \u00A7fSHIFT\u00A77 for stats\u00A7r",
+  "tooltip.usefulguns.shotgun.shoot": "Shoots multiple projectiles"
 }

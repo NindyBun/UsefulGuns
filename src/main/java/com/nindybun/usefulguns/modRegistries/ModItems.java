@@ -5,6 +5,7 @@ import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.PouchTypes;
 import com.nindybun.usefulguns.items.bullets.*;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
+import com.nindybun.usefulguns.items.guns.AbstractMachineGun;
 import com.nindybun.usefulguns.items.guns.AbstractShotgun;
 import com.sun.org.apache.xalan.internal.res.XSLTErrorResources_zh_TW;
 import net.minecraft.item.Item;
@@ -39,6 +40,8 @@ public class ModItems {
             .projectileSpeed(4).fireSound(() -> ModSounds.SNIPER.get()));
     public static final RegistryObject<Item> DIAMOND_SHOTGUN = ITEMS.register("diamond_shotgun", () -> new AbstractShotgun(0, 0.85, 18, 10)
             .fireSound(() -> ModSounds.SHOTGUN.get()));
+    public static final RegistryObject<Item> DIAMOND_MINIGUN = ITEMS.register("diamond_minigun", () -> new AbstractMachineGun(0, 1, 4, 4)
+            .fireSound(() -> ModSounds.GUNNER.get()));
 
     public static final RegistryObject<Item> LEATHER_POUCH = ITEMS.register("leather_pouch", () -> new AbstractPouch("leather_pouch", PouchTypes.LEATHER));
     public static final RegistryObject<Item> IRON_POUCH = ITEMS.register("iron_pouch", () -> new AbstractPouch("iron_pouch", PouchTypes.IRON));

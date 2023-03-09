@@ -39,14 +39,14 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class AbstractGun extends Item {
-    private final int bonusDamage;
-    private final double damageMultiplier;
+    protected final int bonusDamage;
+    protected final double damageMultiplier;
     private final int fireDelay;
     private double projectileSpeed = 3;
     private final int enchantability;
     private final boolean ignoreInvulnerability = false;
-    private Supplier<SoundEvent> fireSound = ModSounds.PISTOL::get;
-    private Supplier<SoundEvent> drySound = ModSounds.DRY_FIRED::get;
+    protected Supplier<SoundEvent> fireSound = ModSounds.PISTOL::get;
+    protected Supplier<SoundEvent> drySound = ModSounds.DRY_FIRED::get;
 
     public AbstractGun(int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
         super(ModItems.ITEM_GROUP.stacksTo(1));
@@ -147,6 +147,10 @@ public class AbstractGun extends Item {
         }else{
             tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID + ".shift"));
         }
+    }
+
+    protected void addExtraTooltip(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip){
+
     }
 
     @Override
