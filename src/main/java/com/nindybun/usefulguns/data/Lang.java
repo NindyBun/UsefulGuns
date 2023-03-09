@@ -46,6 +46,11 @@ public class Lang extends LanguageProvider {
         add(ModItems.TIPPED_BULLET.get(), "Tipped Bullet");
         add(ModItems.IRON_BULLET.get(), "Iron Bullet");
         add(ModItems.GLASS_BULLET.get(), "Glass Bullet");
+        add(ModItems.BUCKSHOT_BULLET.get(), "BuckShot");
+        add(ModItems.BIRDSHOT_BULLET.get(), "BirdShot");
+        add(ModItems.SLUG_BULLET.get(), "Slug");
+        add(ModItems.DRAGONS_BREATH_BULLET.get(), "Dragon's Breath");
+        add(ModItems.DRAGONS_FIREBALL_BULLET.get(), "Dragon's Fireball");
 
         add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.empty", "Uncraftable Tipped Bullet");
         add(ModItems.TIPPED_BULLET.get().getDescriptionId()+".effect.night_vision", "Bullet of Night Vision");

@@ -29,8 +29,8 @@ public class AbstractShotgun extends AbstractGun{
                 ShotgunBullet shotgunBullet = (ShotgunBullet) (ammo.getItem() instanceof ShotgunBullet ? ammo.getItem() : ModItems.BUCKSHOT_BULLET);
                 for (int j = 0; j < shotgunBullet.getAmount(); j++){
                     BulletEntity bulletEntity = shotgunBullet.createProjectile(world, ammo, player);
-                    bulletEntity.setDamage((bulletEntity.getDamage()*this.damageMultiplier+this.bonusDamage));
-                    bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), shotgunBullet.getSpread());
+                    bulletEntity.setDamage(((bulletEntity.getDamage()/shotgunBullet.getAmount())*this.damageMultiplier+this.bonusDamage));
+                    bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun),shotgunBullet.getSpread() == 0 ? 0 : 5 + (int)(Math.random() * ((shotgunBullet.getSpread() - 5) + 1)));
                     world.addFreshEntity(bulletEntity);
                 }
                 return i;

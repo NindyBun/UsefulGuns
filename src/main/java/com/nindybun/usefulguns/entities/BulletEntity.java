@@ -22,6 +22,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,6 +45,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags;
@@ -52,10 +54,7 @@ import org.jline.utils.Colors;
 import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class BulletEntity extends AbstractArrowEntity {
@@ -63,6 +62,8 @@ public class BulletEntity extends AbstractArrowEntity {
     private boolean ignoreInvulnerability = false;
     private int pierceLevel = 0;
     private boolean isShrapnel = false;
+    private boolean setFire = false;
+    private boolean setFireBall = false;
     private ItemStack bullet = ItemStack.EMPTY;
     private int ticksSinceFired;
     private static final DataParameter<Integer> ID_EFFECT_COLOR = EntityDataManager.defineId(BulletEntity.class, DataSerializers.INT);
@@ -73,6 +74,9 @@ public class BulletEntity extends AbstractArrowEntity {
     private IntOpenHashSet piercingIgnoreEntityIds;
     private List<Entity> piercedAndKilledEntities;
     private final Predicate<LivingEntity> WATER_SENSITIVE = LivingEntity::isSensitiveToWater;
+    private UUID ownerUUID;
+    private int ownerNetworkId;
+    private boolean leftOwner;
 
     public BulletEntity(EntityType<? extends BulletEntity> entityType, World world) {
         super(entityType, world);
@@ -100,6 +104,14 @@ public class BulletEntity extends AbstractArrowEntity {
 
     public void setIgnoreInvulnerability(boolean ignoreInvulnerability){
         this.ignoreInvulnerability = ignoreInvulnerability;
+    }
+    
+    public void setFire(boolean setFire){
+        this.setFire = setFire;
+    }
+
+    public void setFireBall(boolean setFireBall){
+        this.setFireBall = setFireBall;
     }
 
     public void setPierceLevel(int pierceLevel){
@@ -257,13 +269,26 @@ public class BulletEntity extends AbstractArrowEntity {
             areaeffectcloudentity.setOwner((LivingEntity)entity);
         }
         areaeffectcloudentity.setRadius(3.0F);
-        areaeffectcloudentity.setRadiusOnUse(-0.5F);
-        areaeffectcloudentity.setWaitTime(10);
+        areaeffectcloudentity.setDuration(150);
         areaeffectcloudentity.setRadiusPerTick(-areaeffectcloudentity.getRadius() / (float)areaeffectcloudentity.getDuration());
         areaeffectcloudentity.setFixedColor(PotionUtils.getColor(potion));
         for (EffectInstance effectInstance : potion.getEffects()){
             areaeffectcloudentity.addEffect(new EffectInstance(effectInstance.getEffect(), Math.max(effectInstance.getDuration() / 16, 1)));
         }
+        this.level.addFreshEntity(areaeffectcloudentity);
+    }
+
+    private void makeDragonsBreathCloud(Vector3d pos) {
+        AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(this.level, pos.x, pos.y, pos.z);
+        Entity entity = this.getOwner();
+        if (entity instanceof LivingEntity) {
+            areaeffectcloudentity.setOwner((LivingEntity)entity);
+        }
+        areaeffectcloudentity.setParticle(ParticleTypes.DRAGON_BREATH);
+        areaeffectcloudentity.setRadius(3.0F);
+        areaeffectcloudentity.setDuration(150);
+        areaeffectcloudentity.setRadiusPerTick((5.0F - areaeffectcloudentity.getRadius()) / (float)areaeffectcloudentity.getDuration());
+        areaeffectcloudentity.addEffect(new EffectInstance(Effects.HARM, 1, 1));
         this.level.addFreshEntity(areaeffectcloudentity);
     }
 
@@ -377,6 +402,9 @@ public class BulletEntity extends AbstractArrowEntity {
                 int i = potion.hasInstantEffects() ? 2007 : 2002;
                 this.level.levelEvent(i, new BlockPos(rayTrace.getLocation()), PotionUtils.getColor(itemstack));
             }
+        }else if (setFireBall){
+            this.makeDragonsBreathCloud(rayTrace.getLocation());
+            this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
         }
         this.remove();
     }
@@ -463,11 +491,46 @@ public class BulletEntity extends AbstractArrowEntity {
         return 0.78f;
     }
 
+    public void setOwner(@Nullable Entity p_212361_1_) {
+        if (p_212361_1_ != null) {
+            this.ownerUUID = p_212361_1_.getUUID();
+            this.ownerNetworkId = p_212361_1_.getId();
+        }
+
+    }
+
+    @Nullable
+    public Entity getOwner() {
+        if (this.ownerUUID != null && this.level instanceof ServerWorld) {
+            return ((ServerWorld)this.level).getEntity(this.ownerUUID);
+        } else {
+            return this.ownerNetworkId != 0 ? this.level.getEntity(this.ownerNetworkId) : null;
+        }
+    }
+
+    private boolean checkLeftOwner() {
+        Entity entity = this.getOwner();
+        if (entity != null) {
+            for(Entity entity1 : this.level.getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D), (p_234613_0_) -> {
+                return !p_234613_0_.isSpectator() && p_234613_0_.isPickable();
+            })) {
+                if (entity1.getRootVehicle() == entity.getRootVehicle()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public void tick() {
         ticksSinceFired++;
         if (ticksSinceFired > 100 || this.getDeltaMovement().lengthSqr() < STOP_TRESHOLD) {
             this.remove();
+        }
+        if (!this.leftOwner) {
+            this.leftOwner = this.checkLeftOwner();
         }
         super.tick();
 
@@ -558,16 +621,19 @@ public class BulletEntity extends AbstractArrowEntity {
     }
 
     @Override
-    protected void doPostHurtEffects(LivingEntity p_184548_1_) {
-        super.doPostHurtEffects(p_184548_1_);
+    protected void doPostHurtEffects(LivingEntity entity) {
+        super.doPostHurtEffects(entity);
+        
+        if (setFire)
+            entity.setSecondsOnFire(5);
 
         for(EffectInstance effectinstance : this.potion.getEffects()) {
-            p_184548_1_.addEffect(new EffectInstance(effectinstance.getEffect(), Math.max(effectinstance.getDuration() / 8, 1), effectinstance.getAmplifier(), effectinstance.isAmbient(), effectinstance.isVisible()));
+            entity.addEffect(new EffectInstance(effectinstance.getEffect(), Math.max(effectinstance.getDuration() / 8, 1), effectinstance.getAmplifier(), effectinstance.isAmbient(), effectinstance.isVisible()));
         }
 
         if (!this.effects.isEmpty()) {
             for(EffectInstance effectinstance1 : this.effects) {
-                p_184548_1_.addEffect(effectinstance1);
+                entity.addEffect(effectinstance1);
             }
         }
 
@@ -575,7 +641,6 @@ public class BulletEntity extends AbstractArrowEntity {
 
     @Override
     public void addAdditionalSaveData(CompoundNBT nbt) {
-        super.addAdditionalSaveData(nbt);
         nbt.putInt("tsf", this.ticksSinceFired);
         nbt.putDouble("damage", this.damage);
         nbt.putInt("pierceLevel", this.pierceLevel);
@@ -596,11 +661,18 @@ public class BulletEntity extends AbstractArrowEntity {
             }
             nbt.put("CustomPotionEffects", listnbt);
         }
+
+        if (this.ownerUUID != null) {
+            nbt.putUUID("Owner", this.ownerUUID);
+        }
+
+        if (this.leftOwner) {
+            nbt.putBoolean("LeftOwner", true);
+        }
     }
 
     @Override
     public void readAdditionalSaveData(CompoundNBT nbt) {
-        super.readAdditionalSaveData(nbt);
         this.ticksSinceFired = nbt.getInt("tsf");
         this.damage = nbt.getDouble("damage");
         this.ignoreInvulnerability = nbt.getBoolean("ignoreInv");
@@ -619,6 +691,12 @@ public class BulletEntity extends AbstractArrowEntity {
         } else {
             this.updateColor();
         }
+
+        if (nbt.hasUUID("Owner")) {
+            this.ownerUUID = nbt.getUUID("Owner");
+        }
+
+        this.leftOwner = nbt.getBoolean("LeftOwner");
     }
 
     @Override

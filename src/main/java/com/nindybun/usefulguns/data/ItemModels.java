@@ -37,6 +37,11 @@ public class ItemModels extends ItemModelProvider {
                 .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/lingering_bullet"));
         withExistingParent(ModItems.BULLET_CASING.get().getRegistryName().getPath(), mcLoc("item/handheld"))
                 .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/bullet_base"));
+        simpleItem(ModItems.DRAGONS_FIREBALL_BULLET.get());
+        simpleItem(ModItems.DRAGONS_BREATH_BULLET.get());
+        simpleItem(ModItems.SLUG_BULLET.get());
+        simpleItem(ModItems.BIRDSHOT_BULLET.get());
+        simpleItem(ModItems.BUCKSHOT_BULLET.get());
         simpleItem(ModItems.FLINT_BULLET.get());
         simpleItem(ModItems.IRON_BULLET.get());
         simpleItem(ModItems.GLASS_BULLET.get());
