@@ -53,7 +53,6 @@ import static net.minecraft.client.util.InputMappings.Type.MOUSE;
 public class UsefulGuns
 {
     public static final String MOD_ID = "usefulguns";
-
     public static final Logger LOGGER = LogManager.getLogger();
 
     public UsefulGuns() {

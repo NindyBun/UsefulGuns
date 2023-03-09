@@ -1,7 +1,9 @@
 package com.nindybun.usefulguns.items.bullets;
 
 import com.nindybun.usefulguns.UsefulGuns;
+import com.nindybun.usefulguns.entities.BulletEntity;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -20,9 +22,16 @@ import java.util.List;
 
 public class LingeringBullet extends AbstractBullet{
     private int damage;
-    public LingeringBullet(int damage, int pierceLevel, boolean isShrapnel) {
-        super(damage, pierceLevel, isShrapnel);
+    public LingeringBullet(int damage) {
+        super(damage);
         this.damage = damage;
+    }
+
+    @Override
+    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter) {
+        BulletEntity entity = super.createProjectile(world, stack, shooter);
+        entity.setEffectsFromItem(stack);
+        return entity;
     }
 
     @Override
@@ -49,7 +58,7 @@ public class LingeringBullet extends AbstractBullet{
 
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack p_77624_1_, @Nullable World p_77624_2_, List<ITextComponent> tooltip, ITooltipFlag p_77624_4_) {
-        PotionUtils.addPotionTooltip(p_77624_1_, tooltip, 0.125F);
+        PotionUtils.addPotionTooltip(p_77624_1_, tooltip, 0.0625F);
         tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.damage", ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(this.damage)));
 
     }

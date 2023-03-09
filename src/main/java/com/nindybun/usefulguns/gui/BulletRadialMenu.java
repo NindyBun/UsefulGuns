@@ -9,7 +9,9 @@ import com.nindybun.usefulguns.inventory.PouchData;
 import com.nindybun.usefulguns.inventory.PouchHandler;
 import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.PouchTypes;
+import com.nindybun.usefulguns.items.bullets.ShotgunBullet;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
+import com.nindybun.usefulguns.items.guns.AbstractShotgun;
 import com.nindybun.usefulguns.network.PacketHandler;
 import com.nindybun.usefulguns.network.packets.PacketSaveSelection;
 import com.nindybun.usefulguns.util.Util;
@@ -57,24 +59,27 @@ public class BulletRadialMenu extends Screen {
         ItemStack pouch = Util.locateAndGetPouch(player);
         if (pouch == null)
             return;
-        containedItems = getBulletsInPouch(player, pouch);
+        containedItems = getBulletsInPouch(gun, pouch);
     }
 
-    public static List<ItemStack> getBulletsInPouch(PlayerEntity player, ItemStack pouch){
-        /*PouchData data = AbstractPouch.getData(pouch);
-        PouchTypes itemType = AbstractPouch.getType(pouch);
-        data.updateAccessRecords(player.getName().getString(), System.currentTimeMillis());
-        if (data.getType().ordinal() < itemType.ordinal())
-            data.upgrade(itemType);*/
+    public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
+        if (gun.getItem() instanceof AbstractShotgun && ammo.getItem() instanceof ShotgunBullet)
+            return true;
+        if (!(gun.getItem() instanceof AbstractShotgun) && !(ammo.getItem() instanceof ShotgunBullet))
+            return true;
+        return false;
+    }
 
-        LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional()/*pouch.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)*/;
+    public static List<ItemStack> getBulletsInPouch(ItemStack gun, ItemStack pouch){
+        LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
         List<ItemStack> itemStacks = new ArrayList<>();
         if (optional.isPresent()){
             IItemHandler handler = optional.resolve().get();
             for (int i = 0; i < handler.getSlots(); i++){
-                if (handler.getStackInSlot(i) != ItemStack.EMPTY){
-                    if (!doesContainInList(itemStacks, handler.getStackInSlot(i)))
-                        itemStacks.add(handler.getStackInSlot(i));
+                ItemStack ammo = handler.getStackInSlot(i);
+                if (ammo != ItemStack.EMPTY){
+                    if (!doesContainInList(itemStacks, ammo) && isValidForGun(gun, ammo))
+                        itemStacks.add(ammo);
                 }
             }
         }

@@ -2,7 +2,9 @@ package com.nindybun.usefulguns.items.bullets;
 
 
 import com.nindybun.usefulguns.UsefulGuns;
+import com.nindybun.usefulguns.entities.BulletEntity;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -22,9 +24,16 @@ import java.util.List;
 
 public class TippedBullet extends AbstractBullet{
     private int damage;
-    public TippedBullet(int damage, int pierceLevel, boolean isShrapnel) {
-        super(damage, pierceLevel, isShrapnel);
+    public TippedBullet(int damage) {
+        super(damage);
         this.damage = damage;
+    }
+
+    @Override
+    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter) {
+        BulletEntity entity = super.createProjectile(world, stack, shooter);
+        entity.setEffectsFromItem(stack);
+        return entity;
     }
 
     @Override

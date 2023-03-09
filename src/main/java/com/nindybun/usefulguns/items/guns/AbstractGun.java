@@ -7,6 +7,7 @@ import com.nindybun.usefulguns.inventory.PouchHandler;
 import com.nindybun.usefulguns.inventory.PouchManager;
 import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
+import com.nindybun.usefulguns.items.bullets.ShotgunBullet;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModSounds;
 import com.nindybun.usefulguns.util.Util;
@@ -32,7 +33,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class AbstractGun extends Item {
@@ -63,23 +66,19 @@ public class AbstractGun extends Item {
         return this;
     }
 
-    public boolean shoot(LazyOptional<IItemHandler> optional, ItemStack ammo, World world, PlayerEntity player, ItemStack gun){
-        if (optional.isPresent()) {
-            IItemHandler handler = optional.resolve().get();
-            for (int i = 0; i < handler.getSlots(); i++){
-                ItemStack stack = handler.getStackInSlot(i).copy().split(1);
-                if (ammo.equals(stack, false)) {
-                    AbstractBullet abstractBullet = (AbstractBullet) (ammo.getItem() instanceof AbstractBullet ? ammo.getItem() : ModItems.FLINT_BULLET);
-                    BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player);
-                    bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);
-                    bulletEntity.setDamage((bulletEntity.getDamage()+this.bonusDamage)*this.damageMultiplier);
-                    world.addFreshEntity(bulletEntity);
-                    handler.extractItem(i, 1, false);
-                    return true;
-                }
+    public int shoot(IItemHandler handler, ItemStack ammo, World world, PlayerEntity player, ItemStack gun){
+        for (int i = 0; i < handler.getSlots(); i++){
+            ItemStack stack = handler.getStackInSlot(i).copy().split(1);
+            if (ammo.equals(stack, false)) {
+                AbstractBullet abstractBullet = (AbstractBullet) (ammo.getItem() instanceof AbstractBullet ? ammo.getItem() : ModItems.FLINT_BULLET);
+                BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player);
+                bulletEntity.setDamage((bulletEntity.getDamage()*this.damageMultiplier+this.bonusDamage));
+                bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);
+                world.addFreshEntity(bulletEntity);
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 
     @Override
@@ -90,15 +89,22 @@ public class AbstractGun extends Item {
             return ActionResult.fail(gun);
         if (!world.isClientSide){
             ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
-            if (bulletInfo.getItem() == Items.AIR)
-                return ActionResult.fail(gun);
-            LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
-            if (shoot(optional, bulletInfo, world, playerEntity, gun))
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
-            else
+            if (bulletInfo.getItem() == Items.AIR){
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+                return ActionResult.fail(gun);
+            }
+            LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
+            if (optional.isPresent()) {
+                IItemHandler handler = optional.resolve().get();
+                int shot = shoot(handler, bulletInfo, world, playerEntity, gun);
+                if (shot != -1){
+                    world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+                    handler.extractItem(shot, 1, false);
+                } else
+                    world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+            }
         }
-         playerEntity.getCooldowns().addCooldown(this, getFireDelay(gun));
+        playerEntity.getCooldowns().addCooldown(this, getFireDelay(gun));
         return ActionResult.consume(gun);
     }
 

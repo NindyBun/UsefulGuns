@@ -18,23 +18,16 @@ import java.util.List;
 
 public class AbstractBullet extends Item{
     private int damage;
-    private int pierceLevel;
-    private boolean isShrapnel;
 
-    public AbstractBullet(int damage, int pierceLevel, boolean isShrapnel) {
+    public AbstractBullet(int damage) {
         super(ModItems.ITEM_GROUP.stacksTo(64));
         this.damage = damage;
-        this.pierceLevel = pierceLevel;
-        this.isShrapnel = isShrapnel;
     }
 
     public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter){
         BulletEntity entity = new BulletEntity(world, shooter);
         entity.setBullet(stack);
         entity.setDamage(damage);
-        entity.setPierceLevel((byte)pierceLevel);
-        entity.setEffectsFromItem(stack);
-        entity.setIsShrapnel(isShrapnel);
         return entity;
     }
 

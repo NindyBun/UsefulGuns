@@ -22,7 +22,11 @@ public class Lang extends LanguageProvider {
         add("key.usefulguns.radialmenu_key", "Bullet Radial Menu");
         add("key.categories.usefulguns", "Useful Guns");
         add("subtitles.usefulguns.pistol.shoot", "Pistol Fired");
-        add("subtitles.usefulguns.pistol.dry", "Pistol Dry Fired");
+        add("subtitles.usefulguns.sniper.shoot", "Sniper Fired");
+        add("subtitles.usefulguns.shotgun.shoot", "Shotgun Fired");
+        add("subtitles.usefulguns.rifle.shoot", "Rifle Fired");
+        add("subtitles.usefulguns.gunner.shoot", "Automatic Gun Fired");
+        add("subtitles.usefulguns.pistol.dry", "Gun Empty");
 
         add(ModItems.LEATHER_POUCH.get(), "Leather Ammo Pouch");
         add(ModItems.IRON_POUCH.get(), "Iron Ammo Pouch");
@@ -35,6 +39,7 @@ public class Lang extends LanguageProvider {
         add(ModItems.IRON_GUN.get(), "Iron Pistol");
         add(ModItems.GOLD_GUN.get(), "Gold Pistol");
         add(ModItems.DIAMOND_SNIPER.get(), "Diamond Sniper");
+        add(ModItems.DIAMOND_SHOTGUN.get(), "Diamond Shotgun");
 
         add(ModItems.BULLET_CASING.get(), "Bullet Casing");
         add(ModItems.FLINT_BULLET.get(), "Flint Bullet");
