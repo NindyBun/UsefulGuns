@@ -1,20 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " B ",
-    "BGB",
+    " A ",
+    " A ",
     " B "
   ],
   "key": {
-    "G": {
-      "tag": "forge:glass"
+    "A": {
+      "tag": "forge:sand"
     },
     "B": {
       "item": "usefulguns:bullet_casing"
     }
   },
   "result": {
-    "item": "usefulguns:glass_bullet",
-    "count": 4
+    "item": "usefulguns:birdshot_bullet"
   }
 }

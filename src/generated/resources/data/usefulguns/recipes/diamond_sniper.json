@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DCG",
+    "BDF",
+    " SW"
+  ],
+  "key": {
+    "D": {
+      "tag": "forge:gems/diamond"
+    },
+    "B": {
+      "item": "minecraft:stone_button"
+    },
+    "C": {
+      "item": "usefulguns:bullet_casing"
+    },
+    "F": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "minecraft:oak_log"
+    },
+    "G": {
+      "tag": "forge:glass"
+    }
+  },
+  "result": {
+    "item": "usefulguns:diamond_sniper"
+  }
+}

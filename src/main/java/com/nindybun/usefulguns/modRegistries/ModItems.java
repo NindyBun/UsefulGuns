@@ -23,7 +23,7 @@ public class ModItems {
     public static final RegistryObject<Item> SPLASH_BULLET = ITEMS.register("splash_bullet", () -> new SplashBullet(1));
     public static final RegistryObject<Item> LINGERING_BULLET = ITEMS.register("lingering_bullet", () -> new LingeringBullet(1));
 
-    public static final RegistryObject<Item> DRAGONS_FIREBALL_BULLET = ITEMS.register("dragonsfireball_bullet", () -> new ShotgunBullet(3, 1));
+    public static final RegistryObject<Item> DRAGONS_FIREBALL_BULLET = ITEMS.register("dragonsfireball_bullet", () -> new ShotgunBullet(5, 1));
     public static final RegistryObject<Item> DRAGONS_BREATH_BULLET = ITEMS.register("dragonsbreath_bullet", () -> new ShotgunBullet(8, 5));
     public static final RegistryObject<Item> BUCKSHOT_BULLET = ITEMS.register("buckshot_bullet", () -> new ShotgunBullet(8, 5));
     public static final RegistryObject<Item> BIRDSHOT_BULLET = ITEMS.register("birdshot_bullet", () -> new ShotgunBullet(8, 15));

@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DC ",
+    "BDF",
+    " SW"
+  ],
+  "key": {
+    "D": {
+      "tag": "forge:gems/diamond"
+    },
+    "B": {
+      "item": "minecraft:stone_button"
+    },
+    "C": {
+      "item": "usefulguns:bullet_casing"
+    },
+    "F": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "minecraft:oak_log"
+    }
+  },
+  "result": {
+    "item": "usefulguns:diamond_shotgun"
+  }
+}

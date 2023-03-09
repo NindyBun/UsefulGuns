@@ -1,20 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " B ",
-    "BGB",
+    " G ",
+    " A ",
     " B "
   ],
   "key": {
     "G": {
-      "tag": "forge:glass"
+      "item": "minecraft:dragon_breath"
+    },
+    "A": {
+      "item": "minecraft:fire_charge"
     },
     "B": {
       "item": "usefulguns:bullet_casing"
     }
   },
   "result": {
-    "item": "usefulguns:glass_bullet",
-    "count": 4
+    "item": "usefulguns:dragonsfireball_bullet"
   }
 }

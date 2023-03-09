@@ -7,13 +7,13 @@
   ],
   "key": {
     "A": {
-      "item": "minecraft:flint"
+      "item": "minecraft:fire_charge"
     },
     "B": {
-      "item": "usefulguns:bullet_casing"
+      "item": "usefulguns:buckshot_bullet"
     }
   },
   "result": {
-    "item": "usefulguns:flint_bullet"
+    "item": "usefulguns:dragonsbreath_bullet"
   }
 }

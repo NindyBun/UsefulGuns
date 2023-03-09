@@ -1,13 +1,18 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    " A ",
+    " B "
+  ],
+  "key": {
+    "A": {
       "tag": "forge:nuggets/iron"
     },
-    {
+    "B": {
       "item": "usefulguns:bullet_casing"
     }
-  ],
+  },
   "result": {
     "item": "usefulguns:iron_bullet"
   }
