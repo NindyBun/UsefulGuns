@@ -1,21 +1,28 @@
 package com.nindybun.usefulguns.entities;
 
 
+import com.google.common.cache.RemovalCause;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.nindybun.usefulguns.items.bullets.AbstractBullet;
+import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -27,15 +34,22 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SChangeGameStatePacket;
 import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.jline.utils.Colors;
+import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -44,7 +58,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class BulletEntity extends ProjectileEntity {
+public class BulletEntity extends AbstractArrowEntity {
     private double damage = 1;
     private boolean ignoreInvulnerability = false;
     private int pierceLevel = 0;
@@ -52,7 +66,6 @@ public class BulletEntity extends ProjectileEntity {
     private ItemStack bullet = ItemStack.EMPTY;
     private int ticksSinceFired;
     private static final DataParameter<Integer> ID_EFFECT_COLOR = EntityDataManager.defineId(BulletEntity.class, DataSerializers.INT);
-    private static final DataParameter<Byte> PIERCE_LEVEL = EntityDataManager.defineId(BulletEntity.class, DataSerializers.BYTE);
     private Potion potion = Potions.EMPTY;
     private final Set<EffectInstance> effects = Sets.newHashSet();
     private boolean fixedColor;
@@ -66,7 +79,7 @@ public class BulletEntity extends ProjectileEntity {
     }
 
     public BulletEntity(World world, LivingEntity livingEntity) {
-        super(ModEntities.BULLET.get(), world);
+        super(ModEntities.BULLET.get(), livingEntity, world);
         this.setOwner(livingEntity);
     }
 
@@ -109,7 +122,7 @@ public class BulletEntity extends ProjectileEntity {
             } else {
                 this.setFixedColor(i);
             }
-        } else if (bullet.getItem() instanceof AbstractBullet) {
+        } else if (bullet.getItem() instanceof BucketItem) {
             this.potion = Potions.EMPTY;
             this.effects.clear();
             this.entityData.set(ID_EFFECT_COLOR, -1);
@@ -131,12 +144,7 @@ public class BulletEntity extends ProjectileEntity {
 
     }
 
-    @Override
-    public void move(MoverType p_213315_1_, Vector3d p_213315_2_) {
-        super.move(p_213315_1_, p_213315_2_);
-    }
-
-    @Override
+    @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(byte p_70103_1_) {
         if (p_70103_1_ == 0) {
             int i = this.getColor();
@@ -182,6 +190,22 @@ public class BulletEntity extends ProjectileEntity {
         this.entityData.set(ID_EFFECT_COLOR, p_191507_1_);
     }
 
+    @Override
+    public boolean isNoGravity() {
+        return true;
+    }
+
+    @Override
+    public void setPierceLevel(byte pierceLevel) {
+        super.setPierceLevel(pierceLevel);
+        this.pierceLevel = Byte.toUnsignedInt(pierceLevel);
+    }
+
+    @Override
+    public byte getPierceLevel() {
+        return (byte) this.pierceLevel;
+    }
+
     private void applyWater() {
         AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
         List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb, WATER_SENSITIVE);
@@ -195,7 +219,7 @@ public class BulletEntity extends ProjectileEntity {
         }
 
     }
-    
+
     private void applySplash(Potion potion, @Nullable Entity p_213888_2_, Vector3d pos) {
         AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
         List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
@@ -251,7 +275,7 @@ public class BulletEntity extends ProjectileEntity {
         return null;
     }
 
-    private void dowseFire(BlockPos p_184542_1_) {
+    private void dowseFire(BlockPos p_184542_1_, Direction p_184542_2_) {
         BlockState blockstate = this.level.getBlockState(p_184542_1_);
         if (blockstate.is(BlockTags.FIRE)) {
             this.level.removeBlock(p_184542_1_, false);
@@ -276,26 +300,26 @@ public class BulletEntity extends ProjectileEntity {
                 BlockPos blockpos = rayTrace.getBlockPos();
                 BlockPos blockpos1 = blockpos.relative(direction);
                 if (flag) {
-                    this.dowseFire(blockpos1);
-                    this.dowseFire(blockpos1.relative(direction.getOpposite()));
+                    this.dowseFire(blockpos1, direction);
+                    this.dowseFire(blockpos1.relative(direction.getOpposite()), direction);
                     for(Direction direction1 : Direction.Plane.HORIZONTAL) {
-                        this.dowseFire(blockpos1.relative(direction1));
+                        this.dowseFire(blockpos1.relative(direction1), direction1);
                     }
                 }
-                this.remove();
             }else if (!this.isShrapnel){
                 BlockPos blockPos = rayTrace.getBlockPos();
                 BlockState blockState = this.level.getBlockState(blockPos);
                 SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
+                this.setSoundEvent(soundType.getBreakSound());
                 Minecraft.getInstance().level.playLocalSound(blockPos, soundType.getBreakSound(), SoundCategory.NEUTRAL,  0.8F, random.nextFloat() * 0.1F + 0.9F, false);
                 IParticleData particleData = ParticleTypes.CRIT;
                 Vector3d vector3d = rayTrace.getLocation();
                 for(int i1 = 0; i1 < 8; ++i1) {
                     Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
                 }
-                this.remove();
             }
         }
+        this.remove();
     }
 
     @Override
@@ -335,7 +359,6 @@ public class BulletEntity extends ProjectileEntity {
                 for (int i1 = 0; i1 < 8; ++i1) {
                     Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
                 }
-                this.remove();
             }
         }else if (this.isLingeringOrSplash() != null){
             if (!this.level.isClientSide){
@@ -353,20 +376,21 @@ public class BulletEntity extends ProjectileEntity {
 
                 int i = potion.hasInstantEffects() ? 2007 : 2002;
                 this.level.levelEvent(i, new BlockPos(rayTrace.getLocation()), PotionUtils.getColor(itemstack));
-                this.remove();
             }
         }
+        this.remove();
     }
 
     @Override
     protected void onHitEntity(EntityRayTraceResult entityHit) {
+        //super.onHitEntity(entityHit);
         Entity owner = this.getOwner();
         Entity entity = entityHit.getEntity();
 
         if (this.isShrapnel)
             return;
 
-        if (this.pierceLevel > 0) {
+        if (this.getPierceLevel() > 0) {
             if (this.piercingIgnoreEntityIds == null) {
                 this.piercingIgnoreEntityIds = new IntOpenHashSet(5);
             }
@@ -375,7 +399,7 @@ public class BulletEntity extends ProjectileEntity {
                 this.piercedAndKilledEntities = Lists.newArrayListWithCapacity(5);
             }
 
-            if (this.piercingIgnoreEntityIds.size() >= this.pierceLevel + 1) {
+            if (this.piercingIgnoreEntityIds.size() >= this.getPierceLevel() + 1) {
                 this.remove();
                 return;
             }
@@ -384,7 +408,7 @@ public class BulletEntity extends ProjectileEntity {
         }
 
         int lastHurt = entity.invulnerableTime;
-        if (this.ignoreInvulnerability) entity.invulnerableTime = 0;
+        if (ignoreInvulnerability) entity.invulnerableTime = 0;
 
         DamageSource damagesource;
         if (owner == null) {
@@ -424,7 +448,7 @@ public class BulletEntity extends ProjectileEntity {
                         CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverplayerentity, Arrays.asList(entity));
                     }
                 }
-                if (this.pierceLevel <= 0) {
+                if (this.getPierceLevel() <= 0) {
                     this.remove();
                 }
             }
@@ -434,23 +458,9 @@ public class BulletEntity extends ProjectileEntity {
         }
     }
 
-    private float getWaterInertia() {
-        return 0.75f;
-    }
-
-    @Nullable
-    protected EntityRayTraceResult findHitEntity(Vector3d p_213866_1_, Vector3d p_213866_2_) {
-        return ProjectileHelper.getEntityHitResult(this.level, this, p_213866_1_, p_213866_2_, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D), this::canHitEntity);
-    }
-
     @Override
-    protected boolean canHitEntity(Entity p_230298_1_) {
-        return super.canHitEntity(p_230298_1_) && (this.piercingIgnoreEntityIds == null || !this.piercingIgnoreEntityIds.contains(p_230298_1_.getId()));
-    }
-
-    public void lerpTo(double p_180426_1_, double p_180426_3_, double p_180426_5_, float p_180426_7_, float p_180426_8_, int p_180426_9_, boolean p_180426_10_) {
-        this.setPos(p_180426_1_, p_180426_3_, p_180426_5_);
-        this.setRot(p_180426_7_, p_180426_8_);
+    protected float getWaterInertia() {
+        return 0.78f;
     }
 
     @Override
@@ -470,7 +480,8 @@ public class BulletEntity extends ProjectileEntity {
             this.entityData.set(ID_EFFECT_COLOR, -1);
         }
 
-        Vector3d vec3 = this.getDeltaMovement();
+        /*Vector3d vec3 = this.getDeltaMovement();
+        this.inGroundTime = 0;
         Vector3d vector3d2 = this.position();
         Vector3d vector3d3 = vector3d2.add(vec3);
         RayTraceResult raytraceresult = this.level.clip(new RayTraceContext(vector3d2, vector3d3, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
@@ -498,54 +509,68 @@ public class BulletEntity extends ProjectileEntity {
                 this.hasImpulse = true;
             }
 
-            if (entityraytraceresult == null || this.pierceLevel <= 0) {
+            if (entityraytraceresult == null || this.getPierceLevel() <= 0) {
                 break;
             }
 
             raytraceresult = null;
-        }
+        }*/
 
+        Vector3d vec3 = this.getDeltaMovement();
         double d5 = vec3.x;
         double d6 = vec3.y;
         double d1 = vec3.z;
         double d7 = this.getX() + d5;
         double d2 = this.getY() + d6;
         double d3 = this.getZ() + d1;
-        float f2 = 0.99f;
+        //float f2 = 0.99f;
         if (this.isInWater()){
-            for (int i = 0; i < 4; i++) this.level.addParticle(ParticleTypes.BUBBLE, d7 * 0.25D, d2 * 0.25D, d3 * 0.25D, d5, d6, d1);
-            f2 = getWaterInertia();
+            this.level.addParticle(ParticleTypes.BUBBLE, d7, d2, d3 , d5, d6, d1);
+            //f2 = getWaterInertia();
         }
         else
-            for (int i = 0; i < 4; i++) this.level.addParticle(ParticleTypes.FLAME, d7 * 0.25D, d2 * 0.25D, d3 * 0.25D, d5, d6, d1);
-        this.setDeltaMovement(vec3.scale(f2));
+            this.level.addParticle(ParticleTypes.FLAME, d7, d2, d3 , d5, d6, d1);
+        /*this.setDeltaMovement(vec3.scale((double)f2));
         this.setPos(d5, d1, d2);
-        this.checkInsideBlocks();
+        this.checkInsideBlocks();*/
     }
 
     @Override
     protected void defineSynchedData() {
+        super.defineSynchedData();
         this.entityData.define(ID_EFFECT_COLOR, -1);
-        this.entityData.define(PIERCE_LEVEL, (byte)0);
-
     }
 
-    protected void doPostHurtEffects(LivingEntity entity) {
+    @Override
+    public void move(MoverType p_213315_1_, Vector3d p_213315_2_) {
+        super.move(p_213315_1_, p_213315_2_);
+    }
+
+
+    @Override
+    protected SoundEvent getDefaultHitGroundSoundEvent() {
+        return this.getHitGroundSoundEvent();
+    }
+
+    @Override
+    protected ItemStack getPickupItem() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    protected void doPostHurtEffects(LivingEntity p_184548_1_) {
+        super.doPostHurtEffects(p_184548_1_);
+
         for(EffectInstance effectinstance : this.potion.getEffects()) {
-            entity.addEffect(new EffectInstance(effectinstance.getEffect(), Math.max(effectinstance.getDuration() / 8, 1), effectinstance.getAmplifier(), effectinstance.isAmbient(), effectinstance.isVisible()));
+            p_184548_1_.addEffect(new EffectInstance(effectinstance.getEffect(), Math.max(effectinstance.getDuration() / 8, 1), effectinstance.getAmplifier(), effectinstance.isAmbient(), effectinstance.isVisible()));
         }
 
         if (!this.effects.isEmpty()) {
             for(EffectInstance effectinstance1 : this.effects) {
-                entity.addEffect(effectinstance1);
+                p_184548_1_.addEffect(effectinstance1);
             }
         }
 
-    }
-
-    @Override
-    protected boolean isMovementNoisy() {
-        return false;
     }
 
     @Override
