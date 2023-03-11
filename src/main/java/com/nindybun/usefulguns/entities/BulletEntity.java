@@ -400,6 +400,8 @@ public class BulletEntity extends AbstractArrowEntity {
             this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
         }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
             BlockPos blockPos = new BlockPos(rayTrace.getLocation());
+            if (rayTrace.getType() == RayTraceResult.Type.BLOCK)
+                blockPos = ((BlockRayTraceResult)rayTrace).getBlockPos().relative(((BlockRayTraceResult)rayTrace).getDirection());
             this.level.explode(this, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 2.5F, Explosion.Mode.BREAK);
         }
         this.remove();
