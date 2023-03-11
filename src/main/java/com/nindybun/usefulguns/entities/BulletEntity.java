@@ -1,7 +1,6 @@
 package com.nindybun.usefulguns.entities;
 
 
-import com.google.common.cache.RemovalCause;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.nindybun.usefulguns.UsefulGuns;
@@ -11,22 +10,13 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.projectile.DragonFireballEntity;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
@@ -35,30 +25,28 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SChangeGameStatePacket;
 import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
-import org.jline.utils.Colors;
-import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public class BulletEntity extends AbstractArrowEntity {
-    private double damage = 1;
+    private float damage = 1f;
     private boolean ignoreInvulnerability = false;
     private int pierceLevel = 0;
     private boolean isShrapnel = false;
@@ -87,10 +75,15 @@ public class BulletEntity extends AbstractArrowEntity {
         this.setOwner(livingEntity);
     }
 
-    public void setDamage(double damage){
+    @Override
+    public void shoot(double p_70186_1_, double p_70186_3_, double p_70186_5_, float p_70186_7_, float p_70186_8_) {
+        super.shoot(p_70186_1_, p_70186_3_, p_70186_5_, p_70186_7_, p_70186_8_);
+    }
+
+    public void setDamage(float damage){
         this.damage = damage;
     }
-    public double getDamage() {
+    public float getDamage() {
         return this.damage;
     }
     
@@ -350,7 +343,7 @@ public class BulletEntity extends AbstractArrowEntity {
     @Override
     protected void onHit(RayTraceResult rayTrace) {
         super.onHit(rayTrace);
-        if (this.isShrapnel){
+        if (this.bullet.getItem() == ModItems.GLASS_BULLET.get()){
             if (!this.level.isClientSide) {
                 AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
                 List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
@@ -402,9 +395,12 @@ public class BulletEntity extends AbstractArrowEntity {
                 int i = potion.hasInstantEffects() ? 2007 : 2002;
                 this.level.levelEvent(i, new BlockPos(rayTrace.getLocation()), PotionUtils.getColor(itemstack));
             }
-        }else if (setFireBall){
+        }else if (this.bullet.getItem() == ModItems.DRAGONS_FIREBALL_BULLET.get()){
             this.makeDragonsBreathCloud(rayTrace.getLocation());
             this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
+        }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
+            BlockPos blockPos = new BlockPos(rayTrace.getLocation());
+            this.level.explode(this, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 2.5F, Explosion.Mode.BREAK);
         }
         this.remove();
     }
@@ -415,7 +411,7 @@ public class BulletEntity extends AbstractArrowEntity {
         Entity owner = this.getOwner();
         Entity entity = entityHit.getEntity();
 
-        if (this.isShrapnel)
+        if (this.bullet.getItem() == ModItems.GLASS_BULLET.get())
             return;
 
         if (this.getPierceLevel() > 0) {
@@ -448,7 +444,17 @@ public class BulletEntity extends AbstractArrowEntity {
             }
         }
 
-        boolean damaged = entity.hurt(damagesource, (float)this.damage);
+        if (this.bullet.getItem() == ModItems.ARMOR_PIERCING_BULLET.get())
+            damagesource.bypassArmor();
+
+        if (this.bullet.getItem() == ModItems.HOLLOW_POINT_BULLET.get()){
+            if (entity instanceof LivingEntity) {
+                LivingEntity livingentity = (LivingEntity) entity;
+                this.damage = CombatRules.getDamageAfterAbsorb(this.damage, (float)livingentity.getArmorValue(), (float)livingentity.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
+            }
+        }
+
+        boolean damaged = entity.hurt(damagesource, (float) this.damage);
         if (damaged) {
             if (entity.getType() == EntityType.ENDERMAN)
                 return;
@@ -588,11 +594,11 @@ public class BulletEntity extends AbstractArrowEntity {
         double d3 = this.getZ() + d1;
         //float f2 = 0.99f;
         if (this.isInWater()){
-            this.level.addParticle(ParticleTypes.BUBBLE, d7, d2, d3 , d5, d6, d1);
+            for (int i = 0; i < 2; i++) this.level.addParticle(ParticleTypes.BUBBLE, d7-(d5/5*i), d2-(d6/5*i)+0.15625f, d3-(d1/5*i), d5, d6, d1);
             //f2 = getWaterInertia();
         }
         else
-            this.level.addParticle(ParticleTypes.FLAME, d7, d2, d3 , d5, d6, d1);
+            for (int i = 1; i < 3; i++) this.level.addParticle(ParticleTypes.FLAME, d7-(d5/5*i), d2-(d6/5*i)+0.15625f, d3-(d1/5*i), d5, d6, d1);
         /*this.setDeltaMovement(vec3.scale((double)f2));
         this.setPos(d5, d1, d2);
         this.checkInsideBlocks();*/
@@ -612,7 +618,7 @@ public class BulletEntity extends AbstractArrowEntity {
 
     @Override
     protected SoundEvent getDefaultHitGroundSoundEvent() {
-        return this.getHitGroundSoundEvent();
+        return null;
     }
 
     @Override
@@ -642,7 +648,7 @@ public class BulletEntity extends AbstractArrowEntity {
     @Override
     public void addAdditionalSaveData(CompoundNBT nbt) {
         nbt.putInt("tsf", this.ticksSinceFired);
-        nbt.putDouble("damage", this.damage);
+        nbt.putFloat("damage", this.damage);
         nbt.putInt("pierceLevel", this.pierceLevel);
         nbt.putBoolean("ignoreInv", this.ignoreInvulnerability);
         
@@ -674,7 +680,7 @@ public class BulletEntity extends AbstractArrowEntity {
     @Override
     public void readAdditionalSaveData(CompoundNBT nbt) {
         this.ticksSinceFired = nbt.getInt("tsf");
-        this.damage = nbt.getDouble("damage");
+        this.damage = nbt.getFloat("damage");
         this.ignoreInvulnerability = nbt.getBoolean("ignoreInv");
         this.pierceLevel = nbt.getInt("pierceLevel");
 

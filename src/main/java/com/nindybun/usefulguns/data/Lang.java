@@ -47,7 +47,12 @@ public class Lang extends LanguageProvider {
         add(ModItems.FLINT_BULLET.get(), "Flint Bullet");
         add(ModItems.TIPPED_BULLET.get(), "Tipped Bullet");
         add(ModItems.IRON_BULLET.get(), "Iron Bullet");
+        add(ModItems.DIAMOND_BULLET.get(), "Diamond Bullet");
         add(ModItems.GLASS_BULLET.get(), "Glass Bullet");
+        add(ModItems.ARMOR_PIERCING_BULLET.get(), "Armor Piercing");
+        add(ModItems.HOLLOW_POINT_BULLET.get(), "Hollow Point");
+        add(ModItems.EXPLOSIVE_BULLET.get(), "Explosive Bullet");
+
         add(ModItems.BUCKSHOT_BULLET.get(), "BuckShot");
         add(ModItems.BIRDSHOT_BULLET.get(), "BirdShot");
         add(ModItems.SLUG_BULLET.get(), "Slug");
@@ -133,6 +138,11 @@ public class Lang extends LanguageProvider {
         add("tooltip.usefulguns.gun.firerate", "\u00A72Fire delay: \u00A7f%d\u00A77 RPM\u00A7r");
         add("tooltip.usefulguns.gun.firerate.modified", "\u00A7dFire delay: \u00A7f%d\u00A77 RPM\u00A7r");
         add("tooltip.usefulguns.gun.ignore_invulnerability", "Projectiles ignore invulnerability time");
+        add("tooltip.usefulguns.bullet.armor_piercing", "Effective against armor");
+        add("tooltip.usefulguns.bullet.hollow_point", "Ineffective against armor");
+        add("tooltip.usefulguns.bullet.dragonsbreath", "Inflicts fire");
+        add("tooltip.usefulguns.bullet.dragonsfireball", "A dragon's fireball");
+        add("tooltip.usefulguns.bullet.glass", "Shatters on impact");
         
     }
 }

@@ -44,7 +44,11 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.BUCKSHOT_BULLET.get());
         simpleItem(ModItems.FLINT_BULLET.get());
         simpleItem(ModItems.IRON_BULLET.get());
+        simpleItem(ModItems.DIAMOND_BULLET.get());
         simpleItem(ModItems.GLASS_BULLET.get());
+        simpleItem(ModItems.ARMOR_PIERCING_BULLET.get());
+        simpleItem(ModItems.HOLLOW_POINT_BULLET.get());
+        simpleItem(ModItems.EXPLOSIVE_BULLET.get());
     }
 
     private void registerGuns(){

@@ -29,7 +29,12 @@ public class ModItems {
     public static final RegistryObject<Item> BIRDSHOT_BULLET = ITEMS.register("birdshot_bullet", () -> new ShotgunBullet(8, 15));
     public static final RegistryObject<Item> SLUG_BULLET = ITEMS.register("slug_bullet", () -> new ShotgunBullet(12, 1));
 
+
+    public static final RegistryObject<Item> EXPLOSIVE_BULLET = ITEMS.register("explosive_bullet", () -> new AbstractBullet(1));
+    public static final RegistryObject<Item> HOLLOW_POINT_BULLET = ITEMS.register("hollow_point_bullet", () -> new AbstractBullet(8));
+    public static final RegistryObject<Item> ARMOR_PIERCING_BULLET = ITEMS.register("armor_piercing_bullet", () -> new AbstractBullet(7).setPierceLevel(1));
     public static final RegistryObject<Item> GLASS_BULLET = ITEMS.register("glass_bullet", () -> new AbstractBullet(5));
+    public static final RegistryObject<Item> DIAMOND_BULLET = ITEMS.register("diamond_bullet", () -> new AbstractBullet(7));
     public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new AbstractBullet(6));
     public static final RegistryObject<Item> FLINT_BULLET = ITEMS.register("flint_bullet", () -> new AbstractBullet(5));
     public static final RegistryObject<Item> BULLET_CASING = ITEMS.register("bullet_casing", () -> new Item(ITEM_GROUP.stacksTo(64)));
