@@ -399,8 +399,12 @@ public class BulletEntity extends AbstractArrowEntity {
             this.makeDragonsBreathCloud(rayTrace.getLocation());
             this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
         }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
-            BlockPos blockPos = new BlockPos(rayTrace.getLocation());
-            this.level.explode(this, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 2.5F, Explosion.Mode.BREAK);
+            BlockPos hitVec = new BlockPos(rayTrace.getLocation());
+            if (rayTrace.getType() == RayTraceResult.Type.BLOCK){
+                BlockRayTraceResult blockRay = (BlockRayTraceResult) rayTrace;
+                hitVec = blockRay.getBlockPos().relative(blockRay.getDirection());
+            }
+            this.level.explode(this, hitVec.getX(), hitVec.getY(), hitVec.getZ(), 2.5F, Explosion.Mode.BREAK);
         }
         this.remove();
     }
