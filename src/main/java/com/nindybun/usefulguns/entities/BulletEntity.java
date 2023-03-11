@@ -396,13 +396,15 @@ public class BulletEntity extends AbstractArrowEntity {
                 this.level.levelEvent(i, new BlockPos(rayTrace.getLocation()), PotionUtils.getColor(itemstack));
             }
         }else if (this.bullet.getItem() == ModItems.DRAGONS_FIREBALL_BULLET.get()){
-            this.makeDragonsBreathCloud(rayTrace.getLocation());
-            this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
+            if (!this.level.isClientSide){
+                this.makeDragonsBreathCloud(rayTrace.getLocation());
+                this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
+            }
         }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
             BlockPos blockPos = new BlockPos(rayTrace.getLocation());
             if (rayTrace.getType() == RayTraceResult.Type.BLOCK)
                 blockPos = ((BlockRayTraceResult)rayTrace).getBlockPos().relative(((BlockRayTraceResult)rayTrace).getDirection());
-            this.level.explode(this, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 2.5F, Explosion.Mode.BREAK);
+            if (!this.level.isClientSide) this.level.explode(this, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 2.5F, Explosion.Mode.BREAK);
         }
         this.remove();
     }
