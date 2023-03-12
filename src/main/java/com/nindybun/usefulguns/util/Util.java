@@ -8,13 +8,29 @@ import com.nindybun.usefulguns.items.AbstractPouch;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Util {
+
+    public static Direction getDirection(RayTraceResult rayTraceResult){
+        BlockPos blockPos = new BlockPos(rayTraceResult.getLocation());
+        Vector3d ray = rayTraceResult.getLocation();
+        Vector3d block = new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+
+        Vector3d diff = ray.subtract(block);
+        return Direction.UP;
+    }
 
     public static ItemStack locateAndGetPouch(PlayerEntity player){
         NonNullList<ItemStack> inventory = player.inventory.items;

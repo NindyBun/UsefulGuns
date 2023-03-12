@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
+import com.nindybun.usefulguns.util.Util;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
@@ -32,6 +33,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
@@ -39,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -343,20 +346,22 @@ public class BulletEntity extends AbstractArrowEntity {
         }
     }
 
-    public void toTeleport(Entity entity, BlockPos target){
-        if (!this.level.isClientSide && !this.removed) {
+    public void toTeleport(Entity entity, Vector3d target){
+        if (!this.level.isClientSide) {
             if (entity instanceof ServerPlayerEntity) {
                 ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
-                if (serverplayerentity.connection.getConnection().isConnected() && serverplayerentity.level == this.level && !serverplayerentity.isSleeping()) {
-                    entity.teleportTo(target.getX(), target.getY(), target.getZ());
-                        entity.fallDistance = 0.0F;
-                        entity.hurt(DamageSource.FALL, 5.0f);
+                if (serverplayerentity.connection.getConnection().isConnected() && serverplayerentity.level == this.level && !serverplayerentity.isSleeping() && serverplayerentity.isAlive()) {
+                    if (entity.isPassenger()) {
+                        entity.stopRiding();
+                    }
+                    entity.teleportTo(target.x, target.y, target.z);
+                    entity.fallDistance = 0.0F;
+                    entity.hurt(DamageSource.FALL, 0.5f);
+                }else if (entity != null){
+                    entity.teleportTo(target.x, target.y, target.z);
+                    entity.fallDistance = 0.0F;
                 }
-            } else if (entity != null) {
-                entity.teleportTo(this.getX(), this.getY(), this.getZ());
-                entity.fallDistance = 0.0F;
             }
-
             this.remove();
         }
     }
@@ -398,8 +403,8 @@ public class BulletEntity extends AbstractArrowEntity {
                 for (int i1 = 0; i1 < 8; ++i1) {
                     Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
                 }
+                this.remove();
             }
-            this.remove();
         }else if (this.isLingeringOrSplash() != null){
             if (!this.level.isClientSide){
                 ItemStack itemstack = this.bullet;
@@ -416,23 +421,32 @@ public class BulletEntity extends AbstractArrowEntity {
 
                 int i = potion.hasInstantEffects() ? 2007 : 2002;
                 this.level.levelEvent(i, new BlockPos(rayTrace.getLocation()), PotionUtils.getColor(itemstack));
+                this.remove();
             }
-            this.remove();
         }else if (this.bullet.getItem() == ModItems.DRAGONS_FIREBALL_BULLET.get()){
             if (!this.level.isClientSide){
                 this.makeDragonsBreathCloud(rayTrace.getLocation());
                 this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
+                this.remove();
             }
-            this.remove();
         }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
-            BlockPos blockPos = new BlockPos(rayTrace.getLocation());
+            /*BlockPos blockPos = new BlockPos(rayTrace.getLocation());
+            BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity) this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().distanceTo(this));
             if (rayTrace.getType() == RayTraceResult.Type.BLOCK)
-                blockPos = ((BlockRayTraceResult)rayTrace).getBlockPos().relative(((BlockRayTraceResult)rayTrace).getDirection());
-            if (!this.level.isClientSide) this.level.explode(this, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 2.5F, Explosion.Mode.BREAK);
-            this.remove();
+                blockPos = blockRay.getBlockPos().relative(blockRay.getDirection());*/
+            if (!this.level.isClientSide){
+                Vector3d blockpos = rayTrace.getLocation();
+                //this.level.explode(this, rayTrace.getLocation().x, rayTrace.getLocation().y, rayTrace.getLocation().z, 2.5F, Explosion.Mode.BREAK);
+                this.remove();
+            }
         }else if (this.bullet.getItem() == ModItems.ENDER_BULLET.get()){
-            toTeleport(this.getOwner(), new BlockPos(rayTrace.getLocation()));
-            this.remove();
+            for(int i = 0; i < 32; ++i) {
+                Minecraft.getInstance().level.addParticle(ParticleTypes.PORTAL, this.getX(), this.getY() + this.random.nextDouble() * 2.0D, this.getZ(), this.random.nextGaussian(), 0.0D, this.random.nextGaussian());
+            }
+            if (!this.level.isClientSide){
+                this.toTeleport(this.getOwner(), rayTrace.getLocation());
+                this.remove();
+            }
         }
     }
 
@@ -523,6 +537,16 @@ public class BulletEntity extends AbstractArrowEntity {
             entity.invulnerableTime = lastHurt;
             this.remove();
         }
+    }
+
+    @Nullable
+    @Override
+    public Entity changeDimension(ServerWorld p_241206_1_, ITeleporter teleporter) {
+        Entity entity = this.getOwner();
+        if (entity != null && entity.level.dimension() != p_241206_1_.dimension()) {
+            this.setOwner((Entity)null);
+        }
+        return super.changeDimension(p_241206_1_, teleporter);
     }
 
     @Override
@@ -635,7 +659,7 @@ public class BulletEntity extends AbstractArrowEntity {
             //f2 = getWaterInertia();
         }
         else
-            for (int i = 1; i < 3; i++) this.level.addParticle(ParticleTypes.FLAME, d7-(d5/5*i), d2-(d6/5*i)+0.15625f, d3-(d1/5*i), d5, d6, d1);
+            for (int i = 0; i < 2; i++) this.level.addParticle(ParticleTypes.FLAME, d7-(d5/5*i), d2-(d6/5*i)+0.15625f, d3-(d1/5*i), d5, d6, d1);
         /*this.setDeltaMovement(vec3.scale((double)f2));
         this.setPos(d5, d1, d2);
         this.checkInsideBlocks();*/
