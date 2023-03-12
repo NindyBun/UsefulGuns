@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.monster.EndermiteEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -33,6 +34,7 @@ import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -324,6 +326,7 @@ public class BulletEntity extends AbstractArrowEntity {
                         this.dowseFire(blockpos1.relative(direction1), direction1);
                     }
                 }
+                this.remove();
             }else if (!this.isShrapnel){
                 BlockPos blockPos = rayTrace.getBlockPos();
                 BlockState blockState = this.level.getBlockState(blockPos);
@@ -335,9 +338,27 @@ public class BulletEntity extends AbstractArrowEntity {
                 for(int i1 = 0; i1 < 8; ++i1) {
                     Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
                 }
+                this.remove();
             }
         }
-        this.remove();
+    }
+
+    public void toTeleport(Entity entity, BlockPos target){
+        if (!this.level.isClientSide && !this.removed) {
+            if (entity instanceof ServerPlayerEntity) {
+                ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
+                if (serverplayerentity.connection.getConnection().isConnected() && serverplayerentity.level == this.level && !serverplayerentity.isSleeping()) {
+                    entity.teleportTo(target.getX(), target.getY(), target.getZ());
+                        entity.fallDistance = 0.0F;
+                        entity.hurt(DamageSource.FALL, 5.0f);
+                }
+            } else if (entity != null) {
+                entity.teleportTo(this.getX(), this.getY(), this.getZ());
+                entity.fallDistance = 0.0F;
+            }
+
+            this.remove();
+        }
     }
 
     @Override
@@ -378,6 +399,7 @@ public class BulletEntity extends AbstractArrowEntity {
                     Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
                 }
             }
+            this.remove();
         }else if (this.isLingeringOrSplash() != null){
             if (!this.level.isClientSide){
                 ItemStack itemstack = this.bullet;
@@ -395,18 +417,23 @@ public class BulletEntity extends AbstractArrowEntity {
                 int i = potion.hasInstantEffects() ? 2007 : 2002;
                 this.level.levelEvent(i, new BlockPos(rayTrace.getLocation()), PotionUtils.getColor(itemstack));
             }
+            this.remove();
         }else if (this.bullet.getItem() == ModItems.DRAGONS_FIREBALL_BULLET.get()){
-            this.makeDragonsBreathCloud(rayTrace.getLocation());
-            this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
-        }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
-            BlockPos hitVec = new BlockPos(rayTrace.getLocation());
-            if (rayTrace.getType() == RayTraceResult.Type.BLOCK){
-                BlockRayTraceResult blockRay = (BlockRayTraceResult) rayTrace;
-                hitVec = blockRay.getBlockPos().relative(blockRay.getDirection());
+            if (!this.level.isClientSide){
+                this.makeDragonsBreathCloud(rayTrace.getLocation());
+                this.level.levelEvent(2006, this.blockPosition(), this.isSilent() ? -1 : 1);
             }
-            this.level.explode(this, hitVec.getX(), hitVec.getY(), hitVec.getZ(), 2.5F, Explosion.Mode.BREAK);
+            this.remove();
+        }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
+            BlockPos blockPos = new BlockPos(rayTrace.getLocation());
+            if (rayTrace.getType() == RayTraceResult.Type.BLOCK)
+                blockPos = ((BlockRayTraceResult)rayTrace).getBlockPos().relative(((BlockRayTraceResult)rayTrace).getDirection());
+            if (!this.level.isClientSide) this.level.explode(this, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 2.5F, Explosion.Mode.BREAK);
+            this.remove();
+        }else if (this.bullet.getItem() == ModItems.ENDER_BULLET.get()){
+            toTeleport(this.getOwner(), new BlockPos(rayTrace.getLocation()));
+            this.remove();
         }
-        this.remove();
     }
 
     @Override
@@ -415,8 +442,10 @@ public class BulletEntity extends AbstractArrowEntity {
         Entity owner = this.getOwner();
         Entity entity = entityHit.getEntity();
 
-        if (this.bullet.getItem() == ModItems.GLASS_BULLET.get())
+        if (this.bullet.getItem() == ModItems.GLASS_BULLET.get() || this.bullet.getItem() == ModItems.ENDER_BULLET.get()){
+            entity.hurt(DamageSource.thrown(this, owner), 0.0f);
             return;
+        }
 
         if (this.getPierceLevel() > 0) {
             if (this.piercingIgnoreEntityIds == null) {
@@ -458,7 +487,7 @@ public class BulletEntity extends AbstractArrowEntity {
             }
         }
 
-        boolean damaged = entity.hurt(damagesource, (float) this.damage);
+        boolean damaged = entity.hurt(damagesource, this.damage);
         if (damaged) {
             if (entity.getType() == EntityType.ENDERMAN)
                 return;
@@ -542,6 +571,10 @@ public class BulletEntity extends AbstractArrowEntity {
         if (!this.leftOwner) {
             this.leftOwner = this.checkLeftOwner();
         }
+
+        if (this.getOwner() instanceof PlayerEntity && !this.getOwner().isAlive() && this.bullet.getItem() == ModItems.ENDER_BULLET.get())
+            this.remove();
+
         super.tick();
 
         if (this.level.isClientSide){

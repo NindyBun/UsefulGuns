@@ -52,6 +52,7 @@ public class Lang extends LanguageProvider {
         add(ModItems.ARMOR_PIERCING_BULLET.get(), "Armor Piercing");
         add(ModItems.HOLLOW_POINT_BULLET.get(), "Hollow Point");
         add(ModItems.EXPLOSIVE_BULLET.get(), "Explosive Bullet");
+        add(ModItems.ENDER_BULLET.get(), "Bullet of Teleportation");
 
         add(ModItems.BUCKSHOT_BULLET.get(), "BuckShot");
         add(ModItems.BIRDSHOT_BULLET.get(), "BirdShot");
@@ -143,6 +144,7 @@ public class Lang extends LanguageProvider {
         add("tooltip.usefulguns.bullet.dragonsbreath", "Inflicts fire");
         add("tooltip.usefulguns.bullet.dragonsfireball", "A dragon's fireball");
         add("tooltip.usefulguns.bullet.glass", "Shatters on impact");
+        add("tooltip.usefulguns.bullet.ender", "Inherits the properties of an Ender Pearl");
         
     }
 }
