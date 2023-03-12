@@ -1,4 +1,4 @@
-6a255ba84fc7b6a844bb1ace17c4c1e405e8949d assets/usefulguns/lang/en_us.json
+2a9d6b0dbe5fc0800e031cdf1558bbd901af0ab2 assets/usefulguns/lang/en_us.json
 1f5b4a6792275e6e49fbc206cccdbb946c7bba15 assets/usefulguns/models/item/armor_piercing_bullet.json
 3d6cf58864118b1cbd355dcb49a482b3877680ef assets/usefulguns/models/item/birdshot_bullet.json
 d97301b17d14aa2c0925f3c8d19f1c47cf2d4843 assets/usefulguns/models/item/buckshot_bullet.json
@@ -7,6 +7,7 @@ d97301b17d14aa2c0925f3c8d19f1c47cf2d4843 assets/usefulguns/models/item/buckshot_
 f4afd91a00ea0477d82a534fdbbcc3b8412ce3c4 assets/usefulguns/models/item/diamond_pouch.json
 2e01770602ac87c4816cff7280a4ec685ff5ab1b assets/usefulguns/models/item/dragonsbreath_bullet.json
 7dfddd3412d1a97478d8e8985b427f6f2a837298 assets/usefulguns/models/item/dragonsfireball_bullet.json
+cf2006cd75fd301fb14a8e60e1c4189fec221ba8 assets/usefulguns/models/item/ender_bullet.json
 82efa9e50d895a01043c74f965c29a40d9da66fc assets/usefulguns/models/item/explosive_bullet.json
 7b69844cb7e41a05beb9b186a52dfd9a08d9e002 assets/usefulguns/models/item/flint_bullet.json
 360f3c9801d729978bd4495a704c848891d639a3 assets/usefulguns/models/item/glass_bullet.json
