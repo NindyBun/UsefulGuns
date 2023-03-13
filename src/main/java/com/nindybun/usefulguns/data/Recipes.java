@@ -109,6 +109,21 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(ModItems.EXPLOSIVE_BULLET.get(), 2)
+                .pattern(" B ")
+                .pattern(" A ")
+                .pattern(" B ")
+                .define('A', Items.TNT)
+                .define('B', ModItems.BULLET_CASING.get())
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(ModItems.ENDER_BULLET.get())
+                .requires(ModItems.BULLET_CASING.get())
+                .requires(Items.ENDER_PEARL)
+                .unlockedBy("", nul)
+                .save(consumer);
+
         ShapedRecipeBuilder.shaped(ModItems.IRON_GUN.get())
                 .pattern("IC ")
                 .pattern("BIF")
