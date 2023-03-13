@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "BAB",
+    " B "
+  ],
+  "key": {
+    "A": {
+      "tag": "forge:gems/diamond"
+    },
+    "B": {
+      "item": "usefulguns:bullet_casing"
+    }
+  },
+  "result": {
+    "item": "usefulguns:diamond_bullet",
+    "count": 4
+  }
+}

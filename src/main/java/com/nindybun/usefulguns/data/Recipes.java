@@ -54,6 +54,34 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(ModItems.DIAMOND_BULLET.get(), 4)
+                .pattern(" B ")
+                .pattern("BAB")
+                .pattern(" B ")
+                .define('A', Tags.Items.GEMS_DIAMOND)
+                .define('B', ModItems.BULLET_CASING.get())
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.ARMOR_PIERCING_BULLET.get(), 4)
+                .pattern(" B ")
+                .pattern("BAB")
+                .pattern(" B ")
+                .define('A', Tags.Items.INGOTS_NETHERITE)
+                .define('B', ModItems.DIAMOND_BULLET.get())
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.HOLLOW_POINT_BULLET.get())
+                .pattern(" I ")
+                .pattern("GGG")
+                .pattern(" B ")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('G', Tags.Items.INGOTS_GOLD)
+                .define('B', ModItems.BULLET_CASING.get())
+                .unlockedBy("", nul)
+                .save(consumer);
+
         ShapedRecipeBuilder.shaped(ModItems.DRAGONS_BREATH_BULLET.get())
                 .pattern(" A ")
                 .pattern(" A ")
