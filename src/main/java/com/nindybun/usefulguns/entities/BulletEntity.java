@@ -444,10 +444,10 @@ public class BulletEntity extends AbstractArrowEntity {
                 Minecraft.getInstance().level.addParticle(ParticleTypes.PORTAL, this.getX(), this.getY() + this.random.nextDouble() * 2.0D, this.getZ(), this.random.nextGaussian(), 0.0D, this.random.nextGaussian());
             }
             if (!this.level.isClientSide){
-                Vector3d direction = rayTrace.getLocation();
+                BlockRa;
                 if (rayTrace.getType() == RayTraceResult.Type.BLOCK)
-                    direction = Util.getLookingAt(this.level, (PlayerEntity) this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().position().distanceTo(rayTrace.getLocation())*1.2).getLocation();
-                this.toTeleport(this.getOwner(), direction);
+                    direction = Util.getLookingAt(this.level, (PlayerEntity) this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().position().distanceTo(rayTrace.getLocation())*1.2).getDirection();
+                this.toTeleport(this.getOwner(), new BlockPos(rayTrace.getLocation()).relative(direction));
                 this.remove();
             }
         }

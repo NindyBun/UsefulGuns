@@ -1,17 +1,10 @@
 package com.nindybun.usefulguns.util;
 
-import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.inventory.PouchData;
 import com.nindybun.usefulguns.inventory.PouchHandler;
-import com.nindybun.usefulguns.inventory.PouchManager;
 import com.nindybun.usefulguns.items.AbstractPouch;
-import net.minecraft.block.DirectionalBlock;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
@@ -29,6 +22,14 @@ public class Util {
         Vector3d end = new Vector3d(start.x + look.x * range, start.y + look.y * range, start.z + look.z * range);
         RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, rayTraceFluid, player);
         return world.clip(context);
+    }
+
+    public static RayTraceContext getLooking(World world, PlayerEntity player, RayTraceContext.FluidMode rayTraceFluid, double range) {
+        Vector3d look = player.getLookAngle();
+        Vector3d start = new Vector3d(player.getX(), player.getEyeY()-(double)0.1f, player.getZ());
+        Vector3d end = new Vector3d(start.x + look.x * range, start.y + look.y * range, start.z + look.z * range);
+        RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, rayTraceFluid, player);
+        return context;
     }
 
     public static ItemStack locateAndGetPouch(PlayerEntity player){
