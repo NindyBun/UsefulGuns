@@ -5,15 +5,15 @@ import com.nindybun.usefulguns.inventory.PouchData;
 import com.nindybun.usefulguns.inventory.PouchHandler;
 import com.nindybun.usefulguns.inventory.PouchManager;
 import com.nindybun.usefulguns.items.AbstractPouch;
+import net.minecraft.block.DirectionalBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.DirectionProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
@@ -23,13 +23,12 @@ import java.util.List;
 
 public class Util {
 
-    public static Direction getDirection(RayTraceResult rayTraceResult){
-        BlockPos blockPos = new BlockPos(rayTraceResult.getLocation());
-        Vector3d ray = rayTraceResult.getLocation();
-        Vector3d block = new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-
-        Vector3d diff = ray.subtract(block);
-        return Direction.UP;
+    public static BlockRayTraceResult getLookingAt(World world, PlayerEntity player, RayTraceContext.FluidMode rayTraceFluid, double range) {
+        Vector3d look = player.getLookAngle();
+        Vector3d start = new Vector3d(player.getX(), player.getEyeY()-(double)0.1f, player.getZ());
+        Vector3d end = new Vector3d(start.x + look.x * range, start.y + look.y * range, start.z + look.z * range);
+        RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, rayTraceFluid, player);
+        return world.clip(context);
     }
 
     public static ItemStack locateAndGetPouch(PlayerEntity player){
@@ -72,8 +71,5 @@ public class Util {
             }
         return inventory;
     }
-
-
-
 
 }

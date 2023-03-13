@@ -330,7 +330,9 @@ public class BulletEntity extends AbstractArrowEntity {
                     }
                 }
                 this.remove();
-            }else if (!this.isShrapnel){
+            }
+
+            if (this.bullet.getItem() != ModItems.GLASS_BULLET.get()){
                 BlockPos blockPos = rayTrace.getBlockPos();
                 BlockState blockState = this.level.getBlockState(blockPos);
                 SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
@@ -430,13 +432,11 @@ public class BulletEntity extends AbstractArrowEntity {
                 this.remove();
             }
         }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
-            /*BlockPos blockPos = new BlockPos(rayTrace.getLocation());
-            BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity) this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().distanceTo(this));
+            Vector3i direction = new Vector3i(0, 0, 0);
             if (rayTrace.getType() == RayTraceResult.Type.BLOCK)
-                blockPos = blockRay.getBlockPos().relative(blockRay.getDirection());*/
+                direction = Util.getLookingAt(this.level, (PlayerEntity) this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().position().distanceTo(rayTrace.getLocation())*1.2).getDirection().getNormal();
             if (!this.level.isClientSide){
-                Vector3d blockpos = rayTrace.getLocation();
-                //this.level.explode(this, rayTrace.getLocation().x, rayTrace.getLocation().y, rayTrace.getLocation().z, 2.5F, Explosion.Mode.BREAK);
+                this.level.explode(this, rayTrace.getLocation().x+direction.getX(), rayTrace.getLocation().y+direction.getY(), rayTrace.getLocation().z+direction.getZ(), 2.5F, Explosion.Mode.BREAK);
                 this.remove();
             }
         }else if (this.bullet.getItem() == ModItems.ENDER_BULLET.get()){
