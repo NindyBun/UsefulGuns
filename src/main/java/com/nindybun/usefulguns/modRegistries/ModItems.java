@@ -8,6 +8,7 @@ import com.nindybun.usefulguns.items.guns.AbstractGun;
 import com.nindybun.usefulguns.items.guns.AbstractMachineGun;
 import com.nindybun.usefulguns.items.guns.AbstractShotgun;
 import com.sun.org.apache.xalan.internal.res.XSLTErrorResources_zh_TW;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
@@ -29,6 +30,9 @@ public class ModItems {
     public static final RegistryObject<Item> BIRDSHOT_BULLET = ITEMS.register("birdshot_bullet", () -> new ShotgunBullet(8, 15));
     public static final RegistryObject<Item> SLUG_BULLET = ITEMS.register("slug_bullet", () -> new ShotgunBullet(12, 1));
 
+    public static final RegistryObject<Item> LIGHT_ITEM = ITEMS.register("light", () -> new BlockItem(ModBlocks.LIGHT.get(), ITEM_GROUP.stacksTo(64)));
+
+    public static final RegistryObject<Item> TORCH_BULLET = ITEMS.register("torch_bullet", () -> new AbstractBullet(1));
     public static final RegistryObject<Item> ENDER_BULLET = ITEMS.register("ender_bullet", () -> new AbstractBullet(0));
     public static final RegistryObject<Item> EXPLOSIVE_BULLET = ITEMS.register("explosive_bullet", () -> new AbstractBullet(1));
     public static final RegistryObject<Item> HOLLOW_POINT_BULLET = ITEMS.register("hollow_point_bullet", () -> new AbstractBullet(8));

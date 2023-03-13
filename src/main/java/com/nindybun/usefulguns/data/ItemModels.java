@@ -1,6 +1,7 @@
 package com.nindybun.usefulguns.data;
 
 import com.nindybun.usefulguns.UsefulGuns;
+import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
@@ -50,6 +51,7 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.HOLLOW_POINT_BULLET.get());
         simpleItem(ModItems.EXPLOSIVE_BULLET.get());
         simpleItem(ModItems.ENDER_BULLET.get());
+        simpleItem(ModItems.TORCH_BULLET.get());
     }
 
     private void registerGuns(){

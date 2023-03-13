@@ -1,4 +1,4 @@
-2a9d6b0dbe5fc0800e031cdf1558bbd901af0ab2 assets/usefulguns/lang/en_us.json
+28dcbb23d0d2a4b0ff13389bf79cfdaf1a64c326 assets/usefulguns/lang/en_us.json
 1f5b4a6792275e6e49fbc206cccdbb946c7bba15 assets/usefulguns/models/item/armor_piercing_bullet.json
 3d6cf58864118b1cbd355dcb49a482b3877680ef assets/usefulguns/models/item/birdshot_bullet.json
 d97301b17d14aa2c0925f3c8d19f1c47cf2d4843 assets/usefulguns/models/item/buckshot_bullet.json
@@ -23,6 +23,7 @@ c45c6a207c2834b6b36cc34ddc2536b104fd4330 assets/usefulguns/models/item/netherite
 e03318c8864a76700ad4e8e859ec8ae7204d5ae0 assets/usefulguns/models/item/slug_bullet.json
 613da3fa500d3c157a4f675aff2824bb254953f0 assets/usefulguns/models/item/splash_bullet.json
 65b0f9bd4a2d65a84d924d7d3a690534f282c462 assets/usefulguns/models/item/tipped_bullet.json
+ab8f1d8984f28f2defa6cec3ae923aedf29424af assets/usefulguns/models/item/torch_bullet.json
 544d7f541f1602c2c0a3223cf46d76e2db20e583 data/usefulguns/recipes/armor_piercing_bullet.json
 8c95e789a8b60954293ccf00f1d5f92431ff832d data/usefulguns/recipes/birdshot_bullet.json
 94bdfdf804b44e7e9b92396753be6874fb54a058 data/usefulguns/recipes/buckshot_bullet.json

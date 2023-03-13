@@ -60,6 +60,7 @@ public class UsefulGuns
 
         ModSounds.SOUNDS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModBlocks.BLOCKS.register(modEventBus);
         ModContainers.CONTAINERS.register(modEventBus);
         ModRecipes.RECIPES.register(modEventBus);
         ModEntities.ENTITY.register(modEventBus);

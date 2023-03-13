@@ -2,6 +2,7 @@ package com.nindybun.usefulguns.data;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.events.ClientEvents;
+import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModSounds;
 import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
@@ -12,8 +13,8 @@ import net.minecraftforge.common.data.LanguageProvider;
 import javax.swing.text.JTextComponent;
 
 public class Lang extends LanguageProvider {
-    public Lang(DataGenerator gen, String modid, String locale) {
-        super(gen, modid, locale);
+    public Lang(DataGenerator gen, String locale) {
+        super(gen, UsefulGuns.MOD_ID, locale);
     }
 
     @Override
@@ -28,6 +29,8 @@ public class Lang extends LanguageProvider {
         add("subtitles.usefulguns.rifle.shoot", "Rifle Fired");
         add("subtitles.usefulguns.gunner.shoot", "Automatic Gun Fired");
         add("subtitles.usefulguns.pistol.dry", "Gun Empty");
+
+        add(ModBlocks.LIGHT.get(), "Light");
 
         add(ModItems.LEATHER_POUCH.get(), "Leather Ammo Pouch");
         add(ModItems.IRON_POUCH.get(), "Iron Ammo Pouch");
@@ -53,6 +56,7 @@ public class Lang extends LanguageProvider {
         add(ModItems.HOLLOW_POINT_BULLET.get(), "Hollow Point");
         add(ModItems.EXPLOSIVE_BULLET.get(), "Explosive Bullet");
         add(ModItems.ENDER_BULLET.get(), "Bullet of Teleportation");
+        add(ModItems.TORCH_BULLET.get(), "Torch Bullet");
 
         add(ModItems.BUCKSHOT_BULLET.get(), "BuckShot");
         add(ModItems.BIRDSHOT_BULLET.get(), "BirdShot");

@@ -1,4 +1,5 @@
 {
+  "block.usefulguns.light": "Light",
   "item.usefulguns.armor_piercing_bullet": "Armor Piercing",
   "item.usefulguns.birdshot_bullet": "BirdShot",
   "item.usefulguns.buckshot_bullet": "BuckShot",
@@ -88,6 +89,7 @@
   "item.usefulguns.tipped_bullet.effect.turtle_master": "Bullet of the Turtle Master",
   "item.usefulguns.tipped_bullet.effect.water_breathing": "Bullet of Water Breathing",
   "item.usefulguns.tipped_bullet.effect.weakness": "Bullet of Weakness",
+  "item.usefulguns.torch_bullet": "Torch Bullet",
   "itemGroup.usefulguns": "Useful Guns",
   "key.categories.usefulguns": "Useful Guns",
   "key.usefulguns.radialmenu_key": "Bullet Radial Menu",
