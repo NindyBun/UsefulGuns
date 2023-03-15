@@ -59,10 +59,10 @@ public class AbstractMachineGun extends AbstractGun{
                     IItemHandler handler = optional.resolve().get();
                     int shot = shoot(handler, bulletInfo, world, playerEntity, gun);
                     if (shot != -1){
-                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), fireSound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), fireSound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                         handler.extractItem(shot, 1, false);
                     } else{
-                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                         return;
                     }
                 }
@@ -83,7 +83,7 @@ public class AbstractMachineGun extends AbstractGun{
             return ActionResult.fail(gun);
         ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
         if (bulletInfo.getItem() == Items.AIR) {
-            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundCategory.PLAYERS, 0.8f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
             return ActionResult.fail(gun);
         }
         playerEntity.startUsingItem(hand);

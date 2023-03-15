@@ -3,7 +3,6 @@ package com.nindybun.usefulguns.entities;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
@@ -11,11 +10,9 @@ import com.nindybun.usefulguns.util.Util;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.monster.EndermiteEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -27,7 +24,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SChangeGameStatePacket;
-import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.*;
 import net.minecraft.tags.BlockTags;
@@ -37,24 +33,15 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Explosion;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ITeleporter;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
-import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public class BulletEntity extends AbstractArrowEntity {
@@ -330,8 +317,8 @@ public class BulletEntity extends AbstractArrowEntity {
         BlockPos blockPos = rayTrace.getBlockPos();
         BlockState blockState = this.level.getBlockState(blockPos);
         SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
-        this.setSoundEvent(soundType.getBreakSound());
-        this.playSound(soundType.getBreakSound(),  0.8F, random.nextFloat() * 0.1F + 0.9F);
+        //this.setSoundEvent(soundType.getBreakSound());
+        this.playSound(soundType.getBreakSound(),  1.0F, random.nextFloat() * 0.1F + 0.9F);
         Vector3d vector3d = rayTrace.getLocation();
         for(int i1 = 0; i1 < 8; ++i1) {
             this.level.addParticle(ParticleTypes.CRIT, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
@@ -386,7 +373,7 @@ public class BulletEntity extends AbstractArrowEntity {
                     }
                 }
             }
-            this.playSound(SoundEvents.SPLASH_POTION_BREAK, 0.8F, random.nextFloat() * 0.1F + 0.9F);
+            this.playSound(SoundEvents.SPLASH_POTION_BREAK, 1.0F, random.nextFloat() * 0.1F + 0.9F);
             this.remove();
         }else if (this.isLingeringOrSplash() != null){
             if (!this.level.isClientSide){
@@ -440,30 +427,27 @@ public class BulletEntity extends AbstractArrowEntity {
             else if (rayTrace.getType() == RayTraceResult.Type.BLOCK){
                 if (!this.level.isClientSide) {
                     BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity)this.getOwner(), this.shotPos, this.shotAngle, RayTraceContext.FluidMode.NONE, this.shotPos.distanceTo(rayTrace.getLocation()) * 1.2);
-                    //BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity)this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().position().distanceTo(rayTrace.getLocation()) * 1.2);
-                    this.validBlockPos((PlayerEntity) this.getOwner(), blockRay);
+                    this.placeBlock((PlayerEntity) this.getOwner(), blockRay);
                 }
             }
             if (!this.level.isClientSide) this.remove();
         }
     }
 
-    public boolean validBlockPos(PlayerEntity player, BlockRayTraceResult blockRay){
+    public void placeBlock(PlayerEntity player, BlockRayTraceResult blockRay){
         BlockItemUseContext blockItemUseContext = new BlockItemUseContext(player, null, ModItems.LIGHT_ITEM.get().getDefaultInstance(), blockRay);
         if (!blockItemUseContext.canPlace() || blockItemUseContext == null || !this.level.setBlock(blockItemUseContext.getClickedPos(), ModBlocks.LIGHT.get().defaultBlockState(), 11))
-            return false;
+            return;
         else{
             BlockPos blockPos = blockItemUseContext.getClickedPos();
             World world = blockItemUseContext.getLevel();
             PlayerEntity playerentity = blockItemUseContext.getPlayer();
             BlockState blockstate1 = world.getBlockState(blockPos);
             Block block = blockstate1.getBlock();
-            if (block == blockstate1.getBlock()){
+            if (block == blockstate1.getBlock())
                 block.setPlacedBy(world, blockPos, blockstate1, playerentity, ModItems.LIGHT_ITEM.get().getDefaultInstance());
-                return true;
-            }
+            return;
         }
-        return false;
     }
 
     @Override
