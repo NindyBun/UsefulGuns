@@ -22,15 +22,16 @@ public class Light extends Block {
                         .of(Material.DECORATION)
                         .noCollission()
                         .instabreak()
+                        .noOcclusion()
                         .sound(SoundType.WOOD)
                         .lightLevel(value -> 14)
         );
     }
 
-    @Override
+    /*@Override
     public BlockRenderType getRenderShape(BlockState p_149645_1_) {
         return BlockRenderType.INVISIBLE;
-    }
+    }*/
 
     @Override
     public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
@@ -50,7 +51,7 @@ public class Light extends Block {
     @Override
     public void animateTick(BlockState stateIn, World world, BlockPos pos, Random rand) {
         double d0 = (double)pos.getX() + 0.5D;
-        double d1 = (double)pos.getY() + 0.5D;
+        double d1 = (double)pos.getY() + 0.7D;
         double d2 = (double)pos.getZ() + 0.5D;
         world.addParticle(ParticleTypes.SMOKE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
         world.addParticle(ParticleTypes.FLAME, d0, d1, d2, 0.0D, 0.0D, 0.0D);

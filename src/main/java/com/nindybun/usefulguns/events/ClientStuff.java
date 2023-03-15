@@ -32,6 +32,7 @@ public class ClientStuff {
     @SubscribeEvent
     public static void clientStuff(FMLClientSetupEvent event){
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.BULLET.get(), BulletEntityRenderer::new);
+
     }
 
     @SubscribeEvent

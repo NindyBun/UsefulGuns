@@ -4,6 +4,7 @@ package com.nindybun.usefulguns.entities;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.nindybun.usefulguns.UsefulGuns;
+import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.util.Util;
@@ -41,8 +42,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ITeleporter;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -54,9 +61,6 @@ public class BulletEntity extends AbstractArrowEntity {
     private float damage = 1f;
     private boolean ignoreInvulnerability = false;
     private int pierceLevel = 0;
-    private boolean isShrapnel = false;
-    private boolean setFire = false;
-    private boolean setFireBall = false;
     private ItemStack bullet = ItemStack.EMPTY;
     private int ticksSinceFired;
     private static final DataParameter<Integer> ID_EFFECT_COLOR = EntityDataManager.defineId(BulletEntity.class, DataSerializers.INT);
@@ -70,6 +74,8 @@ public class BulletEntity extends AbstractArrowEntity {
     private UUID ownerUUID;
     private int ownerNetworkId;
     private boolean leftOwner;
+    private Vector3d shotAngle = new Vector3d(0, 0, 0);
+    private Vector3d shotPos = new Vector3d(0, 0, 0);
 
     public BulletEntity(EntityType<? extends BulletEntity> entityType, World world) {
         super(entityType, world);
@@ -78,6 +84,9 @@ public class BulletEntity extends AbstractArrowEntity {
     public BulletEntity(World world, LivingEntity livingEntity) {
         super(ModEntities.BULLET.get(), livingEntity, world);
         this.setOwner(livingEntity);
+        PlayerEntity player = (PlayerEntity)livingEntity;
+        this.shotAngle = player.getLookAngle();
+        this.shotPos = new Vector3d(player.getX(), player.getEyeY()-(double)0.1f, player.getZ());
     }
 
     @Override
@@ -96,20 +105,8 @@ public class BulletEntity extends AbstractArrowEntity {
         this.bullet = bullet;
     }
 
-    public void setShrapnel(boolean shrapnel){
-        this.isShrapnel = shrapnel;
-    }
-
     public void setIgnoreInvulnerability(boolean ignoreInvulnerability){
         this.ignoreInvulnerability = ignoreInvulnerability;
-    }
-    
-    public void setFire(boolean setFire){
-        this.setFire = setFire;
-    }
-
-    public void setFireBall(boolean setFireBall){
-        this.setFireBall = setFireBall;
     }
 
     public void setPierceLevel(int pierceLevel){
@@ -132,7 +129,7 @@ public class BulletEntity extends AbstractArrowEntity {
             } else {
                 this.setFixedColor(i);
             }
-        } else if (bullet.getItem() instanceof BucketItem) {
+        } else if (bullet.getItem() != ModItems.TIPPED_BULLET.get()) {
             this.potion = Potions.EMPTY;
             this.effects.clear();
             this.entityData.set(ID_EFFECT_COLOR, -1);
@@ -298,7 +295,7 @@ public class BulletEntity extends AbstractArrowEntity {
         return null;
     }
 
-    private void dowseFire(BlockPos p_184542_1_, Direction p_184542_2_) {
+    private void dowseFire(BlockPos p_184542_1_) {
         BlockState blockstate = this.level.getBlockState(p_184542_1_);
         if (blockstate.is(BlockTags.FIRE)) {
             this.level.removeBlock(p_184542_1_, false);
@@ -313,58 +310,50 @@ public class BulletEntity extends AbstractArrowEntity {
     @Override
     protected void onHitBlock(BlockRayTraceResult rayTrace) {
         super.onHitBlock(rayTrace);
-        if (!this.level.isClientSide){
-            if (this.isLingeringOrSplash() != null){
-                ItemStack itemstack = this.bullet;
-                Potion potion = PotionUtils.getPotion(itemstack);
-                List<EffectInstance> list = PotionUtils.getMobEffects(itemstack);
-                boolean flag = potion == Potions.WATER && list.isEmpty();
-                Direction direction = rayTrace.getDirection();
-                BlockPos blockpos = rayTrace.getBlockPos();
-                BlockPos blockpos1 = blockpos.relative(direction);
-                if (flag) {
-                    this.dowseFire(blockpos1, direction);
-                    this.dowseFire(blockpos1.relative(direction.getOpposite()), direction);
-                    for(Direction direction1 : Direction.Plane.HORIZONTAL) {
-                        this.dowseFire(blockpos1.relative(direction1), direction1);
-                    }
+        if (this.isLingeringOrSplash() != null && !this.level.isClientSide){
+            ItemStack itemstack = this.bullet;
+            Potion potion = PotionUtils.getPotion(itemstack);
+            List<EffectInstance> list = PotionUtils.getMobEffects(itemstack);
+            boolean flag = potion == Potions.WATER && list.isEmpty();
+            Direction direction = rayTrace.getDirection();
+            BlockPos blockpos = rayTrace.getBlockPos();
+            BlockPos blockpos1 = blockpos.relative(direction);
+            if (flag) {
+                this.dowseFire(blockpos1);
+                this.dowseFire(blockpos1.relative(direction.getOpposite()));
+                for(Direction direction1 : Direction.Plane.HORIZONTAL) {
+                    this.dowseFire(blockpos1.relative(direction1));
                 }
-                this.remove();
-            }
-
-            if (this.bullet.getItem() != ModItems.GLASS_BULLET.get()){
-                BlockPos blockPos = rayTrace.getBlockPos();
-                BlockState blockState = this.level.getBlockState(blockPos);
-                SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
-                this.setSoundEvent(soundType.getBreakSound());
-                Minecraft.getInstance().level.playLocalSound(blockPos, soundType.getBreakSound(), SoundCategory.NEUTRAL,  0.8F, random.nextFloat() * 0.1F + 0.9F, false);
-                IParticleData particleData = ParticleTypes.CRIT;
-                Vector3d vector3d = rayTrace.getLocation();
-                for(int i1 = 0; i1 < 8; ++i1) {
-                    Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
-                }
-                this.remove();
             }
         }
+
+        BlockPos blockPos = rayTrace.getBlockPos();
+        BlockState blockState = this.level.getBlockState(blockPos);
+        SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
+        this.setSoundEvent(soundType.getBreakSound());
+        this.playSound(soundType.getBreakSound(),  0.8F, random.nextFloat() * 0.1F + 0.9F);
+        Vector3d vector3d = rayTrace.getLocation();
+        for(int i1 = 0; i1 < 8; ++i1) {
+            this.level.addParticle(ParticleTypes.CRIT, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+        }
+
+        this.remove();
     }
 
     public void toTeleport(Entity entity, Vector3d target){
-        if (!this.level.isClientSide) {
-            if (entity instanceof ServerPlayerEntity) {
-                ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
-                if (serverplayerentity.connection.getConnection().isConnected() && serverplayerentity.level == this.level && !serverplayerentity.isSleeping() && serverplayerentity.isAlive()) {
-                    if (entity.isPassenger()) {
-                        entity.stopRiding();
-                    }
-                    entity.teleportTo(target.x, target.y, target.z);
-                    entity.fallDistance = 0.0F;
-                    entity.hurt(DamageSource.FALL, 0.5f);
-                }else if (entity != null){
-                    entity.teleportTo(target.x, target.y, target.z);
-                    entity.fallDistance = 0.0F;
+        if (entity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
+            if (serverplayerentity.connection.getConnection().isConnected() && serverplayerentity.level == this.level && !serverplayerentity.isSleeping() && serverplayerentity.isAlive()) {
+                if (entity.isPassenger()) {
+                    entity.stopRiding();
                 }
+                entity.teleportTo(target.x, target.y, target.z);
+                entity.fallDistance = 0.0F;
+                entity.hurt(DamageSource.FALL, 0.5f);
+            }else if (entity != null){
+                entity.teleportTo(target.x, target.y, target.z);
+                entity.fallDistance = 0.0F;
             }
-            this.remove();
         }
     }
 
@@ -372,41 +361,33 @@ public class BulletEntity extends AbstractArrowEntity {
     protected void onHit(RayTraceResult rayTrace) {
         super.onHit(rayTrace);
         if (this.bullet.getItem() == ModItems.GLASS_BULLET.get()){
-            if (!this.level.isClientSide) {
-                AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
-                List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
-                Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
-                Entity owner = this.getOwner();
-                if (!list.isEmpty()) {
-                    for (LivingEntity livingentity : list) {
-                        double d0 = rayTrace.getLocation().distanceToSqr(new Vector3d(livingentity.getX(), livingentity.getY(), livingentity.getZ()));
-                        if (d0 < 16.0D) {
-                            double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
-                            if (livingentity == hitEntity) {
-                                d1 = 1.0D;
-                            }
-                            DamageSource damagesource;
-                            if (owner == null) {
-                                damagesource = (new IndirectEntityDamageSource("arrow", this, this)).setProjectile();
-                            } else {
-                                damagesource = (new IndirectEntityDamageSource("arrow", this, owner)).setProjectile();
-                                if (owner instanceof LivingEntity) {
-                                    ((LivingEntity) owner).setLastHurtMob(livingentity);
-                                }
-                            }
-                            livingentity.hurt(damagesource, (float) (d1 * this.damage));
+            AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
+            List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
+            Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
+            Entity owner = this.getOwner();
+            if (!list.isEmpty()) {
+                for (LivingEntity livingentity : list) {
+                    double d0 = rayTrace.getLocation().distanceToSqr(new Vector3d(livingentity.getX(), livingentity.getY(), livingentity.getZ()));
+                    if (d0 < 16.0D) {
+                        double d1 = 1.0D - Math.sqrt(d0) / 4.0D;
+                        if (livingentity == hitEntity) {
+                            d1 = 1.0D;
                         }
+                        DamageSource damagesource;
+                        if (owner == null) {
+                            damagesource = (new IndirectEntityDamageSource("arrow", this, this)).setProjectile();
+                        } else {
+                            damagesource = (new IndirectEntityDamageSource("arrow", this, owner)).setProjectile();
+                            if (owner instanceof LivingEntity) {
+                                ((LivingEntity) owner).setLastHurtMob(livingentity);
+                            }
+                        }
+                        livingentity.hurt(damagesource, (float) (d1 * this.damage));
                     }
                 }
-                BlockPos blockPos = new BlockPos(rayTrace.getLocation());
-                Minecraft.getInstance().level.playLocalSound(blockPos, SoundEvents.SPLASH_POTION_BREAK, SoundCategory.NEUTRAL, 0.8F, random.nextFloat() * 0.1F + 0.9F, false);
-                IParticleData particleData = ParticleTypes.CRIT;
-                Vector3d vector3d = rayTrace.getLocation();
-                for (int i1 = 0; i1 < 8; ++i1) {
-                    Minecraft.getInstance().level.addParticle(particleData, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
-                }
-                this.remove();
             }
+            this.playSound(SoundEvents.SPLASH_POTION_BREAK, 0.8F, random.nextFloat() * 0.1F + 0.9F);
+            this.remove();
         }else if (this.isLingeringOrSplash() != null){
             if (!this.level.isClientSide){
                 ItemStack itemstack = this.bullet;
@@ -441,7 +422,7 @@ public class BulletEntity extends AbstractArrowEntity {
             }
         }else if (this.bullet.getItem() == ModItems.ENDER_BULLET.get()){
             for(int i = 0; i < 32; ++i) {
-                Minecraft.getInstance().level.addParticle(ParticleTypes.PORTAL, this.getX(), this.getY() + this.random.nextDouble() * 2.0D, this.getZ(), this.random.nextGaussian(), 0.0D, this.random.nextGaussian());
+                this.level.addParticle(ParticleTypes.PORTAL, this.getX(), this.getY() + this.random.nextDouble() * 2.0D, this.getZ(), this.random.nextGaussian(), 0.0D, this.random.nextGaussian());
             }
             if (!this.level.isClientSide){
                 BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity) this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().position().distanceTo(rayTrace.getLocation())*1.2);
@@ -453,7 +434,36 @@ public class BulletEntity extends AbstractArrowEntity {
                 this.toTeleport(this.getOwner(), pos);
                 this.remove();
             }
+        }else if (this.bullet.getItem() == ModItems.TORCH_BULLET.get()){
+            if (rayTrace.getType() == RayTraceResult.Type.ENTITY)
+                ((EntityRayTraceResult)rayTrace).getEntity().hurt(DamageSource.ON_FIRE, this.damage);
+            else if (rayTrace.getType() == RayTraceResult.Type.BLOCK){
+                if (!this.level.isClientSide) {
+                    BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity)this.getOwner(), this.shotPos, this.shotAngle, RayTraceContext.FluidMode.NONE, this.shotPos.distanceTo(rayTrace.getLocation()) * 1.2);
+                    //BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity)this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().position().distanceTo(rayTrace.getLocation()) * 1.2);
+                    this.validBlockPos((PlayerEntity) this.getOwner(), blockRay);
+                }
+            }
+            if (!this.level.isClientSide) this.remove();
         }
+    }
+
+    public boolean validBlockPos(PlayerEntity player, BlockRayTraceResult blockRay){
+        BlockItemUseContext blockItemUseContext = new BlockItemUseContext(player, null, ModItems.LIGHT_ITEM.get().getDefaultInstance(), blockRay);
+        if (!blockItemUseContext.canPlace() || blockItemUseContext == null || !this.level.setBlock(blockItemUseContext.getClickedPos(), ModBlocks.LIGHT.get().defaultBlockState(), 11))
+            return false;
+        else{
+            BlockPos blockPos = blockItemUseContext.getClickedPos();
+            World world = blockItemUseContext.getLevel();
+            PlayerEntity playerentity = blockItemUseContext.getPlayer();
+            BlockState blockstate1 = world.getBlockState(blockPos);
+            Block block = blockstate1.getBlock();
+            if (block == blockstate1.getBlock()){
+                block.setPlacedBy(world, blockPos, blockstate1, playerentity, ModItems.LIGHT_ITEM.get().getDefaultInstance());
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -697,7 +707,7 @@ public class BulletEntity extends AbstractArrowEntity {
     protected void doPostHurtEffects(LivingEntity entity) {
         super.doPostHurtEffects(entity);
         
-        if (setFire)
+        if (this.bullet.getItem() == ModItems.DRAGONS_BREATH_BULLET.get())
             entity.setSecondsOnFire(5);
 
         for(EffectInstance effectinstance : this.potion.getEffects()) {
@@ -718,6 +728,8 @@ public class BulletEntity extends AbstractArrowEntity {
         nbt.putFloat("damage", this.damage);
         nbt.putInt("pierceLevel", this.pierceLevel);
         nbt.putBoolean("ignoreInv", this.ignoreInvulnerability);
+        nbt.putString("shotAngle", this.shotAngle.x+":"+this.shotAngle.y+":"+this.shotAngle.z);
+        nbt.putString("shotPos", this.shotPos.x+":"+this.shotPos.y+":"+this.shotPos.z);
         
         if (this.potion != Potions.EMPTY && this.potion != null) {
             nbt.putString("Potion", Registry.POTION.getKey(this.potion).toString());
@@ -750,6 +762,8 @@ public class BulletEntity extends AbstractArrowEntity {
         this.damage = nbt.getFloat("damage");
         this.ignoreInvulnerability = nbt.getBoolean("ignoreInv");
         this.pierceLevel = nbt.getInt("pierceLevel");
+        this.shotAngle = this.getVectorFromString(nbt.getString("shotAngle"));
+        this.shotPos = this.getVectorFromString(nbt.getString("shotPos"));
 
         if (nbt.contains("Potion", 8)) {
             this.potion = PotionUtils.getPotion(nbt);
@@ -770,6 +784,15 @@ public class BulletEntity extends AbstractArrowEntity {
         }
 
         this.leftOwner = nbt.getBoolean("LeftOwner");
+    }
+
+    public Vector3d getVectorFromString(String string){
+        int first = string.indexOf(":");
+        int last = string.lastIndexOf(":");
+        double x = Double.parseDouble(string.substring(0, first));
+        double y = Double.parseDouble(string.substring(first+1, last));
+        double z = Double.parseDouble(string.substring(last));
+       return new Vector3d(x, y, z);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.nindybun.usefulguns.util;
 
+import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.inventory.PouchData;
 import com.nindybun.usefulguns.inventory.PouchHandler;
 import com.nindybun.usefulguns.items.AbstractPouch;
@@ -24,12 +25,10 @@ public class Util {
         return world.clip(context);
     }
 
-    public static RayTraceContext getLooking(World world, PlayerEntity player, RayTraceContext.FluidMode rayTraceFluid, double range) {
-        Vector3d look = player.getLookAngle();
-        Vector3d start = new Vector3d(player.getX(), player.getEyeY()-(double)0.1f, player.getZ());
+    public static BlockRayTraceResult getLookingAt(World world, PlayerEntity player, Vector3d start, Vector3d look, RayTraceContext.FluidMode rayTraceFluid, double range) {
         Vector3d end = new Vector3d(start.x + look.x * range, start.y + look.y * range, start.z + look.z * range);
         RayTraceContext context = new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, rayTraceFluid, player);
-        return context;
+        return world.clip(context);
     }
 
     public static ItemStack locateAndGetPouch(PlayerEntity player){
