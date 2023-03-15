@@ -493,8 +493,7 @@ public class BulletEntity extends AbstractArrowEntity {
 
         if (this.bullet.getItem() == ModItems.ARMOR_PIERCING_BULLET.get())
             damagesource.bypassArmor();
-
-        if (this.bullet.getItem() == ModItems.HOLLOW_POINT_BULLET.get()){
+        else if (this.bullet.getItem() == ModItems.HOLLOW_POINT_BULLET.get()){
             if (entity instanceof LivingEntity) {
                 LivingEntity livingentity = (LivingEntity) entity;
                 this.damage = CombatRules.getDamageAfterAbsorb(this.damage, (float)livingentity.getArmorValue(), (float)livingentity.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
