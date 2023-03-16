@@ -10,6 +10,7 @@ import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.*;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
@@ -35,6 +36,7 @@ public class Recipes extends RecipeProvider {
         CustomRecipe.special(ModRecipes.TIPPED_BULLET_RECIPE.get()).save(consumer, "tipped_bullet");
         CustomRecipe.special(ModRecipes.SPLASH_BULLET_RECIPE.get()).save(consumer, "splash_bullet");
         CustomRecipe.special(ModRecipes.LINGERING_BULLET_RECIPE.get()).save(consumer, "lingering_bullet");
+        CustomRecipe.special(ModRecipes.BULLET_BOREKIT_RECIPE.get()).save(consumer, "bullet_borekit");
 
         ShapedRecipeBuilder.shaped(ModItems.FLINT_BULLET.get())
                 .pattern(" A ")
@@ -149,6 +151,11 @@ public class Recipes extends RecipeProvider {
         ShapelessRecipeBuilder.shapeless(ModItems.ENDER_BULLET.get())
                 .requires(ModItems.BULLET_CASING.get())
                 .requires(Items.ENDER_PEARL)
+                .unlockedBy("", nul)
+                .save(consumer);
+        ShapelessRecipeBuilder.shapeless(ModItems.TORCH_BULLET.get())
+                .requires(ModItems.BULLET_CASING.get())
+                .requires(Items.TORCH)
                 .unlockedBy("", nul)
                 .save(consumer);
 

@@ -35,7 +35,7 @@ public class AbstractMachineGun extends AbstractGun{
             ItemStack stack = handler.getStackInSlot(i).copy().split(1);
             if (ammo.equals(stack, false)) {
                 AbstractBullet abstractBullet = (AbstractBullet) (ammo.getItem() instanceof AbstractBullet ? ammo.getItem() : ModItems.FLINT_BULLET);
-                BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player);
+                BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player, gun);
                 bulletEntity.setDamage((float) (bulletEntity.getDamage()*this.damageMultiplier+this.bonusDamage));
                 bulletEntity.setIgnoreInvulnerability(true);
                 bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);

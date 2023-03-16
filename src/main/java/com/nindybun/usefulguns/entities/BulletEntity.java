@@ -3,6 +3,8 @@ package com.nindybun.usefulguns.entities;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.nindybun.usefulguns.UsefulGuns;
+import com.nindybun.usefulguns.items.bullets.MiningBullet;
 import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
@@ -16,7 +18,9 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.*;
+import net.minecraft.loot.LootContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
@@ -27,27 +31,36 @@ import net.minecraft.network.play.server.SChangeGameStatePacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.*;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.Blockreader;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ITeleporter;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import javax.jws.soap.SOAPBinding;
 import java.util.*;
 import java.util.function.Predicate;
 
 public class BulletEntity extends AbstractArrowEntity {
     private float damage = 1f;
-    private boolean ignoreInvulnerability = false;
     private int pierceLevel = 0;
+    private boolean ignoreInvulnerability = false;
     private ItemStack bullet = ItemStack.EMPTY;
     private int ticksSinceFired;
     private static final DataParameter<Integer> ID_EFFECT_COLOR = EntityDataManager.defineId(BulletEntity.class, DataSerializers.INT);
@@ -63,6 +76,7 @@ public class BulletEntity extends AbstractArrowEntity {
     private boolean leftOwner;
     private Vector3d shotAngle = new Vector3d(0, 0, 0);
     private Vector3d shotPos = new Vector3d(0, 0, 0);
+    private int miningArea = 0;
 
     public BulletEntity(EntityType<? extends BulletEntity> entityType, World world) {
         super(entityType, world);
@@ -81,6 +95,10 @@ public class BulletEntity extends AbstractArrowEntity {
         super.shoot(p_70186_1_, p_70186_3_, p_70186_5_, p_70186_7_, p_70186_8_);
     }
 
+    public void setMiningArea(int area){
+        this.miningArea = area;
+    }
+
     public void setDamage(float damage){
         this.damage = damage;
     }
@@ -96,8 +114,8 @@ public class BulletEntity extends AbstractArrowEntity {
         this.ignoreInvulnerability = ignoreInvulnerability;
     }
 
-    public void setPierceLevel(int pierceLevel){
-        this.pierceLevel = pierceLevel;
+    public void setPierce(int level){
+        this.pierceLevel = level;
     }
 
     public void setEffectsFromItem(ItemStack bullet){
@@ -187,17 +205,6 @@ public class BulletEntity extends AbstractArrowEntity {
     @Override
     public boolean isNoGravity() {
         return true;
-    }
-
-    @Override
-    public void setPierceLevel(byte pierceLevel) {
-        super.setPierceLevel(pierceLevel);
-        this.pierceLevel = Byte.toUnsignedInt(pierceLevel);
-    }
-
-    @Override
-    public byte getPierceLevel() {
-        return (byte) this.pierceLevel;
     }
 
     private void applyWater() {
@@ -297,6 +304,15 @@ public class BulletEntity extends AbstractArrowEntity {
     @Override
     protected void onHitBlock(BlockRayTraceResult rayTrace) {
         super.onHitBlock(rayTrace);
+        BlockPos blockPos = rayTrace.getBlockPos();
+        BlockState blockState = this.level.getBlockState(blockPos);
+        SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
+        this.setSoundEvent(soundType.getBreakSound());
+        this.playSound(soundType.getBreakSound(), 1.0F, random.nextFloat() * 0.1F + 0.9F);
+        Vector3d vector3d = rayTrace.getLocation();
+        for (int i1 = 0; i1 < 8; ++i1) {
+            this.level.addParticle(ParticleTypes.CRIT, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+        }
         if (this.isLingeringOrSplash() != null && !this.level.isClientSide){
             ItemStack itemstack = this.bullet;
             Potion potion = PotionUtils.getPotion(itemstack);
@@ -312,19 +328,28 @@ public class BulletEntity extends AbstractArrowEntity {
                     this.dowseFire(blockpos1.relative(direction1));
                 }
             }
+            this.remove();
         }
-
-        BlockPos blockPos = rayTrace.getBlockPos();
-        BlockState blockState = this.level.getBlockState(blockPos);
-        SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
-        //this.setSoundEvent(soundType.getBreakSound());
-        this.playSound(soundType.getBreakSound(),  1.0F, random.nextFloat() * 0.1F + 0.9F);
-        Vector3d vector3d = rayTrace.getLocation();
-        for(int i1 = 0; i1 < 8; ++i1) {
-            this.level.addParticle(ParticleTypes.CRIT, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
+        if (this.bullet.getItem() instanceof MiningBullet){
+            int harvestLevel = ((MiningBullet)this.bullet.getItem()).getHarvestLevel();
+            BlockPos pos = rayTrace.getBlockPos();
+            BlockState state = this.level.getBlockState(pos);
+            int blockHarvestLevel = state.getHarvestLevel();
+            float destroySpeed = state.getDestroySpeed(this.level, pos);
+            if (destroySpeed != -1.0f) {
+                PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck((PlayerEntity) this.getOwner(), state, harvestLevel >= blockHarvestLevel);
+                MinecraftForge.EVENT_BUS.post(event);
+                if (event.canHarvest() && !this.level.isClientSide){
+                    FluidState fluidstate = this.level.getFluidState(pos);
+                    boolean flag = state.removedByPlayer(this.level, pos, (PlayerEntity) this.getOwner(), false, fluidstate);
+                    if (flag) {
+                        TileEntity tileEntity = state.hasTileEntity() ? this.level.getBlockEntity(pos) : null;
+                        Block.dropResources(state, this.level, pos, tileEntity, this.getOwner(), this.bullet);
+                    }
+                }
+            }
+            this.remove();
         }
-
-        this.remove();
     }
 
     public void toTeleport(Entity entity, Vector3d target){
@@ -430,7 +455,7 @@ public class BulletEntity extends AbstractArrowEntity {
                     this.placeBlock((PlayerEntity) this.getOwner(), blockRay);
                 }
             }
-            if (!this.level.isClientSide) this.remove();
+            this.remove();
         }
     }
 
@@ -461,7 +486,7 @@ public class BulletEntity extends AbstractArrowEntity {
             return;
         }
 
-        if (this.getPierceLevel() > 0) {
+        if (this.pierceLevel > 0) {
             if (this.piercingIgnoreEntityIds == null) {
                 this.piercingIgnoreEntityIds = new IntOpenHashSet(5);
             }
@@ -470,7 +495,7 @@ public class BulletEntity extends AbstractArrowEntity {
                 this.piercedAndKilledEntities = Lists.newArrayListWithCapacity(5);
             }
 
-            if (this.piercingIgnoreEntityIds.size() >= this.getPierceLevel() + 1) {
+            if (this.piercingIgnoreEntityIds.size() >= this.pierceLevel + 1) {
                 this.remove();
                 return;
             }
@@ -493,7 +518,7 @@ public class BulletEntity extends AbstractArrowEntity {
 
         if (this.bullet.getItem() == ModItems.ARMOR_PIERCING_BULLET.get())
             damagesource.bypassArmor();
-        else if (this.bullet.getItem() == ModItems.HOLLOW_POINT_BULLET.get()){
+        if (this.bullet.getItem() == ModItems.HOLLOW_POINT_BULLET.get()){
             if (entity instanceof LivingEntity) {
                 LivingEntity livingentity = (LivingEntity) entity;
                 this.damage = CombatRules.getDamageAfterAbsorb(this.damage, (float)livingentity.getArmorValue(), (float)livingentity.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
@@ -528,7 +553,7 @@ public class BulletEntity extends AbstractArrowEntity {
                         CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverplayerentity, Arrays.asList(entity));
                     }
                 }
-                if (this.getPierceLevel() <= 0) {
+                if (this.pierceLevel <= 0) {
                     this.remove();
                 }
             }
@@ -558,7 +583,6 @@ public class BulletEntity extends AbstractArrowEntity {
             this.ownerUUID = p_212361_1_.getUUID();
             this.ownerNetworkId = p_212361_1_.getId();
         }
-
     }
 
     @Nullable
@@ -581,7 +605,6 @@ public class BulletEntity extends AbstractArrowEntity {
                 }
             }
         }
-
         return true;
     }
 
@@ -665,10 +688,16 @@ public class BulletEntity extends AbstractArrowEntity {
     }
 
     @Override
+    protected boolean canHitEntity(Entity p_230298_1_) {
+        return super.canHitEntity(p_230298_1_) && (this.piercingIgnoreEntityIds == null || !this.piercingIgnoreEntityIds.contains(p_230298_1_.getId()));
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ID_EFFECT_COLOR, -1);
     }
+
 
     @Override
     public void move(MoverType p_213315_1_, Vector3d p_213315_2_) {
@@ -713,6 +742,7 @@ public class BulletEntity extends AbstractArrowEntity {
         nbt.putBoolean("ignoreInv", this.ignoreInvulnerability);
         nbt.putString("shotAngle", this.shotAngle.x+":"+this.shotAngle.y+":"+this.shotAngle.z);
         nbt.putString("shotPos", this.shotPos.x+":"+this.shotPos.y+":"+this.shotPos.z);
+        nbt.putInt("miningArea", this.miningArea);
         
         if (this.potion != Potions.EMPTY && this.potion != null) {
             nbt.putString("Potion", Registry.POTION.getKey(this.potion).toString());
@@ -747,6 +777,7 @@ public class BulletEntity extends AbstractArrowEntity {
         this.pierceLevel = nbt.getInt("pierceLevel");
         this.shotAngle = this.getVectorFromString(nbt.getString("shotAngle"));
         this.shotPos = this.getVectorFromString(nbt.getString("shotPos"));
+        this.miningArea = nbt.getInt("miningArea");
 
         if (nbt.contains("Potion", 8)) {
             this.potion = PotionUtils.getPotion(nbt);

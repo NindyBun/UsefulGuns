@@ -19,7 +19,8 @@ import javax.jws.soap.SOAPBinding;
 import java.util.List;
 
 public class AbstractBullet extends Item{
-    private int damage, pierceLevel = 0;
+    private int damage;
+    private int pierceLevel = 0;
 
     public AbstractBullet(int damage) {
         super(ModItems.ITEM_GROUP.stacksTo(64));
@@ -31,11 +32,11 @@ public class AbstractBullet extends Item{
         return this;
     }
 
-    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter){
+    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter, ItemStack gun){
         BulletEntity entity = new BulletEntity(world, shooter);
         entity.setBullet(stack);
         entity.setDamage(damage);
-        entity.setPierceLevel(pierceLevel);
+        entity.setPierce(pierceLevel);
         return entity;
     }
 

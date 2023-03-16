@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "usefulguns:items/netherite_bore_kit"
+  }
+}

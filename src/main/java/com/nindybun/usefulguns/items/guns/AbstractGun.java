@@ -44,9 +44,31 @@ public class AbstractGun extends Item {
     private final int fireDelay;
     private double projectileSpeed = 3;
     private final int enchantability;
+    private Type type;
     private final boolean ignoreInvulnerability = false;
     protected Supplier<SoundEvent> fireSound = ModSounds.PISTOL::get;
     protected Supplier<SoundEvent> drySound = ModSounds.DRY_FIRED::get;
+
+    public enum Type{
+        /*
+          1 = 1x1 block
+          3 = 1x3 block
+          9 = 3x3 block
+        */
+        GUN(1),
+        RIFLE(3),
+        GUNNER(1),
+        SHOTGUN(9),
+        ;
+        private final int size;
+        Type(int size){
+            this.size = size;
+        }
+
+        public int getSize(){
+            return this.size;
+        }
+    }
 
     public AbstractGun(int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
         super(ModItems.ITEM_GROUP.stacksTo(1));
@@ -54,6 +76,14 @@ public class AbstractGun extends Item {
         this.damageMultiplier = damageMultiplier;
         this.fireDelay = fireDelay;
         this.enchantability = enchantability;
+    }
+
+    public AbstractGun setType(Type type){
+        this.type = type;
+        return this;
+    }
+    public Type getType(){
+        return this.type;
     }
 
     public AbstractGun projectileSpeed(int projectileSpeed){
@@ -71,7 +101,7 @@ public class AbstractGun extends Item {
             ItemStack stack = handler.getStackInSlot(i).copy().split(1);
             if (ammo.equals(stack, false)) {
                 AbstractBullet abstractBullet = (AbstractBullet) (ammo.getItem() instanceof AbstractBullet ? ammo.getItem() : ModItems.FLINT_BULLET);
-                BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player);
+                BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player, gun);
                 bulletEntity.setDamage((float) (bulletEntity.getDamage()*this.damageMultiplier+this.bonusDamage));
                 bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);
                 world.addFreshEntity(bulletEntity);

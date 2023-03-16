@@ -27,8 +27,8 @@ public class ShotgunBullet extends AbstractBullet{
     }
 
     @Override
-    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter) {
-        BulletEntity entity = super.createProjectile(world, stack, shooter);
+    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter, ItemStack gun) {
+        BulletEntity entity = super.createProjectile(world, stack, shooter, gun);
         entity.setIgnoreInvulnerability(amount > 1 ? true : false);
         return entity;
     }

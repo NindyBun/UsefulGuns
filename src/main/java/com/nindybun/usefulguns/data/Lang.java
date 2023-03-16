@@ -58,6 +58,20 @@ public class Lang extends LanguageProvider {
         add(ModItems.ENDER_BULLET.get(), "Bullet of Teleportation");
         add(ModItems.TORCH_BULLET.get(), "Torch Bullet");
 
+        add(ModItems.WOOD_MINING_BULLET.get(), "Wood Bore");
+        add(ModItems.STONE_MINING_BULLET.get(), "Stone Bore");
+        add(ModItems.IRON_MINING_BULLET.get(), "Iron Bore");
+        add(ModItems.GOLD_MINING_BULLET.get(), "Gold Bore");
+        add(ModItems.DIAMOND_MINING_BULLET.get(), "Diamond Bore");
+        add(ModItems.NETHERITE_MINING_BULLET.get(), "Netherite Bore");
+
+        add(ModItems.WOOD_BORE_KIT.get(), "Wood Bore Kit");
+        add(ModItems.STONE_BORE_KIT.get(), "Stone Bore Kit");
+        add(ModItems.IRON_BORE_KIT.get(), "Iron Bore Kit");
+        add(ModItems.GOLD_BORE_KIT.get(), "Gold Bore Kit");
+        add(ModItems.DIAMOND_BORE_KIT.get(), "Diamond Bore Kit");
+        add(ModItems.NETHERITE_BORE_KIT.get(), "Netherite Bore Kit");
+
         add(ModItems.BUCKSHOT_BULLET.get(), "BuckShot");
         add(ModItems.BIRDSHOT_BULLET.get(), "BirdShot");
         add(ModItems.SLUG_BULLET.get(), "Slug");

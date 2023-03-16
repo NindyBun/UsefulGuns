@@ -21,9 +21,10 @@ public class ItemModels extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        registerPouchs();
         //registerGuns(); //Using a different model for the guns so these won't work
+        registerPouchs();
         registerBullets();
+        registerBoreKits();
     }
 
     private void registerBullets(){
@@ -52,6 +53,32 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.EXPLOSIVE_BULLET.get());
         simpleItem(ModItems.ENDER_BULLET.get());
         simpleItem(ModItems.TORCH_BULLET.get());
+
+        simpleItem(ModItems.WOOD_MINING_BULLET.get());
+        simpleItem(ModItems.STONE_MINING_BULLET.get());
+        simpleItem(ModItems.IRON_MINING_BULLET.get());
+        simpleItem(ModItems.GOLD_MINING_BULLET.get());
+        simpleItem(ModItems.DIAMOND_MINING_BULLET.get());
+        simpleItem(ModItems.NETHERITE_MINING_BULLET.get());
+    }
+
+    private void registerBoreKits(){
+        simpleItem(ModItems.WOOD_BORE_KIT.get());
+        simpleItem(ModItems.STONE_BORE_KIT.get());
+        simpleItem(ModItems.IRON_BORE_KIT.get());
+        simpleItem(ModItems.GOLD_BORE_KIT.get());
+        simpleItem(ModItems.DIAMOND_BORE_KIT.get());
+        simpleItem(ModItems.NETHERITE_BORE_KIT.get());
+    }
+
+    private void registerPouchs(){
+        simpleItem(ModItems.LEATHER_POUCH.get());
+        simpleItem(ModItems.IRON_POUCH.get());
+        simpleItem(ModItems.GOLD_POUCH.get());
+        simpleItem(ModItems.DIAMOND_POUCH.get());
+        simpleItem(ModItems.OBSIDIAN_POUCH.get());
+        simpleItem(ModItems.NETHERITE_POUCH.get());
+        simpleItem(ModItems.NETHERSTAR_POUCH.get());
     }
 
     private void registerGuns(){
@@ -71,16 +98,6 @@ public class ItemModels extends ItemModelProvider {
                 .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).translation(0, 3.0f, 0).rotation(0, -90, 0).scale(2, 2, 1).end()
                 .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).translation(0, 3.0f, 0).rotation(0, 90, 0).scale(2, 2, 1).end()
                 .transform(ModelBuilder.Perspective.GUI).rotation(0, -30, 0).scale(2, 2, 1).end();
-    }
-
-    private void registerPouchs(){
-        simpleItem(ModItems.LEATHER_POUCH.get());
-        simpleItem(ModItems.IRON_POUCH.get());
-        simpleItem(ModItems.GOLD_POUCH.get());
-        simpleItem(ModItems.DIAMOND_POUCH.get());
-        simpleItem(ModItems.OBSIDIAN_POUCH.get());
-        simpleItem(ModItems.NETHERITE_POUCH.get());
-        simpleItem(ModItems.NETHERSTAR_POUCH.get());
     }
 
     private ItemModelBuilder simpleItem(Item item){
