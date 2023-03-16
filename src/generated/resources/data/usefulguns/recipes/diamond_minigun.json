@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "DCR",
-    "BDS",
+    "BDP",
     "RFD"
   ],
   "key": {
@@ -18,8 +18,8 @@
     "F": {
       "item": "minecraft:flint_and_steel"
     },
-    "S": {
-      "item": "minecraft:stick"
+    "P": {
+      "tag": "minecraft:planks"
     },
     "R": {
       "tag": "forge:dusts/redstone"

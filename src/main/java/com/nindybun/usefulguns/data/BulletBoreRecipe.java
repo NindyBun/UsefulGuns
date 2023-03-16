@@ -10,12 +10,11 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-public class BulletBoreKitRecipe extends SpecialRecipe {
-    public BulletBoreKitRecipe(ResourceLocation p_i48169_1_) {
+public class BulletBoreRecipe extends SpecialRecipe {
+    public BulletBoreRecipe(ResourceLocation p_i48169_1_) {
         super(p_i48169_1_);
     }
 
@@ -107,6 +106,6 @@ public class BulletBoreKitRecipe extends SpecialRecipe {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return ModRecipes.BULLET_BOREKIT_RECIPE.get();
+        return ModRecipes.BULLET_BORE_RECIPE.get();
     }
 }

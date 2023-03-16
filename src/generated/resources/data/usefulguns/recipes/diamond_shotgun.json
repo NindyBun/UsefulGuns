@@ -22,7 +22,7 @@
       "item": "minecraft:stick"
     },
     "W": {
-      "item": "minecraft:oak_log"
+      "tag": "minecraft:logs"
     }
   },
   "result": {

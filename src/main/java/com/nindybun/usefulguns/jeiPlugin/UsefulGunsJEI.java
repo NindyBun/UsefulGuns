@@ -1,10 +1,7 @@
 package com.nindybun.usefulguns.jeiPlugin;
 
 import com.nindybun.usefulguns.UsefulGuns;
-import com.nindybun.usefulguns.data.LingeringBulletRecipe;
-import com.nindybun.usefulguns.data.Recipes;
-import com.nindybun.usefulguns.data.SplashBulletRecipe;
-import com.nindybun.usefulguns.data.TippedBulletRecipe;
+import com.nindybun.usefulguns.data.*;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
 import mezz.jei.api.IModPlugin;
@@ -67,6 +64,7 @@ public class UsefulGunsJEI implements IModPlugin {
         replacers.put(TippedBulletRecipe.class, TippedBulletRecipeMaker::createRecipes);
         replacers.put(SplashBulletRecipe.class, SplashBulletRecipeMaker::createRecipes);
         replacers.put(LingeringBulletRecipe.class, LingeringBulletRecipeMaker::createRecipes);
+        replacers.put(BulletBoreRecipe.class, BulletBoreRecipeMaker::createRecipes);
 
         List<ICraftingRecipe> recipeList = recipes.stream()
                                                 .map(ICraftingRecipe::getClass)
