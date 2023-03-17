@@ -2,11 +2,14 @@ package com.nindybun.usefulguns.inventory;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PouchHandler extends ItemStackHandler {
     public PouchHandler(int size){

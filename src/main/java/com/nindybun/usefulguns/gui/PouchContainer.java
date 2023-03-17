@@ -1,5 +1,6 @@
 package com.nindybun.usefulguns.gui;
 
+import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.inventory.PouchHandler;
 import com.nindybun.usefulguns.modRegistries.ModContainers;
 import com.nindybun.usefulguns.items.AbstractPouch;
@@ -11,11 +12,17 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class PouchContainer extends Container {
@@ -99,15 +106,14 @@ public class PouchContainer extends Container {
     public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-
         if (slot != null && slot.hasItem()) {
             int bagslotcount = this.slots.size();
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
-            if (index < playerIn.inventory.items.size()) {
+            if (index < playerIn.inventory.items.size()) { //Inserts into bag
                 if (!this.moveItemStackTo(itemstack1, playerIn.inventory.items.size(), bagslotcount, false))
                     return ItemStack.EMPTY;
-            } else if (!this.moveItemStackTo(itemstack1, 0, playerIn.inventory.items.size(), false)) {
+            } else if (!this.moveItemStackTo(itemstack1, 0, playerIn.inventory.items.size(), false)) { //Inserts into player
                 return ItemStack.EMPTY;
             }
             if (itemstack1.isEmpty()) slot.set(ItemStack.EMPTY); else slot.setChanged();
