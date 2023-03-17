@@ -66,7 +66,7 @@ public class UsefulGuns
         ModEntities.ENTITY.register(modEventBus);
         modEventBus.addListener(Generator::gatherData);
 
-        RecipeUnlocker.register(MOD_ID, MinecraftForge.EVENT_BUS, 1);
+        //RecipeUnlocker.register(MOD_ID, MinecraftForge.EVENT_BUS, 1);
 
         modEventBus.addListener(this::setup);
         modEventBus.addListener(this::doClientStuff);

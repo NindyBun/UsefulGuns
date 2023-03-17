@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+//Not in use
 public class RecipeUnlocker {
     private static String modTag;
     private static int version;
