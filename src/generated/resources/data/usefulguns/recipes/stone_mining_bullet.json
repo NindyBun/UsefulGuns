@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "usefulguns:stone_bore_kit"
+    },
+    {
+      "item": "usefulguns:bullet_casing"
+    }
+  ],
+  "result": {
+    "item": "usefulguns:stone_mining_bullet"
+  }
+}

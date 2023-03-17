@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MFM",
+    "SSS"
+  ],
+  "key": {
+    "M": {
+      "tag": "forge:cobblestone"
+    },
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "S": {
+      "tag": "forge:stone"
+    }
+  },
+  "result": {
+    "item": "usefulguns:stone_bore_kit"
+  }
+}

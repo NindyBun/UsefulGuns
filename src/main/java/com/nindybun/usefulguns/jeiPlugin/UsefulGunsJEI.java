@@ -64,7 +64,6 @@ public class UsefulGunsJEI implements IModPlugin {
         replacers.put(TippedBulletRecipe.class, TippedBulletRecipeMaker::createRecipes);
         replacers.put(SplashBulletRecipe.class, SplashBulletRecipeMaker::createRecipes);
         replacers.put(LingeringBulletRecipe.class, LingeringBulletRecipeMaker::createRecipes);
-        replacers.put(BulletBoreRecipe.class, BulletBoreRecipeMaker::createRecipes);
 
         List<ICraftingRecipe> recipeList = recipes.stream()
                                                 .map(ICraftingRecipe::getClass)

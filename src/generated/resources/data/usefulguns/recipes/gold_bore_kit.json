@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MFM",
+    "SSS"
+  ],
+  "key": {
+    "M": {
+      "tag": "forge:ingots/gold"
+    },
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "S": {
+      "tag": "forge:stone"
+    }
+  },
+  "result": {
+    "item": "usefulguns:gold_bore_kit"
+  }
+}

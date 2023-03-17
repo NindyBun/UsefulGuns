@@ -1,23 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "C C",
-    "CGC",
-    "CFC"
+    "MFM",
+    "SSS"
   ],
   "key": {
-    "C": {
+    "M": {
       "tag": "forge:ingots/iron"
-    },
-    "G": {
-      "tag": "forge:gunpowder"
     },
     "F": {
       "item": "minecraft:flint"
+    },
+    "S": {
+      "tag": "forge:stone"
     }
   },
   "result": {
-    "item": "usefulguns:bullet_casing",
-    "count": 12
+    "item": "usefulguns:iron_bore_kit"
   }
 }

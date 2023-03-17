@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "usefulguns:iron_bore_kit"
+    },
+    {
+      "item": "usefulguns:bullet_casing"
+    }
+  ],
+  "result": {
+    "item": "usefulguns:iron_mining_bullet"
+  }
+}

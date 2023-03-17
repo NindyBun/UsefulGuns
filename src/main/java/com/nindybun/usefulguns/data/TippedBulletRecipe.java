@@ -56,7 +56,7 @@ public class TippedBulletRecipe extends SpecialRecipe {
     }
 
     public boolean canCraftInDimensions(int p_194133_1_, int p_194133_2_) {
-        return p_194133_1_ >= 2 && p_194133_2_ >= 2;
+        return p_194133_1_ * p_194133_2_ == 9;
     }
 
     public IRecipeSerializer<?> getSerializer() {

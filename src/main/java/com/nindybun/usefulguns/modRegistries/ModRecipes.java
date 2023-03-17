@@ -2,10 +2,7 @@ package com.nindybun.usefulguns.modRegistries;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.crafting.CopyPouchData;
-import com.nindybun.usefulguns.data.BulletBoreRecipe;
-import com.nindybun.usefulguns.data.LingeringBulletRecipe;
-import com.nindybun.usefulguns.data.SplashBulletRecipe;
-import com.nindybun.usefulguns.data.TippedBulletRecipe;
+import com.nindybun.usefulguns.data.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraftforge.fml.RegistryObject;
@@ -20,7 +17,5 @@ public class ModRecipes {
     public static final RegistryObject<SpecialRecipeSerializer<TippedBulletRecipe>> TIPPED_BULLET_RECIPE = RECIPES.register("tipped_bullet", () -> new SpecialRecipeSerializer<>(TippedBulletRecipe::new));
     public static final RegistryObject<SpecialRecipeSerializer<SplashBulletRecipe>> SPLASH_BULLET_RECIPE = RECIPES.register("splash_bullet", () -> new SpecialRecipeSerializer<>(SplashBulletRecipe::new));
     public static final RegistryObject<SpecialRecipeSerializer<LingeringBulletRecipe>> LINGERING_BULLET_RECIPE = RECIPES.register("lingering_bullet", () -> new SpecialRecipeSerializer<>(LingeringBulletRecipe::new));
-    public static final RegistryObject<SpecialRecipeSerializer<BulletBoreRecipe>> BULLET_BORE_RECIPE = RECIPES.register("bullet_bore", () -> new SpecialRecipeSerializer<>(BulletBoreRecipe::new));
-
 
 }
