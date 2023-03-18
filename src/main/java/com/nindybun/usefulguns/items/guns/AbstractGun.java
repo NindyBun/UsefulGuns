@@ -17,6 +17,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.*;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AbstractGun extends Item {
@@ -70,13 +72,31 @@ public class AbstractGun extends Item {
         }
     }
 
-    public AbstractGun(int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
-        super(ModItems.ITEM_GROUP.stacksTo(1));
+    public AbstractGun(int durability, int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
+        super(ModItems.ITEM_GROUP.defaultDurability(durability+1));
         this.bonusDamage = bonusDamage;
         this.damageMultiplier = damageMultiplier;
         this.fireDelay = fireDelay;
         this.enchantability = enchantability;
     }
+
+    /*@Override
+    public boolean hasContainerItem(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public ItemStack getContainerItem(ItemStack itemStack) {
+        ItemStack copy = itemStack.copy();
+        copy.setDamageValue(copy.getDamageValue()-1);
+        return copy.getDamageValue() < copy.getMaxDamage() ? copy : ItemStack.EMPTY;
+    }*/
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return stack.getDamageValue() != 0;
+    }
+
 
     public AbstractGun setType(Type type){
         this.type = type;
@@ -117,6 +137,10 @@ public class AbstractGun extends Item {
         ItemStack pouch = Util.locateAndGetPouch(playerEntity);
         if (pouch == null)
             return ActionResult.fail(gun);
+        if (gun.getDamageValue() == gun.getMaxDamage()-1 && !playerEntity.level.isClientSide){
+            playerEntity.sendMessage(new StringTextComponent("Gun's dirty! Go clean it! ;-;"), net.minecraft.util.Util.NIL_UUID);
+            return ActionResult.fail(gun);
+        }
         if (!world.isClientSide){
             ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
             if (bulletInfo.getItem() == Items.AIR){
@@ -130,6 +154,7 @@ public class AbstractGun extends Item {
                 if (shot != -1){
                     world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                     handler.extractItem(shot, 1, false);
+                    gun.hurtAndBreak(1, playerEntity, p -> p.broadcastBreakEvent(playerEntity.getUsedItemHand()));
                 } else
                     world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
             }

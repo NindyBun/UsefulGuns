@@ -1,6 +1,7 @@
 package com.nindybun.usefulguns.modRegistries;
 
 import com.nindybun.usefulguns.UsefulGuns;
+import com.nindybun.usefulguns.items.AbstractCleaner;
 import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.items.PouchTypes;
@@ -48,17 +49,6 @@ public class ModItems {
     public static final RegistryObject<Item> FLINT_BULLET = ITEMS.register("flint_bullet", () -> new AbstractBullet(5));
     public static final RegistryObject<Item> BULLET_CASING = ITEMS.register("bullet_casing", () -> new Item(ITEM_GROUP.stacksTo(64)));
 
-    public static final RegistryObject<Item> IRON_GUN = ITEMS.register("iron_pistol", () -> new AbstractGun(0, 1, 16, 14)
-            .setType(AbstractGun.Type.GUN));
-    public static final RegistryObject<Item> GOLD_GUN = ITEMS.register("gold_pistol", () -> new AbstractGun(0, 0.75, 10, 22)
-            .setType(AbstractGun.Type.GUN));
-    public static final RegistryObject<Item> DIAMOND_SNIPER = ITEMS.register("diamond_sniper", () -> new AbstractGun(0, 1.6, 24, 10)
-            .projectileSpeed(4).fireSound(() -> ModSounds.SNIPER.get()).setType(AbstractGun.Type.RIFLE));
-    public static final RegistryObject<Item> DIAMOND_SHOTGUN = ITEMS.register("diamond_shotgun", () -> new AbstractShotgun(0, 0.85, 18, 10)
-            .fireSound(() -> ModSounds.SHOTGUN.get()).setType(AbstractGun.Type.SHOTGUN));
-    public static final RegistryObject<Item> DIAMOND_MINIGUN = ITEMS.register("diamond_minigun", () -> new AbstractMachineGun(0, 1, 4, 4)
-            .fireSound(() -> ModSounds.GUNNER.get()).setType(AbstractGun.Type.GUNNER));
-
     public static final RegistryObject<Item> LEATHER_POUCH = ITEMS.register("leather_pouch", () -> new AbstractPouch("leather_pouch", PouchTypes.LEATHER));
     public static final RegistryObject<Item> IRON_POUCH = ITEMS.register("iron_pouch", () -> new AbstractPouch("iron_pouch", PouchTypes.IRON));
     public static final RegistryObject<Item> GOLD_POUCH = ITEMS.register("gold_pouch", () -> new AbstractPouch("gold_pouch", PouchTypes.GOLD));
@@ -67,6 +57,18 @@ public class ModItems {
     public static final RegistryObject<Item> NETHERITE_POUCH = ITEMS.register("netherite_pouch", () -> new AbstractPouch("netherite_pouch", PouchTypes.NETHERITE));
     public static final RegistryObject<Item> NETHERSTAR_POUCH = ITEMS.register("netherstar_pouch", () -> new AbstractPouch("netherstar_pouch", PouchTypes.NETHERSTAR));
 
+
+    public static final RegistryObject<Item> IRON_GUN = ITEMS.register("iron_pistol", () -> new AbstractGun(250, 0, 1, 16, 14)
+            .setType(AbstractGun.Type.GUN));
+    public static final RegistryObject<Item> GOLD_GUN = ITEMS.register("gold_pistol", () -> new AbstractGun(32, 0, 0.75, 10, 22)
+            .setType(AbstractGun.Type.GUN));
+    public static final RegistryObject<Item> DIAMOND_SNIPER = ITEMS.register("diamond_sniper", () -> new AbstractGun(1561, 0, 1.6, 24, 10)
+            .projectileSpeed(4).fireSound(() -> ModSounds.SNIPER.get()).setType(AbstractGun.Type.RIFLE));
+    public static final RegistryObject<Item> DIAMOND_SHOTGUN = ITEMS.register("diamond_shotgun", () -> new AbstractShotgun(1561, 0, 0.85, 18, 10)
+            .fireSound(() -> ModSounds.SHOTGUN.get()).setType(AbstractGun.Type.SHOTGUN));
+    public static final RegistryObject<Item> DIAMOND_MINIGUN = ITEMS.register("diamond_minigun", () -> new AbstractMachineGun(1561, 0, 1, 4, 4)
+            .fireSound(() -> ModSounds.GUNNER.get()).setType(AbstractGun.Type.GUNNER));
+
     public static final RegistryObject<Item> NETHERITE_BORE_KIT = ITEMS.register("netherite_bore_kit", () -> new BoreKit(BoreKit.Kit.NETHERITE));
     public static final RegistryObject<Item> DIAMOND_BORE_KIT = ITEMS.register("diamond_bore_kit", () -> new BoreKit(BoreKit.Kit.DIAMOND));
     public static final RegistryObject<Item> GOLD_BORE_KIT = ITEMS.register("gold_bore_kit", () -> new BoreKit(BoreKit.Kit.GOLD));
@@ -74,10 +76,10 @@ public class ModItems {
     public static final RegistryObject<Item> STONE_BORE_KIT = ITEMS.register("stone_bore_kit", () -> new BoreKit(BoreKit.Kit.STONE));
     public static final RegistryObject<Item> WOOD_BORE_KIT = ITEMS.register("wood_bore_kit", () -> new BoreKit(BoreKit.Kit.WOOD));
 
-
-
-
-
+    public static final RegistryObject<Item> CLEANER = ITEMS.register("cleaner", () -> new AbstractCleaner(256));
+    public static final RegistryObject<Item> BETTER_CLEANER = ITEMS.register("better_cleaner", () -> new AbstractCleaner(768));
+    public static final RegistryObject<Item> BEST_CLEANER = ITEMS.register("best_cleaner", () -> new AbstractCleaner(1280));
+    public static final RegistryObject<Item> ULTIMATE_CLEANER = ITEMS.register("ultimate_cleaner", () -> new AbstractCleaner(-1));
 
 
 

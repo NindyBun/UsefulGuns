@@ -21,8 +21,8 @@ import java.util.Map;
 public class AbstractShotgun extends AbstractGun{
     private double damageMultiplier;
     private int bonusDamage;
-    public AbstractShotgun(int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
-        super(bonusDamage, damageMultiplier, fireDelay, enchantability);
+    public AbstractShotgun(int durability, int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
+        super(durability, bonusDamage, damageMultiplier, fireDelay, enchantability);
         this.bonusDamage = bonusDamage;
         this.damageMultiplier = damageMultiplier;
     }

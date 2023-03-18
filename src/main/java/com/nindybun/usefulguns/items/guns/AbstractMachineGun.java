@@ -16,6 +16,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
@@ -25,8 +26,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class AbstractMachineGun extends AbstractGun{
-    public AbstractMachineGun(int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
-        super(bonusDamage, damageMultiplier, fireDelay, enchantability);
+    public AbstractMachineGun(int durability, int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
+        super(durability, bonusDamage, damageMultiplier, fireDelay, enchantability);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class AbstractMachineGun extends AbstractGun{
                     if (shot != -1){
                         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), fireSound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                         handler.extractItem(shot, 1, false);
+                        gun.hurtAndBreak(1, playerEntity, p -> p.broadcastBreakEvent(playerEntity.getUsedItemHand()));
                     } else{
                         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                         return;
@@ -81,6 +83,10 @@ public class AbstractMachineGun extends AbstractGun{
         ItemStack pouch = Util.locateAndGetPouch(playerEntity);
         if (pouch == null)
             return ActionResult.fail(gun);
+        if (gun.getDamageValue() == gun.getMaxDamage()-1) {
+            playerEntity.sendMessage(new StringTextComponent("Gun's dirty! Go clean it! ;-;"), net.minecraft.util.Util.NIL_UUID);
+            return ActionResult.fail(gun);
+        }
         ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
         if (bulletInfo.getItem() == Items.AIR) {
             world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);

@@ -25,6 +25,7 @@ public class ItemModels extends ItemModelProvider {
         registerPouchs();
         registerBullets();
         registerBoreKits();
+        registerCleaners();
     }
 
     private void registerBullets(){
@@ -60,6 +61,13 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.GOLD_MINING_BULLET.get());
         simpleItem(ModItems.DIAMOND_MINING_BULLET.get());
         simpleItem(ModItems.NETHERITE_MINING_BULLET.get());
+    }
+
+    private void registerCleaners(){
+        simpleItem(ModItems.CLEANER.get());
+        simpleItem(ModItems.BETTER_CLEANER.get());
+        simpleItem(ModItems.BEST_CLEANER.get());
+        simpleItem(ModItems.ULTIMATE_CLEANER.get());
     }
 
     private void registerBoreKits(){

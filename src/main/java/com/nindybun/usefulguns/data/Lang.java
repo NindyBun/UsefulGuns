@@ -65,6 +65,11 @@ public class Lang extends LanguageProvider {
         add(ModItems.DIAMOND_MINING_BULLET.get(), "Diamond Bore");
         add(ModItems.NETHERITE_MINING_BULLET.get(), "Netherite Bore");
 
+        add(ModItems.CLEANER.get(), "Cleaner");
+        add(ModItems.BETTER_CLEANER.get(), "Better Cleaner");
+        add(ModItems.BEST_CLEANER.get(), "Best Cleaner");
+        add(ModItems.ULTIMATE_CLEANER.get(), "Ultimate Cleaner");
+
         add(ModItems.WOOD_BORE_KIT.get(), "Wood Bore Kit");
         add(ModItems.STONE_BORE_KIT.get(), "Stone Bore Kit");
         add(ModItems.IRON_BORE_KIT.get(), "Iron Bore Kit");
@@ -163,6 +168,7 @@ public class Lang extends LanguageProvider {
         add("tooltip.usefulguns.bullet.dragonsfireball", "A dragon's fireball");
         add("tooltip.usefulguns.bullet.glass", "Shatters on impact");
         add("tooltip.usefulguns.bullet.ender", "Inherits the properties of an Ender Pearl");
+        add("tooltip.usefulguns.unbreakable", "Unbreakable!");
         
     }
 }

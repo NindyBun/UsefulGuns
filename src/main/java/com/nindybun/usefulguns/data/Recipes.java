@@ -112,8 +112,7 @@ public class Recipes extends RecipeProvider {
         CustomRecipe.special(ModRecipes.TIPPED_BULLET_RECIPE.get()).save(consumer, "tipped_bullet");
         CustomRecipe.special(ModRecipes.SPLASH_BULLET_RECIPE.get()).save(consumer, "splash_bullet");
         CustomRecipe.special(ModRecipes.LINGERING_BULLET_RECIPE.get()).save(consumer, "lingering_bullet");
-        //CustomRecipe.special(ModRecipes.BULLET_BORE_RECIPE.get()).save(consumer, "bullet_borekit");
-        
+
         for (BoreKit.Kit kit : BoreKit.Kit.values()){
             ShapedRecipeBuilder.shaped(createKit(kit))
                     .pattern("MFM")
@@ -132,6 +131,43 @@ public class Recipes extends RecipeProvider {
                     .unlockedBy("", nul)
                     .save(consumer);
         }
+
+        ShapedRecipeBuilder.shaped(ModItems.CLEANER.get())
+                .pattern("  W")
+                .pattern(" M ")
+                .pattern("M  ")
+                .define('W', ItemTags.WOOL)
+                .define('M', Items.STICK)
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.BETTER_CLEANER.get())
+                .pattern("  W")
+                .pattern(" M ")
+                .pattern("M  ")
+                .define('W', ItemTags.WOOL)
+                .define('M', Tags.Items.INGOTS_IRON)
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.BEST_CLEANER.get())
+                .pattern("  W")
+                .pattern(" M ")
+                .pattern("M  ")
+                .define('W', ItemTags.WOOL)
+                .define('M', Tags.Items.GEMS_DIAMOND)
+                .unlockedBy("", nul)
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(ModItems.ULTIMATE_CLEANER.get())
+                .pattern("  W")
+                .pattern(" S ")
+                .pattern("M  ")
+                .define('W', ItemTags.WOOL)
+                .define('S', Tags.Items.NETHER_STARS)
+                .define('M', Tags.Items.INGOTS_NETHERITE)
+                .unlockedBy("", nul)
+                .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModItems.FLINT_BULLET.get())
                 .pattern(" A ")

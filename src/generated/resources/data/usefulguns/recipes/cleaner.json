@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  W",
+    " M ",
+    "M  "
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "M": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "usefulguns:cleaner"
+  }
+}

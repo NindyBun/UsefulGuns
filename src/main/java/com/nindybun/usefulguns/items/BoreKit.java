@@ -19,11 +19,6 @@ public class BoreKit extends Item {
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
-        return super.damageItem(stack, amount, null, onBroken);
-    }
-
-    @Override
     public boolean hasContainerItem(ItemStack stack) {
         return true;
     }
@@ -32,16 +27,12 @@ public class BoreKit extends Item {
     public ItemStack getContainerItem(ItemStack itemStack) {
         ItemStack copy = itemStack.copy();
         copy.setDamageValue(copy.getDamageValue()+1);
-        return copy.getDamageValue() >= copy.getMaxDamage() ? ItemStack.EMPTY : copy;
+        return copy.getDamageValue() == copy.getMaxDamage() ? ItemStack.EMPTY : copy;
     }
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
         return stack.getDamageValue() != 0;
-    }
-
-    public Kit getKit(){
-        return this.kit;
     }
 
     @Override

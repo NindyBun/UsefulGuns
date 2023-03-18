@@ -1,9 +1,12 @@
 {
   "block.usefulguns.light": "Light",
   "item.usefulguns.armor_piercing_bullet": "Armor Piercing",
+  "item.usefulguns.best_cleaner": "Best Cleaner",
+  "item.usefulguns.better_cleaner": "Better Cleaner",
   "item.usefulguns.birdshot_bullet": "BirdShot",
   "item.usefulguns.buckshot_bullet": "BuckShot",
   "item.usefulguns.bullet_casing": "Bullet Casing",
+  "item.usefulguns.cleaner": "Cleaner",
   "item.usefulguns.diamond_bore_kit": "Diamond Bore Kit",
   "item.usefulguns.diamond_bullet": "Diamond Bullet",
   "item.usefulguns.diamond_minigun": "Diamond Minigun",
@@ -100,6 +103,7 @@
   "item.usefulguns.tipped_bullet.effect.water_breathing": "Bullet of Water Breathing",
   "item.usefulguns.tipped_bullet.effect.weakness": "Bullet of Weakness",
   "item.usefulguns.torch_bullet": "Torch Bullet",
+  "item.usefulguns.ultimate_cleaner": "Ultimate Cleaner",
   "item.usefulguns.wood_bore_kit": "Wood Bore Kit",
   "item.usefulguns.wood_mining_bullet": "Wood Bore",
   "itemGroup.usefulguns": "Useful Guns",
@@ -130,5 +134,6 @@
   "tooltip.usefulguns.machinegun.shoot": "Slows down the user",
   "tooltip.usefulguns.selected_bullet": "\u00A73Selected bullet: ",
   "tooltip.usefulguns.shift": "\u00A77Hold \u00A7fSHIFT\u00A77 for stats\u00A7r",
-  "tooltip.usefulguns.shotgun.shoot": "Shoots multiple projectiles"
+  "tooltip.usefulguns.shotgun.shoot": "Shoots multiple projectiles",
+  "tooltip.usefulguns.unbreakable": "Unbreakable!"
 }
