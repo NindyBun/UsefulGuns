@@ -350,6 +350,7 @@ public class BulletEntity extends AbstractArrowEntity {
             }
             this.remove();
         }
+        this.remove();
     }
 
     public void toTeleport(Entity entity, Vector3d target){
