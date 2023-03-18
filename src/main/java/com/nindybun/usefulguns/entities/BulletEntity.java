@@ -329,28 +329,47 @@ public class BulletEntity extends AbstractArrowEntity {
                 }
             }
             this.remove();
-        }
-        if (this.bullet.getItem() instanceof MiningBullet){
+        }else if (this.bullet.getItem() instanceof MiningBullet){
             int harvestLevel = ((MiningBullet)this.bullet.getItem()).getHarvestLevel();
             BlockPos pos = rayTrace.getBlockPos();
-            BlockState state = this.level.getBlockState(pos);
-            int blockHarvestLevel = state.getHarvestLevel();
-            float destroySpeed = state.getDestroySpeed(this.level, pos);
-            if (destroySpeed != -1.0f) {
-                PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck((PlayerEntity) this.getOwner(), state, harvestLevel >= blockHarvestLevel);
-                MinecraftForge.EVENT_BUS.post(event);
-                if (event.canHarvest() && !this.level.isClientSide){
-                    FluidState fluidstate = this.level.getFluidState(pos);
-                    boolean flag = state.removedByPlayer(this.level, pos, (PlayerEntity) this.getOwner(), false, fluidstate);
-                    if (flag) {
-                        TileEntity tileEntity = state.hasTileEntity() ? this.level.getBlockEntity(pos) : null;
-                        Block.dropResources(state, this.level, pos, tileEntity, this.getOwner(), this.bullet);
+            Direction direction = rayTrace.getDirection();
+            if (this.miningArea == 1) this.mineBlock(pos, harvestLevel);
+            else if (this.miningArea == 3) {
+                for (int i = 0; i < 3; i++) {
+                    this.mineBlock(pos, harvestLevel);
+                    pos = pos.relative(direction.getOpposite());
+                }
+            }else if (this.miningArea == 9){
+                Vector3i dim = Util.getDim(direction);
+                for (int xPos = pos.getX() - dim.getX(); xPos <= pos.getX() + dim.getX(); ++xPos) {
+                    for (int yPos = pos.getY() - dim.getY(); yPos <= pos.getY() + dim.getY(); ++yPos) {
+                        for (int zPos = pos.getZ() - dim.getZ(); zPos <= pos.getZ() + dim.getZ(); ++zPos) {
+                            this.mineBlock(new BlockPos(xPos, yPos, zPos), harvestLevel);
+                        }
                     }
                 }
             }
             this.remove();
         }
         this.remove();
+    }
+
+    public void mineBlock(BlockPos pos, int harvestLevel){
+        BlockState state = this.level.getBlockState(pos);
+        int blockHarvestLevel = state.getHarvestLevel();
+        float destroySpeed = state.getDestroySpeed(this.level, pos);
+        if (destroySpeed != -1.0f) {
+            PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck((PlayerEntity) this.getOwner(), state, harvestLevel >= blockHarvestLevel);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (event.canHarvest() && !this.level.isClientSide){
+                FluidState fluidstate = this.level.getFluidState(pos);
+                boolean flag = state.removedByPlayer(this.level, pos, (PlayerEntity) this.getOwner(), false, fluidstate);
+                if (flag) {
+                    TileEntity tileEntity = state.hasTileEntity() ? this.level.getBlockEntity(pos) : null;
+                    Block.dropResources(state, this.level, pos, tileEntity, this.getOwner(), this.bullet);
+                }
+            }
+        }
     }
 
     public void toTeleport(Entity entity, Vector3d target){
@@ -428,7 +447,7 @@ public class BulletEntity extends AbstractArrowEntity {
         }else if (this.bullet.getItem() == ModItems.EXPLOSIVE_BULLET.get()){
             Vector3i direction = new Vector3i(0, 0, 0);
             if (rayTrace.getType() == RayTraceResult.Type.BLOCK)
-                direction = Util.getLookingAt(this.level, (PlayerEntity) this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().position().distanceTo(rayTrace.getLocation())*1.2).getDirection().getNormal();
+                direction = Util.getLookingAt(this.level, (PlayerEntity)this.getOwner(), this.shotPos, this.shotAngle, RayTraceContext.FluidMode.NONE, this.shotPos.distanceTo(rayTrace.getLocation()) * 1.2).getDirection().getNormal();
             if (!this.level.isClientSide){
                 this.level.explode(this, rayTrace.getLocation().x+direction.getX(), rayTrace.getLocation().y+direction.getY(), rayTrace.getLocation().z+direction.getZ(), 2.5F, Explosion.Mode.BREAK);
                 this.remove();
@@ -438,7 +457,7 @@ public class BulletEntity extends AbstractArrowEntity {
                 this.level.addParticle(ParticleTypes.PORTAL, this.getX(), this.getY() + this.random.nextDouble() * 2.0D, this.getZ(), this.random.nextGaussian(), 0.0D, this.random.nextGaussian());
             }
             if (!this.level.isClientSide){
-                BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity) this.getOwner(), RayTraceContext.FluidMode.NONE, this.getOwner().position().distanceTo(rayTrace.getLocation())*1.2);
+                BlockRayTraceResult blockRay = Util.getLookingAt(this.level, (PlayerEntity)this.getOwner(), this.shotPos, this.shotAngle, RayTraceContext.FluidMode.NONE, this.shotPos.distanceTo(rayTrace.getLocation()) * 1.2);
                 Vector3i direction = blockRay.getDirection().getNormal();
                 Vector3d pos = rayTrace.getLocation();
                 if (rayTrace.getType() == RayTraceResult.Type.BLOCK) {

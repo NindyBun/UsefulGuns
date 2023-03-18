@@ -119,8 +119,8 @@ public class AbstractGun extends Item {
     public int shoot(IItemHandler handler, ItemStack ammo, World world, PlayerEntity player, ItemStack gun){
         for (int i = 0; i < handler.getSlots(); i++){
             ItemStack stack = handler.getStackInSlot(i).copy().split(1);
-            if (ammo.equals(stack, false)) {
-                AbstractBullet abstractBullet = (AbstractBullet) (ammo.getItem() instanceof AbstractBullet ? ammo.getItem() : ModItems.FLINT_BULLET);
+            if (ammo.equals(stack, false) && ammo.getItem() instanceof AbstractBullet) {
+                AbstractBullet abstractBullet = (AbstractBullet) ammo.getItem();
                 BulletEntity bulletEntity = abstractBullet.createProjectile(world, ammo, player, gun);
                 bulletEntity.setDamage((float) (bulletEntity.getDamage()*this.damageMultiplier+this.bonusDamage));
                 bulletEntity.shootFromRotation(player, player.getRotationVector().x, player.getRotationVector().y, 0, (float) getProjectileSpeed(gun), 0);
