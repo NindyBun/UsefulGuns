@@ -506,7 +506,7 @@ public class BulletEntity extends AbstractArrowEntity {
             return;
         }
 
-        if (this.pierceLevel > 0) {
+        if (this.pierceLevel > 0 && entity instanceof LivingEntity) {
             if (this.piercingIgnoreEntityIds == null) {
                 this.piercingIgnoreEntityIds = new IntOpenHashSet(5);
             }
@@ -577,7 +577,7 @@ public class BulletEntity extends AbstractArrowEntity {
                     this.remove();
                 }
             }
-        }else if (!damaged && ignoreInvulnerability){
+        }else if (!damaged && ignoreInvulnerability && !(this.bullet.getItem() instanceof MiningBullet)){
             entity.invulnerableTime = lastHurt;
             this.remove();
         }
