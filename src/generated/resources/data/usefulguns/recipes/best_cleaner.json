@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  W",
+    " M ",
+    "M  "
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "M": {
+      "tag": "forge:gems/diamond"
+    }
+  },
+  "result": {
+    "item": "usefulguns:best_cleaner"
+  }
+}

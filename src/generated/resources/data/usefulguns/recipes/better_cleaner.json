@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  W",
+    " M ",
+    "M  "
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "M": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "usefulguns:better_cleaner"
+  }
+}
