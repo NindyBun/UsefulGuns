@@ -548,8 +548,6 @@ public class BulletEntity extends AbstractArrowEntity {
             }
         }
 
-        UsefulGuns.LOGGER.warn(this.bullet.getItem() instanceof MiningBullet);
-
         boolean damaged = entity.hurt(damagesource, this.damage);
         if (damaged) {
             if (entity.getType() == EntityType.ENDERMAN)
