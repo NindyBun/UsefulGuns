@@ -314,7 +314,7 @@ public class BulletEntity extends AbstractArrowEntity {
             this.level.addParticle(ParticleTypes.CRIT, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
         }
         if (this.bullet.getItem() == ModItems.DRAGONS_BREATH_BULLET.get() && !this.level.isClientSide) {
-            this.level.setBlockAndUpdate(rayTrace.getBlockPos(), Blocks.FIRE.defaultBlockState());
+            this.level.setBlockAndUpdate(rayTrace.getBlockPos().relative(rayTrace.getDirection()), Blocks.FIRE.defaultBlockState());
             this.remove();
         }else if (this.isLingeringOrSplash() != null && !this.level.isClientSide){
             ItemStack itemstack = this.bullet;
@@ -509,7 +509,7 @@ public class BulletEntity extends AbstractArrowEntity {
             return;
         }
 
-        if (this.pierceLevel > 0 && entity instanceof LivingEntity) {
+        if (this.pierceLevel > 0) {
             if (this.piercingIgnoreEntityIds == null) {
                 this.piercingIgnoreEntityIds = new IntOpenHashSet(5);
             }
@@ -548,6 +548,8 @@ public class BulletEntity extends AbstractArrowEntity {
             }
         }
 
+        UsefulGuns.LOGGER.warn(this.bullet.getItem() instanceof MiningBullet);
+
         boolean damaged = entity.hurt(damagesource, this.damage);
         if (damaged) {
             if (entity.getType() == EntityType.ENDERMAN)
@@ -580,7 +582,7 @@ public class BulletEntity extends AbstractArrowEntity {
                     this.remove();
                 }
             }
-        }else if (!damaged && ignoreInvulnerability && !(this.bullet.getItem() instanceof MiningBullet)){
+        }else if (!damaged && ignoreInvulnerability){
             entity.invulnerableTime = lastHurt;
             this.remove();
         }
