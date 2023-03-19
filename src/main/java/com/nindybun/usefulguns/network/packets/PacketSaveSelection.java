@@ -36,7 +36,7 @@ public class PacketSaveSelection {
                 if (!(tool.getItem() instanceof AbstractGun))
                     return;
                 //tool.getOrCreateTag().put("Bullet_Info", msg.itemStack.getOrCreateTag().copy());
-                ItemStack stack = msg.itemStack.copy().split(1);
+                ItemStack stack = msg.itemStack;
                 tool.getOrCreateTag().put("Bullet_Info",stack.serializeNBT());
                 //AbstractGun.setBullet(tool, msg.itemStack);
             });

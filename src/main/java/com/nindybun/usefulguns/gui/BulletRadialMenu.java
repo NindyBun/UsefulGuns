@@ -17,6 +17,7 @@ import com.nindybun.usefulguns.network.PacketHandler;
 import com.nindybun.usefulguns.network.packets.PacketSaveSelection;
 import com.nindybun.usefulguns.util.Util;
 import javafx.scene.shape.VertexFormat;
+import net.minecraft.advancements.criterion.ItemDurabilityTrigger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -36,12 +37,16 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BulletRadialMenu extends Screen {
     private KeyBinding key;
     private int selected;
+    private ItemStack selectedItem;
     private PlayerEntity player;
     private ItemStack gun;
     private List<ItemStack> containedItems = new ArrayList<>();
@@ -53,6 +58,7 @@ public class BulletRadialMenu extends Screen {
         this.player = player;
         this.gun = !(player.getMainHandItem().getItem() instanceof AbstractGun) ? player.getOffhandItem(): player.getMainHandItem();
         this.selected = -1;
+        this.selectedItem = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
     }
 
     @Override
@@ -82,7 +88,7 @@ public class BulletRadialMenu extends Screen {
                 ItemStack ammo = handler.getStackInSlot(i);
                 if (ammo != ItemStack.EMPTY){
                     if (!doesContainInList(itemStacks, ammo) && isValidForGun(gun, ammo))
-                        itemStacks.add(ammo);
+                        itemStacks.add(ammo.copy().split(1));
                 }
             }
         }
@@ -154,6 +160,10 @@ public class BulletRadialMenu extends Screen {
         matrixStack.popPose();
 
         matrixStack.pushPose();
+        drawCount(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
+        matrixStack.popPose();
+
+        matrixStack.pushPose();
         drawToolTip(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
         matrixStack.popPose();
     }
@@ -203,6 +213,24 @@ public class BulletRadialMenu extends Screen {
         RenderHelper.turnOff();
     }
 
+    public void drawCount(MatrixStack matrixStack, List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
+        int numberOfRings = allocateSizes.size();
+        for (int i = 0; i < numberOfRings; i++) {
+            //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
+            int slices = allocateSizes.get(i);
+            for (int j = 0; j < slices; j++) {
+                float start = (((j - 0.5f) / (float) slices) + 0.25f) * 360;
+                float end = (((j + 0.5f) / (float) slices) + 0.25f) * 360;
+                float addRadius = (radiusIn+5)*i;
+                float itemRadius = (radiusIn+radiusOut+(addRadius*2))/2;
+                float middle = (float) Math.toRadians(start+end)/2;
+                float midX = x + itemRadius * (float) Math.cos(middle);
+                float midY = y + itemRadius * (float) Math.sin(middle);
+                int current = j+(( i == 0 ? 0 : getCount(i) ));
+                this.font.drawShadow(matrixStack, containedItems.get(current).getCount()+"", (int)midX, (int)midY, Color.WHITE.getRGB());
+            }
+        }
+    }
 
     public void drawBackground(List<Integer> allocateSizes, int mouseX, int mouseY, int x, int y, float radiusIn, float radiusOut){
         RenderSystem.disableAlphaTest();
@@ -245,11 +273,16 @@ public class BulletRadialMenu extends Screen {
                 float start = (((j - 0.5f) / (float) slices) + 0.25f) * 360;
                 float end = (((j + 0.5f) / (float) slices) + 0.25f) * 360;
                 float addRadius = (radiusIn+5)*i;
-                if (selected == j+(( i == 0 ? 0 : getCount(i) ))){
+                int current = j+(( i == 0 ? 0 : getCount(i) ));
+
+                if (selected == current)
                     drawPieArc(buffer, x, y, 0, radiusIn+addRadius, radiusOut+addRadius, start, end, 255, 255, 255, 64);
-                }else{
-                    drawPieArc(buffer, x, y, 0, radiusIn+addRadius, radiusOut+addRadius, start, end, 0, 0, 0, 64);
-                }
+                else
+                    drawPieArc(buffer, x, y, 0, radiusIn + addRadius, radiusOut + addRadius, start, end, 0, 0, 0, 64);
+
+                if (selectedItem.equals(containedItems.get(current), false))
+                    drawPieArc(buffer, x, y, 0, radiusIn+addRadius, radiusOut+addRadius, start, end, 0, 255, 0, 64);
+
             }
         }
 
