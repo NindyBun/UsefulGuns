@@ -313,7 +313,10 @@ public class BulletEntity extends AbstractArrowEntity {
         for (int i1 = 0; i1 < 8; ++i1) {
             this.level.addParticle(ParticleTypes.CRIT, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
         }
-        if (this.isLingeringOrSplash() != null && !this.level.isClientSide){
+        if (this.bullet.getItem() == ModItems.DRAGONS_BREATH_BULLET.get() && !this.level.isClientSide) {
+            this.level.setBlockAndUpdate(rayTrace.getBlockPos(), Blocks.FIRE.defaultBlockState());
+            this.remove();
+        }else if (this.isLingeringOrSplash() != null && !this.level.isClientSide){
             ItemStack itemstack = this.bullet;
             Potion potion = PotionUtils.getPotion(itemstack);
             List<EffectInstance> list = PotionUtils.getMobEffects(itemstack);
