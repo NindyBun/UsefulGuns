@@ -35,7 +35,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.CallbackI;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -160,7 +162,7 @@ public class BulletRadialMenu extends Screen {
         matrixStack.popPose();
 
         matrixStack.pushPose();
-        drawCount(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
+        //drawCount(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
         matrixStack.popPose();
 
         matrixStack.pushPose();
@@ -190,8 +192,11 @@ public class BulletRadialMenu extends Screen {
 
     public void drawItem(List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
         RenderHelper.turnBackOn();
+        RenderSystem.enableDepthTest();
         RenderSystem.pushMatrix();
         RenderSystem.translatef(-8, -8, 0);
+        MatrixStack matrixStack = new MatrixStack();
+        matrixStack.translate(0, 0, this.itemRenderer.blitOffset+200);
         int numberOfRings = allocateSizes.size();
         for (int i = 0; i < numberOfRings; i++) {
             //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
@@ -207,6 +212,7 @@ public class BulletRadialMenu extends Screen {
                 int current = j+(( i == 0 ? 0 : getCount(i) ));
                 this.itemRenderer.renderAndDecorateItem(containedItems.get(current), (int)midX, (int)midY);
                 this.itemRenderer.renderGuiItemDecorations(this.font, containedItems.get(current), (int)midX, (int)midY, "");
+                this.font.draw(matrixStack, containedItems.get(current).getCount()+"", midX+5, midY+5, Color.WHITE.getRGB());
             }
         }
         RenderSystem.popMatrix();
@@ -228,6 +234,7 @@ public class BulletRadialMenu extends Screen {
                 float midY = y + itemRadius * (float) Math.sin(middle);
                 int current = j+(( i == 0 ? 0 : getCount(i) ));
                 this.font.drawShadow(matrixStack, containedItems.get(current).getCount()+"", (int)midX, (int)midY, Color.WHITE.getRGB());
+
             }
         }
     }
