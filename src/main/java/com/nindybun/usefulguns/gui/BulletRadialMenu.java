@@ -71,7 +71,6 @@ public class BulletRadialMenu extends Screen {
             return;
         containedItems = getBulletsInPouch(gun, pouch);
         containedItemsCount = getBulletsCountInPouch(gun, pouch);
-        UsefulGuns.LOGGER.info(containedItemsCount);
     }
 
     public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
@@ -101,24 +100,44 @@ public class BulletRadialMenu extends Screen {
         return itemStacks;
     }
 
-    public static Map<ItemStack, Integer> getBulletsCountInPouch(ItemStack gun, ItemStack pouch){
+    public Map<ItemStack, Integer> getBulletsCountInPouch(ItemStack gun, ItemStack pouch){
         LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
         Map<ItemStack, Integer> map = new HashMap<>();
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             IItemHandler handler = optional.resolve().get();
-            for (int i = 0; i < handler.getSlots(); i++){
+            for (int i = 0; i < handler.getSlots(); i++) {
                 ItemStack ammo = handler.getStackInSlot(i);
-                if (ammo != ItemStack.EMPTY && isValidForGun(gun, ammo)){
+                if (ammo != ItemStack.EMPTY && isValidForGun(gun, ammo)) {
                     ItemStack copy = ammo.copy().split(1);
-                    if (map.containsKey(copy))//not adding ammo count and instead adds a new pair for the different amounts
-                        map.replace(copy, map.get(copy)+ammo.getCount());
-                    else
+                    if (!this.putIfPresent(map, ammo))
                         map.put(copy, ammo.getCount());
                 }
             }
         }
-
         return map;
+    }
+
+    public boolean putIfPresent(Map<ItemStack, Integer> map, ItemStack bullet){
+        for (Map.Entry<ItemStack, Integer> entry : map.entrySet()) {
+            ItemStack copy = bullet.copy().split(1);
+            ItemStack key = entry.getKey();
+            int value = entry.getValue();
+            if (key.equals(copy, false)) {
+                map.put(key, value + bullet.getCount());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Map.Entry<ItemStack, Integer> getEntry(int current){
+        int element = 0;
+        for (Map.Entry<ItemStack, Integer> entry : containedItemsCount.entrySet()){
+            if (element == current)
+                return entry;
+            element += 1;
+        }
+        return null;
     }
 
     public static boolean doesContainInList(List<ItemStack> list, ItemStack itemStack){
