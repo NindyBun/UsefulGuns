@@ -68,7 +68,6 @@ public class BulletRadialMenu extends Screen {
         if (pouch == null)
             return;
         collectBullets(gun, pouch);
-        UsefulGuns.LOGGER.info(containedItems.size());
     }
 
     public BulletRadialMenu(ItemStack gun, ItemStack pouch) {
