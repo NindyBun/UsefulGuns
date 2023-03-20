@@ -205,7 +205,6 @@ public class BulletRadialMenu extends Screen {
         if (numberOfSlices == 0)
             return;
         List<Integer> allocateSizes = new ArrayList<>();
-        //int numberOfSlices = 81;
         for (int size : ringSize) {
             if ((numberOfSlices - size) >= 0){
                 numberOfSlices -= size;
