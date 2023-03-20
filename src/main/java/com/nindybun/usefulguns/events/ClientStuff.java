@@ -3,6 +3,7 @@ package com.nindybun.usefulguns.events;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.data.TippedBulletColor;
 import com.nindybun.usefulguns.entities.BulletEntityRenderer;
+import com.nindybun.usefulguns.gui.BulletRadialMenu;
 import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.client.Minecraft;
@@ -28,6 +29,10 @@ import java.nio.file.attribute.UserDefinedFileAttributeView;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = UsefulGuns.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientStuff {
+
+    public static void openradialMenu(ItemStack gun, ItemStack pouch){
+        Minecraft.getInstance().setScreen(new BulletRadialMenu(gun, pouch));
+    }
 
     @SubscribeEvent
     public static void clientStuff(FMLClientSetupEvent event){

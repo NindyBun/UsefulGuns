@@ -30,9 +30,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -45,8 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Mod.EventBusSubscriber(modid = UsefulGuns.MOD_ID, value = Dist.CLIENT)
 public class BulletRadialMenu extends Screen {
-    private KeyBinding key;
     private int selected;
     private ItemStack selectedItem;
     private PlayerEntity player;
@@ -56,23 +58,35 @@ public class BulletRadialMenu extends Screen {
     //private Map<ItemStack, Integer> containedItemsCount;
     int[] ringSize = {9, 12, 16, 21, 23};
 
-    public BulletRadialMenu(KeyBinding key, PlayerEntity player) {
+    public BulletRadialMenu(PlayerEntity player){
         super(new StringTextComponent("Title"));
-        this.key = key;
         this.player = player;
         this.gun = !(player.getMainHandItem().getItem() instanceof AbstractGun) ? player.getOffhandItem(): player.getMainHandItem();
         this.selected = -1;
         this.selectedItem = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
+        ItemStack pouch = Util.locateAndGetPouch(player);
+        if (pouch == null)
+            return;
+        collectBullets(gun, pouch);
+        UsefulGuns.LOGGER.info(containedItems.size());
+    }
+
+    public BulletRadialMenu(ItemStack gun, ItemStack pouch) {
+        super(new StringTextComponent("Title"));
+//        this.player = Minecraft.getInstance().player;
+//        this.gun = !(player.getMainHandItem().getItem() instanceof AbstractGun) ? player.getOffhandItem(): player.getMainHandItem();
+        this.selected = -1;
+        this.selectedItem = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
+//        ItemStack pouch = Util.locateAndGetPouch(player);
+//        if (pouch == null)
+//            return;
+        collectBullets(gun, pouch);
     }
 
     @Override
     protected void init(){
-        ItemStack pouch = Util.locateAndGetPouch(player);
-        if (pouch == null)
-            return;
         //containedItems = getBulletsInPouch(gun, pouch);
         //containedItemsCount = getBulletsCountInPouch(gun, pouch);
-        collectBullets(gun, pouch);
     }
 
     public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
@@ -392,7 +406,7 @@ public class BulletRadialMenu extends Screen {
     @Override
     public void tick() {
         super.tick();
-        if (!ClientEvents.isKeyDown(key)){
+        if (!ClientEvents.isKeyDown(ClientEvents.radialMenu_key)){
             Minecraft.getInstance().setScreen(null);
             ClientEvents.wipeOpen();
         }
