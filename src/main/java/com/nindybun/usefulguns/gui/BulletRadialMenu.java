@@ -52,7 +52,8 @@ public class BulletRadialMenu extends Screen {
     private PlayerEntity player;
     private ItemStack gun;
     private List<ItemStack> containedItems = new ArrayList<>();
-    private Map<ItemStack, Integer> containedItemsCount = new HashMap<>();
+    private List<Integer> containedAmount = new ArrayList<>();
+    //private Map<ItemStack, Integer> containedItemsCount;
     int[] ringSize = {9, 12, 16, 21, 23};
 
     public BulletRadialMenu(KeyBinding key, PlayerEntity player) {
@@ -69,8 +70,9 @@ public class BulletRadialMenu extends Screen {
         ItemStack pouch = Util.locateAndGetPouch(player);
         if (pouch == null)
             return;
-        containedItems = getBulletsInPouch(gun, pouch);
-        containedItemsCount = getBulletsCountInPouch(gun, pouch);
+        //containedItems = getBulletsInPouch(gun, pouch);
+        //containedItemsCount = getBulletsCountInPouch(gun, pouch);
+        collectBullets(gun, pouch);
     }
 
     public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
@@ -81,6 +83,31 @@ public class BulletRadialMenu extends Screen {
         if (!(gun.getItem() instanceof AbstractShotgun) && !(ammo.getItem() instanceof ShotgunBullet))
             return true;
         return false;
+    }
+
+    private void collectBullets(ItemStack gun, ItemStack pouch){
+        LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
+        if (optional.isPresent()) {
+            IItemHandler handler = optional.resolve().get();
+            for (int i = 0; i < handler.getSlots(); i++) {
+                ItemStack ammo = handler.getStackInSlot(i);
+                if (ammo != ItemStack.EMPTY && isValidForGun(gun, ammo)){
+                    ItemStack copy = ammo.copy().split(1);
+                    int amount = ammo.getCount();
+                    if (!doesContainInList(containedItems, ammo)){
+                        containedItems.add(copy);
+                        containedAmount.add(amount);
+                    }else{
+                        for (int j = 0; j < i; j++){
+                            if (containedItems.get(j).equals(copy, false)){
+                                containedAmount.set(j, containedAmount.get(j)+amount);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public static List<ItemStack> getBulletsInPouch(ItemStack gun, ItemStack pouch){
@@ -130,7 +157,7 @@ public class BulletRadialMenu extends Screen {
         return false;
     }
 
-    public Map.Entry<ItemStack, Integer> getEntry(int current){
+    /*public Map.Entry<ItemStack, Integer> getEntry(int current){
         int element = 0;
         for (Map.Entry<ItemStack, Integer> entry : containedItemsCount.entrySet()){
             if (element == current)
@@ -138,7 +165,7 @@ public class BulletRadialMenu extends Screen {
             element += 1;
         }
         return null;
-    }
+    }*/
 
     public static boolean doesContainInList(List<ItemStack> list, ItemStack itemStack){
         for (ItemStack stack : list){
@@ -203,9 +230,9 @@ public class BulletRadialMenu extends Screen {
         drawItem(allocateSizes, x, y, radiusIn, radiusOut);
         matrixStack.popPose();
 
-        matrixStack.pushPose();
-        //drawCount(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
-        matrixStack.popPose();
+        /*matrixStack.pushPose();
+        drawCount(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
+        matrixStack.popPose();*/
 
         matrixStack.pushPose();
         drawToolTip(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
@@ -252,16 +279,19 @@ public class BulletRadialMenu extends Screen {
                 float midX = x + itemRadius * (float) Math.cos(middle);
                 float midY = y + itemRadius * (float) Math.sin(middle);
                 int current = j+(( i == 0 ? 0 : getCount(i) ));
-                this.itemRenderer.renderAndDecorateItem(containedItems.get(current), (int)midX, (int)midY);
-                this.itemRenderer.renderGuiItemDecorations(this.font, containedItems.get(current), (int)midX, (int)midY, "");
-                this.font.draw(matrixStack, containedItems.get(current).getCount()+"", midX+5, midY+5, Color.WHITE.getRGB());
+                int value = containedAmount.get(current);
+                ItemStack stack = containedItems.get(current);
+                String string = String.valueOf(value);
+                this.itemRenderer.renderAndDecorateItem(stack, (int)midX, (int)midY);
+                this.itemRenderer.renderGuiItemDecorations(this.font, stack, (int)midX, (int)midY, "");
+                this.font.draw(matrixStack, value > 1 ? string : "", midX+17-font.width(string), midY+9, Color.WHITE.getRGB());
             }
         }
         RenderSystem.popMatrix();
         RenderHelper.turnOff();
     }
 
-    public void drawCount(MatrixStack matrixStack, List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
+    /*public void drawCount(MatrixStack matrixStack, List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
         int numberOfRings = allocateSizes.size();
         for (int i = 0; i < numberOfRings; i++) {
             //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
@@ -275,11 +305,13 @@ public class BulletRadialMenu extends Screen {
                 float midX = x + itemRadius * (float) Math.cos(middle);
                 float midY = y + itemRadius * (float) Math.sin(middle);
                 int current = j+(( i == 0 ? 0 : getCount(i) ));
-                this.font.drawShadow(matrixStack, containedItems.get(current).getCount()+"", (int)midX, (int)midY, Color.WHITE.getRGB());
+                int value = getEntry(current).getValue();
+                String string = String.valueOf(value);
+                this.font.draw(matrixStack, value > 1 ? string : "", midX+17-font.width(string), midY+9, Color.WHITE.getRGB());
 
             }
         }
-    }
+    }*/
 
     public void drawBackground(List<Integer> allocateSizes, int mouseX, int mouseY, int x, int y, float radiusIn, float radiusOut){
         RenderSystem.disableAlphaTest();
