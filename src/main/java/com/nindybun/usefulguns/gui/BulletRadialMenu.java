@@ -52,6 +52,7 @@ public class BulletRadialMenu extends Screen {
     private PlayerEntity player;
     private ItemStack gun;
     private List<ItemStack> containedItems = new ArrayList<>();
+    private Map<ItemStack, Integer> containedItemsCount = new HashMap<>();
     int[] ringSize = {9, 12, 16, 21, 23};
 
     public BulletRadialMenu(KeyBinding key, PlayerEntity player) {
@@ -69,6 +70,8 @@ public class BulletRadialMenu extends Screen {
         if (pouch == null)
             return;
         containedItems = getBulletsInPouch(gun, pouch);
+        containedItemsCount = getBulletsCountInPouch(gun, pouch);
+        UsefulGuns.LOGGER.info(containedItemsCount);
     }
 
     public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
@@ -96,6 +99,26 @@ public class BulletRadialMenu extends Screen {
         }
 
         return itemStacks;
+    }
+
+    public static Map<ItemStack, Integer> getBulletsCountInPouch(ItemStack gun, ItemStack pouch){
+        LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
+        Map<ItemStack, Integer> map = new HashMap<>();
+        if (optional.isPresent()){
+            IItemHandler handler = optional.resolve().get();
+            for (int i = 0; i < handler.getSlots(); i++){
+                ItemStack ammo = handler.getStackInSlot(i);
+                if (ammo != ItemStack.EMPTY && isValidForGun(gun, ammo)){
+                    ItemStack copy = ammo.copy().split(1);
+                    if (map.containsKey(copy))//not adding ammo count and instead adds a new pair for the different amounts
+                        map.replace(copy, map.get(copy)+ammo.getCount());
+                    else
+                        map.put(copy, ammo.getCount());
+                }
+            }
+        }
+
+        return map;
     }
 
     public static boolean doesContainInList(List<ItemStack> list, ItemStack itemStack){
