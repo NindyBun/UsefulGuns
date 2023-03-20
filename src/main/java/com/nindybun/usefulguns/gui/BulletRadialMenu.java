@@ -230,10 +230,6 @@ public class BulletRadialMenu extends Screen {
         drawItem(allocateSizes, x, y, radiusIn, radiusOut);
         matrixStack.popPose();
 
-        /*matrixStack.pushPose();
-        drawCount(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
-        matrixStack.popPose();*/
-
         matrixStack.pushPose();
         drawToolTip(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
         matrixStack.popPose();
@@ -250,8 +246,8 @@ public class BulletRadialMenu extends Screen {
                 float addRadius = (radiusIn+5)*i;
                 float itemRadius = (radiusIn+radiusOut+(addRadius*2))/2;
                 float middle = (float) Math.toRadians(start+end)/2;
-                float midX = x + itemRadius * (float) Math.cos(middle);
-                float midY = y + itemRadius * (float) Math.sin(middle);
+                float midX = x - itemRadius * (float) Math.cos(middle);
+                float midY = y - itemRadius * (float) Math.sin(middle);
                 int current = j+(( i == 0 ? 0 : getCount(i) ));
                 if (selected == current)
                     this.renderTooltip(matrixStack, containedItems.get(current), (int)midX, (int)midY);
@@ -276,8 +272,8 @@ public class BulletRadialMenu extends Screen {
                 float addRadius = (radiusIn+5)*i;
                 float itemRadius = (radiusIn+radiusOut+(addRadius*2))/2;
                 float middle = (float) Math.toRadians(start+end)/2;
-                float midX = x + itemRadius * (float) Math.cos(middle);
-                float midY = y + itemRadius * (float) Math.sin(middle);
+                float midX = x - itemRadius * (float) Math.cos(middle);
+                float midY = y - itemRadius * (float) Math.sin(middle);
                 int current = j+(( i == 0 ? 0 : getCount(i) ));
                 int value = containedAmount.get(current);
                 ItemStack stack = containedItems.get(current);
@@ -291,28 +287,6 @@ public class BulletRadialMenu extends Screen {
         RenderHelper.turnOff();
     }
 
-    /*public void drawCount(MatrixStack matrixStack, List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
-        int numberOfRings = allocateSizes.size();
-        for (int i = 0; i < numberOfRings; i++) {
-            //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
-            int slices = allocateSizes.get(i);
-            for (int j = 0; j < slices; j++) {
-                float start = (((j - 0.5f) / (float) slices) + 0.25f) * 360;
-                float end = (((j + 0.5f) / (float) slices) + 0.25f) * 360;
-                float addRadius = (radiusIn+5)*i;
-                float itemRadius = (radiusIn+radiusOut+(addRadius*2))/2;
-                float middle = (float) Math.toRadians(start+end)/2;
-                float midX = x + itemRadius * (float) Math.cos(middle);
-                float midY = y + itemRadius * (float) Math.sin(middle);
-                int current = j+(( i == 0 ? 0 : getCount(i) ));
-                int value = getEntry(current).getValue();
-                String string = String.valueOf(value);
-                this.font.draw(matrixStack, value > 1 ? string : "", midX+17-font.width(string), midY+9, Color.WHITE.getRGB());
-
-            }
-        }
-    }*/
-
     public void drawBackground(List<Integer> allocateSizes, int mouseX, int mouseY, int x, int y, float radiusIn, float radiusOut){
         RenderSystem.disableAlphaTest();
         RenderSystem.enableBlend();
@@ -323,15 +297,13 @@ public class BulletRadialMenu extends Screen {
         BufferBuilder buffer = tesselator.getBuilder();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-        //int numberOfRings = (int)Math.ceil(numberOfSlices/9.0D);
         int numberOfRings = allocateSizes.size();
         for (int i = 0; i < numberOfRings; i++) {
-            //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
             int slices = allocateSizes.get(i);
             for (int j = 0; j < slices; j++){
                 float s0 = (((0 - 0.5f) / (float) slices) + 0.25f) * 360;
-                double angle = Math.toDegrees(Math.atan2(mouseY - y, mouseX - x)); //Angle the mouse makes with the screen's equator
-                double distance = Math.sqrt(Math.pow(mouseX - x, 2) + Math.pow(mouseY - y, 2)); //Distance of the mouse from the center of the screen
+                double angle = Math.toDegrees(Math.atan2(y-mouseY, x-mouseX)); //Angle the mouse makes with the screen's equator
+                double distance = Math.sqrt(Math.pow(x-mouseX, 2) + Math.pow(y-mouseY, 2)); //Distance of the mouse from the center of the screen
                 if (angle < s0) {
                     angle += 360;
                 }
@@ -348,7 +320,6 @@ public class BulletRadialMenu extends Screen {
         }
 
         for (int i = 0; i < numberOfRings; i++) {
-            //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
             int slices = allocateSizes.get(i);
             for (int j = 0; j < slices; j++){
                 float start = (((j - 0.5f) / (float) slices) + 0.25f) * 360;
@@ -386,14 +357,16 @@ public class BulletRadialMenu extends Screen {
             float angle1 = startAngle + (i / (float) sections) * angle;
             float angle2 = startAngle + ((i + 1) / (float) sections) * angle;
 
-            float pos1InX = x + radiusIn * (float) Math.cos(angle1);
-            float pos1InY = y + radiusIn * (float) Math.sin(angle1);
-            float pos1OutX = x + radiusOut * (float) Math.cos(angle1);
-            float pos1OutY = y + radiusOut * (float) Math.sin(angle1);
-            float pos2OutX = x + radiusOut * (float) Math.cos(angle2);
-            float pos2OutY = y + radiusOut * (float) Math.sin(angle2);
-            float pos2InX = x + radiusIn * (float) Math.cos(angle2);
-            float pos2InY = y + radiusIn * (float) Math.sin(angle2);
+            //subtracting goes top clockwise
+            //addition goes bottom clockwise
+            float pos1InX = x - radiusIn * (float) Math.cos(angle1);
+            float pos1InY = y - radiusIn * (float) Math.sin(angle1);
+            float pos1OutX = x - radiusOut * (float) Math.cos(angle1);
+            float pos1OutY = y - radiusOut * (float) Math.sin(angle1);
+            float pos2OutX = x - radiusOut * (float) Math.cos(angle2);
+            float pos2OutY = y - radiusOut * (float) Math.sin(angle2);
+            float pos2InX = x - radiusIn * (float) Math.cos(angle2);
+            float pos2InY = y - radiusIn * (float) Math.sin(angle2);
 
             buffer.vertex(pos1OutX, pos1OutY, z).color(r, g, b, a).endVertex();
             buffer.vertex(pos1InX, pos1InY, z).color(r, g, b, a).endVertex();
