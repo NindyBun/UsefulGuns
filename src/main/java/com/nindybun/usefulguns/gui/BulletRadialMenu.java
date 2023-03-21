@@ -55,7 +55,6 @@ public class BulletRadialMenu extends Screen {
     private ItemStack gun;
     private List<ItemStack> containedItems = new ArrayList<>();
     private List<Integer> containedAmount = new ArrayList<>();
-    //private Map<ItemStack, Integer> containedItemsCount;
     int[] ringSize = {9, 12, 16, 21, 23};
 
     public BulletRadialMenu(PlayerEntity player){
@@ -68,24 +67,6 @@ public class BulletRadialMenu extends Screen {
         if (pouch == null)
             return;
         collectBullets(gun, pouch);
-    }
-
-    public BulletRadialMenu(ItemStack gun, ItemStack pouch) {
-        super(new StringTextComponent("Title"));
-//        this.player = Minecraft.getInstance().player;
-//        this.gun = !(player.getMainHandItem().getItem() instanceof AbstractGun) ? player.getOffhandItem(): player.getMainHandItem();
-        this.selected = -1;
-        this.selectedItem = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
-//        ItemStack pouch = Util.locateAndGetPouch(player);
-//        if (pouch == null)
-//            return;
-        collectBullets(gun, pouch);
-    }
-
-    @Override
-    protected void init(){
-        //containedItems = getBulletsInPouch(gun, pouch);
-        //containedItemsCount = getBulletsCountInPouch(gun, pouch);
     }
 
     public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
@@ -122,63 +103,6 @@ public class BulletRadialMenu extends Screen {
             }
         }
     }
-
-    public static List<ItemStack> getBulletsInPouch(ItemStack gun, ItemStack pouch){
-        LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
-        List<ItemStack> itemStacks = new ArrayList<>();
-        if (optional.isPresent()){
-            IItemHandler handler = optional.resolve().get();
-            for (int i = 0; i < handler.getSlots(); i++){
-                ItemStack ammo = handler.getStackInSlot(i);
-                if (ammo != ItemStack.EMPTY){
-                    if (!doesContainInList(itemStacks, ammo) && isValidForGun(gun, ammo))
-                        itemStacks.add(ammo.copy().split(1));
-                }
-            }
-        }
-
-        return itemStacks;
-    }
-
-    public Map<ItemStack, Integer> getBulletsCountInPouch(ItemStack gun, ItemStack pouch){
-        LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
-        Map<ItemStack, Integer> map = new HashMap<>();
-        if (optional.isPresent()) {
-            IItemHandler handler = optional.resolve().get();
-            for (int i = 0; i < handler.getSlots(); i++) {
-                ItemStack ammo = handler.getStackInSlot(i);
-                if (ammo != ItemStack.EMPTY && isValidForGun(gun, ammo)) {
-                    ItemStack copy = ammo.copy().split(1);
-                    if (!this.putIfPresent(map, ammo))
-                        map.put(copy, ammo.getCount());
-                }
-            }
-        }
-        return map;
-    }
-
-    public boolean putIfPresent(Map<ItemStack, Integer> map, ItemStack bullet){
-        for (Map.Entry<ItemStack, Integer> entry : map.entrySet()) {
-            ItemStack copy = bullet.copy().split(1);
-            ItemStack key = entry.getKey();
-            int value = entry.getValue();
-            if (key.equals(copy, false)) {
-                map.put(key, value + bullet.getCount());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /*public Map.Entry<ItemStack, Integer> getEntry(int current){
-        int element = 0;
-        for (Map.Entry<ItemStack, Integer> entry : containedItemsCount.entrySet()){
-            if (element == current)
-                return entry;
-            element += 1;
-        }
-        return null;
-    }*/
 
     public static boolean doesContainInList(List<ItemStack> list, ItemStack itemStack){
         for (ItemStack stack : list){
