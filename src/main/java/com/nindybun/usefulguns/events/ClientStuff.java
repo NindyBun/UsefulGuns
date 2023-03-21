@@ -30,10 +30,6 @@ import java.nio.file.attribute.UserDefinedFileAttributeView;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = UsefulGuns.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientStuff {
 
-    public static void openradialMenu(ItemStack gun, ItemStack pouch){
-        Minecraft.getInstance().setScreen(new BulletRadialMenu(gun, pouch));
-    }
-
     @SubscribeEvent
     public static void clientStuff(FMLClientSetupEvent event){
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.BULLET.get(), BulletEntityRenderer::new);

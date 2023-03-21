@@ -3,8 +3,6 @@ package com.nindybun.usefulguns.events;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.gui.BulletRadialMenu;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
-import com.nindybun.usefulguns.network.PacketHandler;
-import com.nindybun.usefulguns.network.packets.PacketServerOpenRadialMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
@@ -16,8 +14,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
-
-import javax.jws.soap.SOAPBinding;
 
 import static net.minecraft.client.util.InputMappings.Type.KEYSYM;
 import static net.minecraft.client.util.InputMappings.Type.MOUSE;
@@ -51,7 +47,6 @@ public class ClientEvents {
             if (keyIsDown && !keyWasDown){
                 while (radialMenu_key.consumeClick() && isHoldingGun) {
                     if (Minecraft.getInstance().screen == null){
-                        //PacketHandler.sendToServer(new PacketServerOpenRadialMenu());
                         Minecraft.getInstance().setScreen(new BulletRadialMenu(player));
                     }
                 }

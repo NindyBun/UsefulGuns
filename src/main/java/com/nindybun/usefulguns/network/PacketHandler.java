@@ -1,8 +1,6 @@
 package com.nindybun.usefulguns.network;
 
 import com.nindybun.usefulguns.UsefulGuns;
-import com.nindybun.usefulguns.network.packets.PacketClientOpenRadialMenu;
-import com.nindybun.usefulguns.network.packets.PacketServerOpenRadialMenu;
 import com.nindybun.usefulguns.network.packets.PacketSaveSelection;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -27,8 +25,6 @@ public class PacketHandler {
     public static void register(){
         int id = 0;
         INSTANCE.registerMessage(id++, PacketSaveSelection.class, PacketSaveSelection::encode, PacketSaveSelection::decode, PacketSaveSelection.Handler::handle);
-        INSTANCE.registerMessage(id++, PacketServerOpenRadialMenu.class,PacketServerOpenRadialMenu::encode, PacketServerOpenRadialMenu::decode, PacketServerOpenRadialMenu.Handler::handle);
-        INSTANCE.registerMessage(id++, PacketClientOpenRadialMenu.class, PacketClientOpenRadialMenu::encode, PacketClientOpenRadialMenu::decode, PacketClientOpenRadialMenu.Handler::handle);
 
     }
 
