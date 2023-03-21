@@ -14,6 +14,7 @@ import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -31,6 +32,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.UUID;
 
@@ -97,14 +99,6 @@ public class AbstractPouch extends Item {
         if (!world.isClientSide && player instanceof ServerPlayerEntity && pouch.getItem() instanceof AbstractPouch){
             PouchData data = AbstractPouch.getData(pouch);
 
-            //To migrate old pouch to new one
-            if (pouch.getOrCreateTag().contains("Inventory")) {
-                if (pouch.getTag().getCompound("Inventory").contains("Size"))
-                    pouch.getTag().getCompound("Inventory").remove("Size");
-                ((PouchHandler) data.getHandler()).deserializeNBT(pouch.getTag().getCompound("Inventory"));
-
-                pouch.getTag().remove("Inventory");
-            }
             PouchTypes itemType = ((AbstractPouch) pouch.getItem()).type;
             UUID uuid = data.getUuid();
 
@@ -131,6 +125,29 @@ public class AbstractPouch extends Item {
         }
         if (stack.getItem().isFireResistant())
             tooltip.add(new StringTextComponent("Fire Resistant!").withStyle(TextFormatting.GOLD));
+    }
+
+    @Override
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
+        super.readShareTag(stack, nbt);
+        LazyOptional<IItemHandler> optional = AbstractPouch.getData(stack).getOptional();
+        if (optional.isPresent()){
+            IItemHandler handler = optional.resolve().get();
+            CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.getStorage().readNBT(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, handler, null, nbt.get("ClientInventory"));
+        }
+    }
+
+    @Nullable
+    @Override
+    public CompoundNBT getShareTag(ItemStack stack) {
+        LazyOptional<IItemHandler> optional = AbstractPouch.getData(stack).getOptional();
+        CompoundNBT tag = super.getShareTag(stack);
+        if (optional.isPresent()){
+            IItemHandler handler = optional.resolve().get();
+            INBT capTag = CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.getStorage().writeNBT(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, handler, null);
+            tag.put("ClientInventory", capTag);
+        }
+        return tag;
     }
 
     @Nullable

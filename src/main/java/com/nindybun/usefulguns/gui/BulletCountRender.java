@@ -71,6 +71,7 @@ public class BulletCountRender {
         PouchData data = AbstractPouch.getData(pouch);
         if (data.getOptional().isPresent()) {
             IItemHandler handler = data.getOptional().resolve().get();
+            //CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.getStorage().readNBT(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, handler, null, pouch.getTag().get("ClientInventory"));
             for (int i = 0; i < handler.getSlots(); i++){
                 ItemStack stack = handler.getStackInSlot(i).copy().split(1);
                 if (bulletInfo.equals(stack, false)) {
