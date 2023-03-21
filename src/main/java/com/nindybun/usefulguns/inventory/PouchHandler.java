@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PouchHandler extends ItemStackHandler {
+    public static final int maxTypes = 81;
     public PouchHandler(int size){
         super(size);
     }
@@ -34,12 +35,35 @@ public class PouchHandler extends ItemStackHandler {
         }
     }
 
+    private boolean contains(ItemStack stack, List<ItemStack> list){
+        for (ItemStack itemStack : list){
+            if (itemStack.copy().split(1).equals(stack.copy().split(1), false))
+                return true;
+        }
+        return false;
+    }
+
+    private List<ItemStack> getItems(){
+        List<ItemStack> list = new ArrayList<>();
+
+        for (int i = 0; i < getSlots(); i++){
+            ItemStack stack = getStackInSlot(i);
+            if (stack != ItemStack.EMPTY && !contains(stack, list))
+                list.add(stack);
+        }
+
+        return list;
+    }
+
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         if (slot < 0 || slot >= this.getSlots())
             throw new IllegalArgumentException("Invalid slot number: " + slot);
-        if (stack.getItem() instanceof AbstractBullet)
-            return true;
+        if (stack.getItem() instanceof AbstractBullet) {
+            List<ItemStack> list = getItems();
+            if ((list.size() <= this.maxTypes && contains(stack, list)) || (list.size() < this.maxTypes && !contains(stack, list)))
+                return true;
+        }
         return false;
     }
 }

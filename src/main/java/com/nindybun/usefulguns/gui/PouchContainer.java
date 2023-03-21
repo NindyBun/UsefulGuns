@@ -22,8 +22,10 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class PouchContainer extends Container {
     public final PouchHandler handler;
@@ -101,6 +103,26 @@ public class PouchContainer extends Container {
         }
     }
 
+    private boolean contains(ItemStack stack, List<ItemStack> list){
+        for (ItemStack itemStack : list){
+            if (itemStack.copy().split(1).equals(stack.copy().split(1), false))
+                return true;
+        }
+        return false;
+    }
+
+    private List<ItemStack> getList(){
+        List<ItemStack> list = new ArrayList<>();
+
+        for (int i = 0; i < this.slots.size(); i++){
+            ItemStack stack = this.slots.get(i).getItem();
+            if (stack != ItemStack.EMPTY && !contains(stack, list))
+                list.add(stack);
+        }
+
+        return list;
+    }
+
     @Override
     @Nonnull
     public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
@@ -111,8 +133,14 @@ public class PouchContainer extends Container {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index < playerIn.inventory.items.size()) { //Inserts into bag
-                if (!this.moveItemStackTo(itemstack1, playerIn.inventory.items.size(), bagslotcount, false))
+                List<ItemStack> list = getList();
+                if (!this.moveItemStackTo(itemstack1, playerIn.inventory.items.size(), bagslotcount, false)){
+                    if ((list.size() <= PouchHandler.maxTypes && contains(itemstack1, list)) || (list.size() < PouchHandler.maxTypes && !contains(itemstack1, list))) {
+                    }else if (!playerIn.level.isClientSide){
+                        playerIn.sendMessage(new StringTextComponent("Unique ammo types exceed "+ PouchHandler.maxTypes +"! Cannot insert anymore!"), Util.NIL_UUID);
+                    }
                     return ItemStack.EMPTY;
+                }
             } else if (!this.moveItemStackTo(itemstack1, 0, playerIn.inventory.items.size(), false)) { //Inserts into player
                 return ItemStack.EMPTY;
             }
