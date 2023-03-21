@@ -56,7 +56,7 @@ public class ModItems {
     public static final RegistryObject<Item> OBSIDIAN_POUCH = ITEMS.register("obsidian_pouch", () -> new AbstractPouch("obsidian_pouch", PouchTypes.OBSIDIAN));
     public static final RegistryObject<Item> NETHERITE_POUCH = ITEMS.register("netherite_pouch", () -> new AbstractPouch("netherite_pouch", PouchTypes.NETHERITE));
     public static final RegistryObject<Item> NETHERSTAR_POUCH = ITEMS.register("netherstar_pouch", () -> new AbstractPouch("netherstar_pouch", PouchTypes.NETHERSTAR));
-
+    public static final RegistryObject<Item> OMEGA_POUCH = ITEMS.register("omega_pouch", () -> new AbstractPouch("omegar_pouch", PouchTypes.OMEGA));
 
     public static final RegistryObject<Item> IRON_GUN = ITEMS.register("iron_pistol", () -> new AbstractGun(250, 0, 1, 16, 14)
             .setType(AbstractGun.Type.GUN));

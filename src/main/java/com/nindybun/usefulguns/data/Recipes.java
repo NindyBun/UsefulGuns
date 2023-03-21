@@ -441,6 +441,18 @@ public class Recipes extends RecipeProvider {
                 .define('B', Items.END_ROD)
                 .unlockedBy("", nul)
                 .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
+
+        ShapedRecipeBuilder.shaped(ModItems.OMEGA_POUCH.get())
+                .pattern("IRI")
+                .pattern("RPR")
+                .pattern("CEC")
+                .define('C', Tags.Items.CHESTS)
+                .define('P', TargetNBTIngredient.of(ModItems.NETHERSTAR_POUCH.get()))
+                .define('I', Items.DRAGON_HEAD)
+                .define('E', Items.ENDER_EYE)
+                .define('R', Items.WITHER_SKELETON_SKULL)
+                .unlockedBy("", nul)
+                .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
     }
 
 }

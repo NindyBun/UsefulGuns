@@ -39,6 +39,7 @@ public class Lang extends LanguageProvider {
         add(ModItems.OBSIDIAN_POUCH.get(), "Obsidian Ammo Pouch");
         add(ModItems.NETHERITE_POUCH.get(), "Netherite Ammo Pouch");
         add(ModItems.NETHERSTAR_POUCH.get(), "Netherstar Ammo Pouch");
+        add(ModItems.OMEGA_POUCH.get(), "Omega Ammo Pouch");
 
         add(ModItems.IRON_GUN.get(), "Iron Pistol");
         add(ModItems.GOLD_GUN.get(), "Gold Pistol");

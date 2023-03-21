@@ -87,6 +87,7 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.OBSIDIAN_POUCH.get());
         simpleItem(ModItems.NETHERITE_POUCH.get());
         simpleItem(ModItems.NETHERSTAR_POUCH.get());
+        simpleItem(ModItems.OMEGA_POUCH.get());
     }
 
     private void registerGuns(){

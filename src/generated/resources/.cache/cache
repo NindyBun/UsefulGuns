@@ -1,4 +1,4 @@
-7bc3cb67b7087623717b3adf7adc27f22bc4c730 assets/usefulguns/lang/en_us.json
+7bcf3fc44fe711f9c80caa8acf3c609994989acf assets/usefulguns/lang/en_us.json
 1f5b4a6792275e6e49fbc206cccdbb946c7bba15 assets/usefulguns/models/item/armor_piercing_bullet.json
 66c5341fd1016939d5306eb9282dbb83e7c2b2ec assets/usefulguns/models/item/best_cleaner.json
 c872c8272426ae3365822354d449f2ef1a4d88a6 assets/usefulguns/models/item/better_cleaner.json
@@ -31,6 +31,7 @@ c330addb5485f2ff9e05670e2c169d1d56f7dc69 assets/usefulguns/models/item/iron_pouc
 c45c6a207c2834b6b36cc34ddc2536b104fd4330 assets/usefulguns/models/item/netherite_pouch.json
 8e5691a320eefbc53a8a4866d90385374ecbc2f6 assets/usefulguns/models/item/netherstar_pouch.json
 2a3448a4f6d072e94b288c2742c3d6b2873156ef assets/usefulguns/models/item/obsidian_pouch.json
+d948a3d1b6f8aacf2045fecd8fd1796ebb7f4a0e assets/usefulguns/models/item/omega_pouch.json
 e03318c8864a76700ad4e8e859ec8ae7204d5ae0 assets/usefulguns/models/item/slug_bullet.json
 613da3fa500d3c157a4f675aff2824bb254953f0 assets/usefulguns/models/item/splash_bullet.json
 ad1dd9f861a0fd18d1baa5cdf22285debf4eb86a assets/usefulguns/models/item/stone_bore_kit.json
@@ -77,6 +78,7 @@ edf54df4d1e7aee68ee672b98094342393f8b215 data/usefulguns/recipes/netherite_minin
 4fe047982b9be08446125508cf3a6df3eb909415 data/usefulguns/recipes/netherite_pouch.json
 0ea44a6f0b53f22c39ac0d1214a2513d0f5476a8 data/usefulguns/recipes/netherstar_pouch.json
 aa1a64a0a4c0e3b0a4254f4524cfa23b7d7343a9 data/usefulguns/recipes/obsidian_pouch.json
+8964ce45ef742664bbef2e865147344641bd6e47 data/usefulguns/recipes/omega_pouch.json
 1af613fe4fffc3d51f13c90a0c71dc489d01c0aa data/usefulguns/recipes/slug_bullet.json
 341337b5d477ff41488e6fc7a47b183f83d9b618 data/usefulguns/recipes/splash_bullet.json
 e7e2ed4ffae8815b2cccb226a172b9d016c25b12 data/usefulguns/recipes/stone_bore_kit.json

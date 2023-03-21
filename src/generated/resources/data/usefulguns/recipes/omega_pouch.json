@@ -1,0 +1,29 @@
+{
+  "type": "usefulguns:pouch_upgrade",
+  "pattern": [
+    "IRI",
+    "RPR",
+    "CEC"
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "P": {
+      "item": "usefulguns:netherstar_pouch",
+      "type": "usefulguns:nbt_target"
+    },
+    "I": {
+      "item": "minecraft:dragon_head"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "R": {
+      "item": "minecraft:wither_skeleton_skull"
+    }
+  },
+  "result": {
+    "item": "usefulguns:omega_pouch"
+  }
+}

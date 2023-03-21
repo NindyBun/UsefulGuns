@@ -48,7 +48,7 @@ public class AbstractPouch extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return getType(stack) == PouchTypes.NETHERSTAR;
+        return getType(stack).ordinal() >= PouchTypes.NETHERSTAR.ordinal();
     }
 
     public static PouchTypes getType(ItemStack stack){

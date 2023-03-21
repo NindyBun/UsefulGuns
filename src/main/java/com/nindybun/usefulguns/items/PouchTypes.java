@@ -8,33 +8,39 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.RegistryObject;
 
 public enum PouchTypes {
-    LEATHER(9, ModItems.LEATHER_POUCH),
-    IRON(18, ModItems.IRON_POUCH),
-    GOLD(27, ModItems.GOLD_POUCH),
-    DIAMOND(36, ModItems.DIAMOND_POUCH),
-    OBSIDIAN(45, ModItems.OBSIDIAN_POUCH),
-    NETHERITE(63, ModItems.NETHERITE_POUCH),
-    NETHERSTAR(81, ModItems.NETHERSTAR_POUCH),
+    LEATHER(1, 9, ModItems.LEATHER_POUCH),
+    IRON(2, 9, ModItems.IRON_POUCH),
+    GOLD(3, 9, ModItems.GOLD_POUCH),
+    DIAMOND(4, 9, ModItems.DIAMOND_POUCH),
+    OBSIDIAN(5, 9, ModItems.OBSIDIAN_POUCH),
+    NETHERITE(7, 9, ModItems.NETHERITE_POUCH),
+    NETHERSTAR(9, 9, ModItems.NETHERSTAR_POUCH),
+    OMEGA(9, 15, ModItems.OMEGA_POUCH),
     ;
 
     public final int slots;
-    public final int rowLength = 9, columnLength;
+    public final int rowLength, columnLength;
     public final int slotX = 8, slotY = 18;
-    public final int textureW = 176, textureH;
-    public final int playerX = 8, playerY;
-    public final int hotbarX = 8, hotbarY;
+    public final int textureW, textureH;
+    public final int playerX, playerY;
+    public final int hotbarX, hotbarY;
     public final ResourceLocation texture;
     public final RegistryObject<Item> pouchItem;
 
 
-    PouchTypes(int slots, RegistryObject<Item> pouch){
-        this.slots = slots;
-        this.columnLength = slots/rowLength;
-        int addHeightPixels = 18*(this.columnLength-1);
+    PouchTypes(int columnLength, int rowLength, RegistryObject<Item> pouch){
+        this.slots = columnLength*rowLength;
+        this.columnLength = columnLength;
+        this.rowLength = rowLength;
+        int addHeightPixels = 18*(columnLength-1);
+        int addWidthPixels = 18*(rowLength);
+        this.textureW = 14+addWidthPixels;
         this.textureH = 132+addHeightPixels;
+        this.playerX = this.textureW/2-80;
         this.playerY = 50+addHeightPixels;
+        this.hotbarX = this.playerX;
         this.hotbarY = 108+addHeightPixels;
-        this.texture = new ResourceLocation(UsefulGuns.MOD_ID, "textures/gui/bagx"+slots+".png");
+        this.texture = new ResourceLocation(UsefulGuns.MOD_ID, "textures/gui/bagx"+this.slots+".png");
         this.pouchItem = pouch;
     }
 
