@@ -51,12 +51,12 @@ public class BoreKit extends Item {
     }
 
     public enum Kit{
-        WOOD(59),
-        STONE(131),
-        IRON(250),
-        GOLD(32),
-        DIAMOND(1561),
-        NETHERITE(2031, true)
+        WOOD(1600),
+        STONE(1600),
+        IRON(1600),
+        GOLD(1600),
+        DIAMOND(1600),
+        NETHERITE(1600, true)
         ;
 
         private int durability;
