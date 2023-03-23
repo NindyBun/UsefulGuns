@@ -170,6 +170,8 @@ public class Lang extends LanguageProvider {
         add("tooltip.usefulguns.bullet.glass", "Shatters on impact");
         add("tooltip.usefulguns.bullet.ender", "Inherits the properties of an Ender Pearl");
         add("tooltip.usefulguns.unbreakable", "Unbreakable!");
+        add("tooltip.usefulguns.kit_uses", "\u00A77Uses: \u00A7f%s / %s\u00A7r");
+        add("tooltip.usefulguns.dirtyness", "\u00A74Dirtyness: \u00A7f%d\u00A7r");
         
     }
 }

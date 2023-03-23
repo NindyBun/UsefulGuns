@@ -64,7 +64,7 @@ public class BulletRadialMenu extends Screen {
         this.selected = -1;
         this.selectedItem = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
         ItemStack pouch = Util.locateAndGetPouch(player);
-        if (pouch == null)
+        if (pouch.isEmpty())
             return;
         collectBullets(gun, pouch);
     }

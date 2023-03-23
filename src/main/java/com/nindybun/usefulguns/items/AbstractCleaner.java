@@ -19,6 +19,7 @@ import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AbstractCleaner extends Item {
     public AbstractCleaner(int durability) {
@@ -51,9 +52,9 @@ public class AbstractCleaner extends Item {
             PlayerEntity player = (PlayerEntity) livingEntity;
             ItemStack gun = player.getOffhandItem();
             int used = getUseDuration(cleaner) - tick;
-            if (used > 0 && !player.level.isClientSide && gun.getDamageValue() != 0){
+            if (used > 0 && !player.level.isClientSide && gun.getOrCreateTag().getInt(AbstractGun.DIRTYNESS) != 0){
                 if (cleaner.getItem() != ModItems.ULTIMATE_CLEANER.get()) cleaner.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
-                gun.hurtAndBreak(-1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
+                gun.getOrCreateTag().putInt(AbstractGun.DIRTYNESS, gun.getOrCreateTag().getInt(AbstractGun.DIRTYNESS)-1);
             }
         }
     }

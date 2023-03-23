@@ -2,8 +2,10 @@ package com.nindybun.usefulguns.jeiPlugin;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.data.*;
+import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
+import com.nindybun.usefulguns.util.Util;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
@@ -12,6 +14,7 @@ import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
+import mezz.jei.api.registration.IModIngredientRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
@@ -52,9 +55,23 @@ public class UsefulGunsJEI implements IModPlugin {
             return stringBuilder.toString();
         };
 
+        IIngredientSubtypeInterpreter<ItemStack> borekitProvider = (itemStack, id) -> {
+            if (!(itemStack.getItem() instanceof BoreKit))
+                return IIngredientSubtypeInterpreter.NONE;
+            int uses = itemStack.getOrCreateTag().getInt(BoreKit.USES);
+            if (uses == 0)
+                return "empty";
+            else if (uses == ((BoreKit) itemStack.getItem()).getKit().getUses())
+                return "full";
+            return IIngredientSubtypeInterpreter.NONE;
+        };
+
         registration.registerSubtypeInterpreter(ModItems.TIPPED_BULLET.get(), potionProvider);
         registration.registerSubtypeInterpreter(ModItems.SPLASH_BULLET.get(), potionProvider);
         registration.registerSubtypeInterpreter(ModItems.LINGERING_BULLET.get(), potionProvider);
+        for (BoreKit.Kit kit : BoreKit.Kit.values()) {
+            registration.registerSubtypeInterpreter(Util.createKit(kit), borekitProvider);
+        }
     }
 
     @Override
@@ -64,6 +81,9 @@ public class UsefulGunsJEI implements IModPlugin {
         replacers.put(TippedBulletRecipe.class, TippedBulletRecipeMaker::createRecipes);
         replacers.put(SplashBulletRecipe.class, SplashBulletRecipeMaker::createRecipes);
         replacers.put(LingeringBulletRecipe.class, LingeringBulletRecipeMaker::createRecipes);
+        replacers.put(BoreBulletRecipe.class, BoreBulletRecipeMaker::createRecipes);
+        replacers.put(BoreKitRepairRecipe.class, BoreKitRepairRecipeMaker::createRecipes);
+        replacers.put(BoreKitRecipe.class, BoreKitRecipeMaker::createRecipes);
 
         List<ICraftingRecipe> recipeList = recipes.stream()
                                                 .map(ICraftingRecipe::getClass)

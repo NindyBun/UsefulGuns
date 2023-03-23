@@ -60,7 +60,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> IRON_GUN = ITEMS.register("iron_pistol", () -> new AbstractGun(250, 0, 1, 16, 14)
             .setType(AbstractGun.Type.GUN));
-    public static final RegistryObject<Item> GOLD_GUN = ITEMS.register("gold_pistol", () -> new AbstractGun(56, 0, 0.75, 10, 22)
+    public static final RegistryObject<Item> GOLD_GUN = ITEMS.register("gold_pistol", () -> new AbstractGun(56, 0, 0.75, 8, 22)
             .setType(AbstractGun.Type.GUN));
     public static final RegistryObject<Item> DIAMOND_SNIPER = ITEMS.register("diamond_sniper", () -> new AbstractGun(1561, 0, 1.6, 24, 10)
             .projectileSpeed(4).fireSound(() -> ModSounds.SNIPER.get()).setType(AbstractGun.Type.RIFLE));

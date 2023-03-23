@@ -26,8 +26,10 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class AbstractMachineGun extends AbstractGun{
-    public AbstractMachineGun(int durability, int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
-        super(durability, bonusDamage, damageMultiplier, fireDelay, enchantability);
+    private final int dirtyness;
+    public AbstractMachineGun(int dirtyness, int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
+        super(dirtyness, bonusDamage, damageMultiplier, fireDelay, enchantability);
+        this.dirtyness = dirtyness;
     }
 
     @Override
@@ -62,7 +64,7 @@ public class AbstractMachineGun extends AbstractGun{
                     if (shot != -1){
                         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), fireSound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                         handler.extractItem(shot, 1, false);
-                        gun.hurtAndBreak(1, playerEntity, p -> p.broadcastBreakEvent(playerEntity.getUsedItemHand()));
+                        gun.getOrCreateTag().putInt(DIRTYNESS, gun.getOrCreateTag().getInt(DIRTYNESS)+1);
                     } else{
                         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                         return;
@@ -81,9 +83,9 @@ public class AbstractMachineGun extends AbstractGun{
     public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
         ItemStack gun = playerEntity.getItemInHand(hand);
         ItemStack pouch = Util.locateAndGetPouch(playerEntity);
-        if (pouch == null)
+        if (pouch.isEmpty())
             return ActionResult.fail(gun);
-        if (gun.getDamageValue() == gun.getMaxDamage()-1) {
+        if (gun.getOrCreateTag().getInt(DIRTYNESS) == this.dirtyness && !playerEntity.level.isClientSide){
             playerEntity.sendMessage(new StringTextComponent("Gun's dirty! Go clean it! ;-;"), net.minecraft.util.Util.NIL_UUID);
             return ActionResult.fail(gun);
         }

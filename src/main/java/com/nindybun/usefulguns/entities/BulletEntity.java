@@ -766,6 +766,7 @@ public class BulletEntity extends AbstractArrowEntity {
         nbt.putString("shotAngle", this.shotAngle.x+":"+this.shotAngle.y+":"+this.shotAngle.z);
         nbt.putString("shotPos", this.shotPos.x+":"+this.shotPos.y+":"+this.shotPos.z);
         nbt.putInt("miningArea", this.miningArea);
+        nbt.put("bullet", this.bullet.serializeNBT());
         
         if (this.potion != Potions.EMPTY && this.potion != null) {
             nbt.putString("Potion", Registry.POTION.getKey(this.potion).toString());
@@ -801,6 +802,7 @@ public class BulletEntity extends AbstractArrowEntity {
         this.shotAngle = this.getVectorFromString(nbt.getString("shotAngle"));
         this.shotPos = this.getVectorFromString(nbt.getString("shotPos"));
         this.miningArea = nbt.getInt("miningArea");
+        this.bullet = ItemStack.of(nbt.getCompound("bullet"));
 
         if (nbt.contains("Potion", 8)) {
             this.potion = PotionUtils.getPotion(nbt);

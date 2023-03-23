@@ -7,6 +7,7 @@ import com.nindybun.usefulguns.crafting.WrappedRecipe;
 import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
+import com.nindybun.usefulguns.util.Util;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.*;
 import net.minecraft.item.Item;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
+
 public class Recipes extends RecipeProvider {
     public Recipes(DataGenerator generator) {
         super(generator);
@@ -33,78 +35,6 @@ public class Recipes extends RecipeProvider {
     protected void saveAdvancement(DirectoryCache p_208310_0_, JsonObject p_208310_1_, Path p_208310_2_) {
     }
 
-    private static Item createBore(BoreKit.Kit kit){
-        Item boreKit = ItemStack.EMPTY.getItem();
-        switch (kit){
-            case WOOD:
-                boreKit = ModItems.WOOD_MINING_BULLET.get();
-                break;
-            case STONE:
-                boreKit = ModItems.STONE_MINING_BULLET.get();
-                break;
-            case IRON:
-                boreKit = ModItems.IRON_MINING_BULLET.get();
-                break;
-            case GOLD:
-                boreKit = ModItems.GOLD_MINING_BULLET.get();
-                break;
-            case DIAMOND:
-                boreKit = ModItems.DIAMOND_MINING_BULLET.get();
-                break;
-            case NETHERITE:
-                boreKit = ModItems.NETHERITE_MINING_BULLET.get();
-                break;
-        }
-        return boreKit;
-    }
-
-    private static Item createKit(BoreKit.Kit kit){
-        Item boreKit = ItemStack.EMPTY.getItem();
-        switch (kit){
-            case WOOD:
-                boreKit = ModItems.WOOD_BORE_KIT.get();
-                break;
-            case STONE:
-                boreKit = ModItems.STONE_BORE_KIT.get();
-                break;
-            case IRON:
-                boreKit = ModItems.IRON_BORE_KIT.get();
-                break;
-            case GOLD:
-                boreKit = ModItems.GOLD_BORE_KIT.get();
-                break;
-            case DIAMOND:
-                boreKit = ModItems.DIAMOND_BORE_KIT.get();
-                break;
-            case NETHERITE:
-                boreKit = ModItems.NETHERITE_BORE_KIT.get();
-                break;
-        }
-        return boreKit;
-    }
-
-    private static Tags.IOptionalNamedTag<Item> createTag(BoreKit.Kit kit){
-        Tags.IOptionalNamedTag<Item> tag = null;
-        switch (kit){
-            case STONE:
-                tag = Tags.Items.COBBLESTONE;
-                break;
-            case IRON:
-                tag = Tags.Items.INGOTS_IRON;
-                break;
-            case GOLD:
-                tag = Tags.Items.INGOTS_GOLD;
-                break;
-            case DIAMOND:
-                tag = Tags.Items.GEMS_DIAMOND;
-                break;
-            case NETHERITE:
-                tag = Tags.Items.INGOTS_NETHERITE;
-                break;
-        }
-        return tag;
-    }
-
     @Override
     protected void buildShapelessRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
         InventoryChangeTrigger.Instance nul = has(Items.AIR);
@@ -112,25 +42,28 @@ public class Recipes extends RecipeProvider {
         CustomRecipe.special(ModRecipes.TIPPED_BULLET_RECIPE.get()).save(consumer, "tipped_bullet");
         CustomRecipe.special(ModRecipes.SPLASH_BULLET_RECIPE.get()).save(consumer, "splash_bullet");
         CustomRecipe.special(ModRecipes.LINGERING_BULLET_RECIPE.get()).save(consumer, "lingering_bullet");
+        CustomRecipe.special(ModRecipes.BORE_BULLET_RECIPE.get()).save(consumer, "bore_bullet");
+        CustomRecipe.special(ModRecipes.BOREKIT_REPAIR_RECIPE.get()).save(consumer, "borekit_repair");
+        CustomRecipe.special(ModRecipes.BOREKIT_RECIPE.get()).save(consumer, "borekit");
 
-        for (BoreKit.Kit kit : BoreKit.Kit.values()){
-            ShapedRecipeBuilder.shaped(createKit(kit))
+        /*for (BoreKit.Kit kit : BoreKit.Kit.values()){
+            ShapedRecipeBuilder.shaped(Util.createKit(kit))
                     .pattern("MFM")
                     .pattern("SSS")
-                    .define('M', kit == BoreKit.Kit.WOOD ? ItemTags.PLANKS : createTag(kit))
+                    .define('M', kit == BoreKit.Kit.WOOD ? ItemTags.PLANKS : Util.createTag(kit))
                     .define('F', Items.FLINT)
                     .define('S', Tags.Items.STONE)
                     .unlockedBy("", nul)
                     .save(consumer);
-        }
+        }*/
 
-        for (BoreKit.Kit kit : BoreKit.Kit.values()) {
+        /*for (BoreKit.Kit kit : BoreKit.Kit.values()) {
             ShapelessRecipeBuilder.shapeless(createBore(kit))
                     .requires(createKit(kit))
                     .requires(ModItems.BULLET_CASING.get())
                     .unlockedBy("", nul)
                     .save(consumer);
-        }
+        }*/
 
         ShapedRecipeBuilder.shaped(ModItems.CLEANER.get())
                 .pattern("  W")

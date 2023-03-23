@@ -20,7 +20,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -46,10 +48,12 @@ public class AbstractGun extends Item {
     private final int fireDelay;
     private double projectileSpeed = 3;
     private final int enchantability;
+    private final int dirtyness;
     private Type type;
     private final boolean ignoreInvulnerability = false;
     protected Supplier<SoundEvent> fireSound = ModSounds.PISTOL::get;
     protected Supplier<SoundEvent> drySound = ModSounds.DRY_FIRED::get;
+    public static final String DIRTYNESS = "Durability";
 
     public enum Type{
         /*
@@ -72,31 +76,30 @@ public class AbstractGun extends Item {
         }
     }
 
-    public AbstractGun(int durability, int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
-        super(ModItems.ITEM_GROUP.defaultDurability(durability+1));
+    public AbstractGun(int dirtyness, int bonusDamage, double damageMultiplier, int fireDelay, int enchantability) {
+        super(ModItems.ITEM_GROUP);
+        this.dirtyness = dirtyness;
         this.bonusDamage = bonusDamage;
         this.damageMultiplier = damageMultiplier;
         this.fireDelay = fireDelay;
         this.enchantability = enchantability;
     }
 
-    /*@Override
-    public boolean hasContainerItem(ItemStack stack) {
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
         return true;
     }
 
     @Override
-    public ItemStack getContainerItem(ItemStack itemStack) {
-        ItemStack copy = itemStack.copy();
-        copy.setDamageValue(copy.getDamageValue()-1);
-        return copy.getDamageValue() < copy.getMaxDamage() ? copy : ItemStack.EMPTY;
-    }*/
-
-    @Override
-    public boolean showDurabilityBar(ItemStack stack) {
-        return stack.getDamageValue() != 0;
+    public int getRGBDurabilityForDisplay(ItemStack stack) {
+        return MathHelper.hsvToRgb(Math.min(this.dirtyness, (float) (getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
     }
 
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        double curr = stack.getOrCreateTag().getInt(DIRTYNESS);
+        return 1d-curr/(double) this.dirtyness;
+    }
 
     public AbstractGun setType(Type type){
         this.type = type;
@@ -135,9 +138,9 @@ public class AbstractGun extends Item {
     public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
         ItemStack gun = playerEntity.getItemInHand(hand);
         ItemStack pouch = Util.locateAndGetPouch(playerEntity);
-        if (pouch == null)
+        if (pouch.isEmpty())
             return ActionResult.fail(gun);
-        if (gun.getDamageValue() == gun.getMaxDamage()-1 && !playerEntity.level.isClientSide){
+        if (gun.getOrCreateTag().getInt(DIRTYNESS) == this.dirtyness && !playerEntity.level.isClientSide){
             playerEntity.sendMessage(new StringTextComponent("Gun's dirty! Go clean it! ;-;"), net.minecraft.util.Util.NIL_UUID);
             return ActionResult.fail(gun);
         }
@@ -154,7 +157,7 @@ public class AbstractGun extends Item {
                 if (shot != -1){
                     world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                     handler.extractItem(shot, 1, false);
-                    gun.hurtAndBreak(1, playerEntity, p -> p.broadcastBreakEvent(playerEntity.getUsedItemHand()));
+                    gun.getOrCreateTag().putInt(DIRTYNESS, gun.getOrCreateTag().getInt(DIRTYNESS)+1);
                 } else
                     world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
             }
@@ -181,6 +184,7 @@ public class AbstractGun extends Item {
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         ItemStack bulletInfo = ItemStack.of(stack.getOrCreateTag().getCompound("Bullet_Info"));
         if (bulletInfo.getItem() != Items.AIR) tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".selected_bullet").append(new StringTextComponent(bulletInfo.getHoverName().getString()).withStyle(TextFormatting.WHITE)));
+        tooltip.add(new TranslationTextComponent("tooltip."+UsefulGuns.MOD_ID+".dirtyness", (stack.getOrCreateTag().getInt(DIRTYNESS)*100)/this.dirtyness).append(new StringTextComponent(" \u00A77%")));
 
         if (Screen.hasShiftDown()){
             double damageMultiplier = getDamageMultipier(stack);

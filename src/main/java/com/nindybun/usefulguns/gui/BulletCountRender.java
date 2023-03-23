@@ -54,8 +54,6 @@ public class BulletCountRender {
                     return;
             else if (!gun.isEmpty()){
                 ItemStack pouch = Util.locateAndGetPouch(player);
-                if (pouch.isEmpty())
-                    return;
                 renderBulletCount(event, player, gun, pouch);
             }
         }
@@ -68,14 +66,16 @@ public class BulletCountRender {
         if (bulletInfo.getItem() == Items.AIR)
             return;
         int selectedBulletCount = 0;
-        PouchData data = AbstractPouch.getData(pouch);
-        if (data.getOptional().isPresent()) {
-            IItemHandler handler = data.getOptional().resolve().get();
-            //CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.getStorage().readNBT(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, handler, null, pouch.getTag().get("ClientInventory"));
-            for (int i = 0; i < handler.getSlots(); i++){
-                ItemStack stack = handler.getStackInSlot(i).copy().split(1);
-                if (bulletInfo.equals(stack, false)) {
-                    selectedBulletCount += handler.getStackInSlot(i).getCount();
+        if (!pouch.isEmpty()) {
+            PouchData data = AbstractPouch.getData(pouch);
+            if (data.getOptional().isPresent()) {
+                IItemHandler handler = data.getOptional().resolve().get();
+                //CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.getStorage().readNBT(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, handler, null, pouch.getTag().get("ClientInventory"));
+                for (int i = 0; i < handler.getSlots(); i++){
+                    ItemStack stack = handler.getStackInSlot(i).copy().split(1);
+                    if (bulletInfo.equals(stack, false)) {
+                        selectedBulletCount += handler.getStackInSlot(i).getCount();
+                    }
                 }
             }
         }
