@@ -103,7 +103,7 @@ public class UsefulGuns
     public static ItemGroup itemGroup = new ItemGroup(UsefulGuns.MOD_ID) {
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(ModItems.IRON_POUCH.get());
+            return new ItemStack(ModItems.ARMOR_PIERCING_BULLET.get());
         }
     };
 
