@@ -9,6 +9,7 @@ import com.nindybun.usefulguns.inventory.PouchData;
 import com.nindybun.usefulguns.inventory.PouchHandler;
 import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.PouchTypes;
+import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.items.bullets.MiningBullet;
 import com.nindybun.usefulguns.items.bullets.ShotgunBullet;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
@@ -70,12 +71,14 @@ public class BulletRadialMenu extends Screen {
     }
 
     public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
-        if (ammo.getItem() instanceof MiningBullet)
-            return true;
-        if (gun.getItem() instanceof AbstractShotgun && ammo.getItem() instanceof ShotgunBullet)
-            return true;
-        if (!(gun.getItem() instanceof AbstractShotgun) && !(ammo.getItem() instanceof ShotgunBullet))
-            return true;
+        if (ammo.getItem() instanceof AbstractBullet){
+            if (ammo.getItem() instanceof MiningBullet)
+                return true;
+            if (gun.getItem() instanceof AbstractShotgun && ammo.getItem() instanceof ShotgunBullet)
+                return true;
+            if (!(gun.getItem() instanceof AbstractShotgun) && !(ammo.getItem() instanceof ShotgunBullet))
+                return true;
+        }
         return false;
     }
 

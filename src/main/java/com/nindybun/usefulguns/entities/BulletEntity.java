@@ -314,7 +314,12 @@ public class BulletEntity extends AbstractArrowEntity {
             this.level.addParticle(ParticleTypes.CRIT, vector3d.x, vector3d.y, vector3d.z, random.nextGaussian() * 0.15D, random.nextDouble() * 0.2D, random.nextGaussian() * 0.15D);
         }
         if (this.bullet.getItem() == ModItems.DRAGONS_BREATH_BULLET.get() && !this.level.isClientSide) {
-            this.level.setBlockAndUpdate(rayTrace.getBlockPos().relative(rayTrace.getDirection()), Blocks.FIRE.defaultBlockState());
+            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getEntity())) {
+                BlockPos blockpos = rayTrace.getBlockPos().relative(rayTrace.getDirection());
+                if (this.level.isEmptyBlock(blockpos)) {
+                    this.level.setBlockAndUpdate(blockpos, AbstractFireBlock.getState(this.level, blockpos));
+                }
+            }
             this.remove();
         }else if (this.isLingeringOrSplash() != null && !this.level.isClientSide){
             ItemStack itemstack = this.bullet;
