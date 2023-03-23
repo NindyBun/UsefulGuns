@@ -11,6 +11,7 @@ import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Util;
@@ -21,6 +22,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,14 +60,14 @@ public class PouchContainer extends Container {
         return true;
     }
 
-/*    @Override
+    @Override
     @Nonnull
     public ItemStack clicked(int slot, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull PlayerEntity player) {
         if (clickTypeIn == ClickType.SWAP)
             return ItemStack.EMPTY;
         if (slot >= 0) getSlot(slot).container.setChanged();
         return super.clicked(slot, dragType, clickTypeIn, player);
-    }*/
+    }
 
 
     private void addPlayerSlots(PlayerInventory playerInventory) {
@@ -103,9 +105,13 @@ public class PouchContainer extends Container {
         }
     }
 
+    public boolean isEqual(ItemStack stack1, ItemStack stack2){
+        return stack1.copy().split(1).equals(stack2.copy().split(1), false);
+    }
+
     private boolean contains(ItemStack stack, List<ItemStack> list){
         for (ItemStack itemStack : list){
-            if (itemStack.copy().split(1).equals(stack.copy().split(1), false))
+            if (this.isEqual(itemStack, stack))
                 return true;
         }
         return false;
@@ -114,14 +120,24 @@ public class PouchContainer extends Container {
     private List<ItemStack> getList(){
         List<ItemStack> list = new ArrayList<>();
 
-        for (int i = 0; i < this.slots.size(); i++){
-            ItemStack stack = this.slots.get(i).getItem();
+        for (int i = 0; i < slots.size(); i++){
+            ItemStack stack = slots.get(i).getItem();
             if (stack != ItemStack.EMPTY && !contains(stack, list))
                 list.add(stack);
         }
 
         return list;
     }
+
+    public boolean checkInsert(ItemStack stack){
+        List<ItemStack> list = getList();
+        if (       (list.size() <= PouchHandler.maxTypes && contains(stack, list))
+                || (list.size() < PouchHandler.maxTypes && !contains(stack, list))
+                )
+            return true;
+        return false;
+    }
+
 
     @Override
     @Nonnull
@@ -133,9 +149,8 @@ public class PouchContainer extends Container {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index < playerIn.inventory.items.size()) { //Inserts into bag
-                List<ItemStack> list = getList();
                 if (!this.moveItemStackTo(itemstack1, playerIn.inventory.items.size(), bagslotcount, false)){
-                    if ((list.size() <= PouchHandler.maxTypes && contains(itemstack1, list)) || (list.size() < PouchHandler.maxTypes && !contains(itemstack1, list))) {
+                    if (checkInsert(itemstack1)) {
                     }else if (!playerIn.level.isClientSide){
                         playerIn.sendMessage(new StringTextComponent("Unique ammo types exceed "+ PouchHandler.maxTypes +"! Cannot insert anymore!"), Util.NIL_UUID);
                     }

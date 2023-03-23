@@ -1,8 +1,10 @@
 package com.nindybun.usefulguns.data;
 
 import com.nindybun.usefulguns.UsefulGuns;
+import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModItems;
+import com.nindybun.usefulguns.util.Util;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -55,7 +57,34 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.ENDER_BULLET.get());
         simpleItem(ModItems.TORCH_BULLET.get());
 
-        simpleItem(ModItems.WOOD_MINING_BULLET.get());
+        for (BoreKit.Kit kit : BoreKit.Kit.values()){
+            String name = Util.createBore(kit).getRegistryName().getPath();
+            withExistingParent(name, mcLoc("item/generated"))
+                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0).model(
+                            withExistingParent(name+"_0", mcLoc("item/generated"))
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))).end()
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 1).model(
+                            withExistingParent(name+"_1", mcLoc("item/generated"))
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
+                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune1_overlay"))).end()
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 2).model(
+                            withExistingParent(name+"_2", mcLoc("item/generated"))
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
+                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune2_overlay"))).end()
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 3).model(
+                            withExistingParent(name+"_3", mcLoc("item/generated"))
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
+                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune3_overlay"))).end()
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 4).model(
+                            withExistingParent(name+"_4", mcLoc("item/generated"))
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
+                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/silktouch_overlay"))).end()
+            ;
+        }
+
+
+
         simpleItem(ModItems.STONE_MINING_BULLET.get());
         simpleItem(ModItems.IRON_MINING_BULLET.get());
         simpleItem(ModItems.GOLD_MINING_BULLET.get());

@@ -42,8 +42,9 @@ public class ModItems {
     public static final RegistryObject<Item> ENDER_BULLET = ITEMS.register("ender_bullet", () -> new AbstractBullet(0));
     public static final RegistryObject<Item> EXPLOSIVE_BULLET = ITEMS.register("explosive_bullet", () -> new AbstractBullet(1));
     public static final RegistryObject<Item> HOLLOW_POINT_BULLET = ITEMS.register("hollow_point_bullet", () -> new AbstractBullet(8));
-    public static final RegistryObject<Item> ARMOR_PIERCING_BULLET = ITEMS.register("armor_piercing_bullet", () -> new AbstractBullet(7).setPierceLevel(1));
+    public static final RegistryObject<Item> ARMOR_PIERCING_BULLET = ITEMS.register("armor_piercing_bullet", () -> new AbstractBullet(7).setPierceLevel(3));
     public static final RegistryObject<Item> GLASS_BULLET = ITEMS.register("glass_bullet", () -> new AbstractBullet(5));
+
     public static final RegistryObject<Item> DIAMOND_BULLET = ITEMS.register("diamond_bullet", () -> new AbstractBullet(7));
     public static final RegistryObject<Item> IRON_BULLET = ITEMS.register("iron_bullet", () -> new AbstractBullet(6));
     public static final RegistryObject<Item> FLINT_BULLET = ITEMS.register("flint_bullet", () -> new AbstractBullet(5));

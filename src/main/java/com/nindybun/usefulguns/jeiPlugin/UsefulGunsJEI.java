@@ -3,6 +3,7 @@ package com.nindybun.usefulguns.jeiPlugin;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.data.*;
 import com.nindybun.usefulguns.items.BoreKit;
+import com.nindybun.usefulguns.items.bullets.MiningBullet;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
 import com.nindybun.usefulguns.util.Util;
@@ -19,11 +20,16 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.EnchantmentNameParts;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
@@ -66,11 +72,24 @@ public class UsefulGunsJEI implements IModPlugin {
             return IIngredientSubtypeInterpreter.NONE;
         };
 
+        IIngredientSubtypeInterpreter<ItemStack> boreEnchantmentProvider = (itemStack, id) -> {
+            if (!(itemStack.getItem() instanceof MiningBullet))
+                return IIngredientSubtypeInterpreter.NONE;
+            Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(itemStack);
+            int level = 0;
+            if (enchantments.containsKey(Enchantments.BLOCK_FORTUNE))
+                level = enchantments.get(Enchantments.BLOCK_FORTUNE);
+            else if (enchantments.containsKey(Enchantments.SILK_TOUCH))
+                level = 4;
+            return level+"";
+        };
+
         registration.registerSubtypeInterpreter(ModItems.TIPPED_BULLET.get(), potionProvider);
         registration.registerSubtypeInterpreter(ModItems.SPLASH_BULLET.get(), potionProvider);
         registration.registerSubtypeInterpreter(ModItems.LINGERING_BULLET.get(), potionProvider);
         for (BoreKit.Kit kit : BoreKit.Kit.values()) {
             registration.registerSubtypeInterpreter(Util.createKit(kit), borekitProvider);
+            registration.registerSubtypeInterpreter(Util.createBore(kit), boreEnchantmentProvider);
         }
     }
 

@@ -120,6 +120,7 @@
   "tooltip.usefulguns.bullet.damage": "\u00A72Damage: \u00A7f+%s\u00A7r",
   "tooltip.usefulguns.bullet.dragonsbreath": "Inflicts fire",
   "tooltip.usefulguns.bullet.dragonsfireball": "A dragon's fireball",
+  "tooltip.usefulguns.bullet.enchanted": " [Enchanted]",
   "tooltip.usefulguns.bullet.ender": "Inherits the properties of an Ender Pearl",
   "tooltip.usefulguns.bullet.glass": "Shatters on impact",
   "tooltip.usefulguns.bullet.hollow_point": "Ineffective against armor",

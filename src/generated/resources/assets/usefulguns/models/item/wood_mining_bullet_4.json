@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "usefulguns:items/wood_mining_bullet",
+    "layer1": "usefulguns:items/silktouch_overlay"
+  }
+}

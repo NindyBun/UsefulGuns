@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "usefulguns:items/iron_mining_bullet",
+    "layer1": "usefulguns:items/fortune2_overlay"
+  }
+}

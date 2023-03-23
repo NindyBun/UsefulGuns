@@ -153,6 +153,7 @@ public class Lang extends LanguageProvider {
         add("tooltip.usefulguns.machinegun.shoot", "Slows down the user");
         add("tooltip.usefulguns.shift", "\u00A77Hold \u00A7fSHIFT\u00A77 for stats\u00A7r");
         add("tooltip.usefulguns.selected_bullet", "\u00A73Selected bullet: ");
+        add("tooltip.usefulguns.bullet.enchanted", " [Enchanted]");
         add("tooltip.usefulguns.bullet.damage", "\u00A72Damage: \u00A7f+%s\u00A7r");
         add("tooltip.usefulguns.gun.damage.flat", "\u00A72Damage: \u00A7f+%s\u00A7r");
         add("tooltip.usefulguns.gun.damage.mult", "\u00A72Damage: \u00A7fx%s\u00A7r");

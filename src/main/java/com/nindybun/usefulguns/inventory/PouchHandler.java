@@ -1,7 +1,10 @@
 package com.nindybun.usefulguns.inventory;
 
 import com.nindybun.usefulguns.UsefulGuns;
+import com.nindybun.usefulguns.items.AbstractCleaner;
+import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
+import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PouchHandler extends ItemStackHandler {
-    public static final int maxTypes = 81;
+    public static final int maxTypes = 9;
     public PouchHandler(int size){
         super(size);
     }
@@ -35,9 +38,13 @@ public class PouchHandler extends ItemStackHandler {
         }
     }
 
+    public boolean isEqual(ItemStack stack1, ItemStack stack2){
+        return stack1.copy().split(1).equals(stack2.copy().split(1), false);
+    }
+
     private boolean contains(ItemStack stack, List<ItemStack> list){
         for (ItemStack itemStack : list){
-            if (itemStack.copy().split(1).equals(stack.copy().split(1), false))
+            if (this.isEqual(itemStack, stack))
                 return true;
         }
         return false;
@@ -48,11 +55,29 @@ public class PouchHandler extends ItemStackHandler {
 
         for (int i = 0; i < getSlots(); i++){
             ItemStack stack = getStackInSlot(i);
-            if (stack != ItemStack.EMPTY && !contains(stack, list))
+            if (stack != ItemStack.EMPTY && !contains(stack, list) && stack.getItem() instanceof AbstractBullet)
                 list.add(stack);
         }
 
         return list;
+    }
+
+    public boolean canSwap(int slot, ItemStack stack, List<ItemStack> list){
+        if (list.size() == maxTypes){
+            ItemStack toSwapWith = getStackInSlot(slot);
+            if (!isEqual(stack, toSwapWith) && !toSwapWith.isEmpty())
+                return true;
+        }
+        return false;
+    }
+
+    public boolean checkInsert(int slot, ItemStack stack){
+        List<ItemStack> list = getItems();
+        if (       (list.size() <= this.maxTypes && contains(stack, list))
+                || (list.size() < this.maxTypes && !contains(stack, list))
+                || canSwap(slot, stack, list))
+            return true;
+        return false;
     }
 
     @Override
@@ -60,10 +85,11 @@ public class PouchHandler extends ItemStackHandler {
         if (slot < 0 || slot >= this.getSlots())
             throw new IllegalArgumentException("Invalid slot number: " + slot);
         if (stack.getItem() instanceof AbstractBullet) {
-            List<ItemStack> list = getItems();
-            if ((list.size() <= this.maxTypes && contains(stack, list)) || (list.size() < this.maxTypes && !contains(stack, list)))
+            if (this.checkInsert(slot, stack))
                 return true;
-        }
+        }else if (stack.getItem() == ModItems.BULLET_CASING.get() || stack.getItem() instanceof BoreKit || stack.getItem() instanceof AbstractCleaner)
+            return true;
+
         return false;
     }
 }

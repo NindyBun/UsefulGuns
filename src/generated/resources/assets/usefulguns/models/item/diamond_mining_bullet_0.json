@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "usefulguns:items/diamond_mining_bullet"
+  }
+}
