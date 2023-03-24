@@ -46,24 +46,12 @@ public class Recipes extends RecipeProvider {
         CustomRecipe.special(ModRecipes.BOREKIT_REPAIR_RECIPE.get()).save(consumer, "borekit_repair");
         CustomRecipe.special(ModRecipes.BOREKIT_RECIPE.get()).save(consumer, "borekit");
 
-        /*for (BoreKit.Kit kit : BoreKit.Kit.values()){
-            ShapedRecipeBuilder.shaped(Util.createKit(kit))
-                    .pattern("MFM")
-                    .pattern("SSS")
-                    .define('M', kit == BoreKit.Kit.WOOD ? ItemTags.PLANKS : Util.createTag(kit))
-                    .define('F', Items.FLINT)
-                    .define('S', Tags.Items.STONE)
-                    .unlockedBy("", nul)
-                    .save(consumer);
-        }*/
-
-        /*for (BoreKit.Kit kit : BoreKit.Kit.values()) {
-            ShapelessRecipeBuilder.shapeless(createBore(kit))
-                    .requires(createKit(kit))
-                    .requires(ModItems.BULLET_CASING.get())
-                    .unlockedBy("", nul)
-                    .save(consumer);
-        }*/
+        ShapelessRecipeBuilder.shapeless(Items.GUNPOWDER, 8)
+                .requires(Items.CHARCOAL)
+                .requires(Items.BLAZE_POWDER)
+                .requires(Items.FLINT)
+                .unlockedBy("", nul)
+                .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModItems.CLEANER.get())
                 .pattern("  W")
