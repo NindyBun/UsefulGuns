@@ -56,7 +56,8 @@ public class BulletRadialMenu extends Screen {
     private ItemStack gun;
     private List<ItemStack> containedItems = new ArrayList<>();
     private List<Integer> containedAmount = new ArrayList<>();
-    int[] ringSize = {9, 12, 16, 21, 23};
+    int[] ringSize = {4, 6, 8};
+    //int[] ringSize = {9, 12, 16, 21, 23};
 
     public BulletRadialMenu(PlayerEntity player){
         super(new StringTextComponent("Title"));

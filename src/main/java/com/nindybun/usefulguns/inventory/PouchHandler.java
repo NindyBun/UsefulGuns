@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PouchHandler extends ItemStackHandler {
-    public static final int maxTypes = 9;
+    public static final int maxTypes = 18;
     public PouchHandler(int size){
         super(size);
     }
