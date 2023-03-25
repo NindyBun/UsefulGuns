@@ -12,25 +12,25 @@
     },
     {
       "predicate": {
-        "usefulguns:enchantment_id": 1.0
+        "usefulguns:enchantment_id": 0.1
       },
       "model": "usefulguns:item/diamond_mining_bullet_1"
     },
     {
       "predicate": {
-        "usefulguns:enchantment_id": 2.0
+        "usefulguns:enchantment_id": 0.2
       },
       "model": "usefulguns:item/diamond_mining_bullet_2"
     },
     {
       "predicate": {
-        "usefulguns:enchantment_id": 3.0
+        "usefulguns:enchantment_id": 0.3
       },
       "model": "usefulguns:item/diamond_mining_bullet_3"
     },
     {
       "predicate": {
-        "usefulguns:enchantment_id": 4.0
+        "usefulguns:enchantment_id": 0.4
       },
       "model": "usefulguns:item/diamond_mining_bullet_4"
     }

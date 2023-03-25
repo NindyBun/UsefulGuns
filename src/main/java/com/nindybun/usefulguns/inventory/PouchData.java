@@ -1,7 +1,7 @@
 package com.nindybun.usefulguns.inventory;
 
 import com.nindybun.usefulguns.items.PouchTypes;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -45,7 +45,7 @@ public class PouchData {
         optional = LazyOptional.of(() -> inventory);
     }
 
-    public PouchData(UUID uuid, CompoundNBT nbt) {
+    public PouchData(UUID uuid, CompoundTag nbt) {
         this.uuid = uuid;
         this.type = PouchTypes.values()[Math.min(nbt.getInt("Type"), PouchTypes.NETHERSTAR.ordinal())];
         inventory = new PouchHandler(type.slots);
@@ -65,7 +65,7 @@ public class PouchData {
         return uuid;
     }
 
-    public static Optional<PouchData> fromNBT(CompoundNBT nbt){
+    public static Optional<PouchData> fromNBT(CompoundTag nbt){
         if (nbt.contains("UUID")){
             UUID uuid = nbt.getUUID("UUID");
             return Optional.of(new PouchData(uuid, nbt));
@@ -80,8 +80,8 @@ public class PouchData {
         }
     }
 
-    public CompoundNBT toNBT(){
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag toNBT(){
+        CompoundTag nbt = new CompoundTag();
 
         nbt.putUUID("UUID", uuid);
         nbt.putInt("Type", type.ordinal());
@@ -92,7 +92,7 @@ public class PouchData {
     }
 
 
-    /*public static class Metadata implements INBTSerializable<CompoundNBT> {
+    /*public static class Metadata implements INBTSerializable<CompoundTag> {
 
         private String firstAccessedPlayer = "";
 
@@ -124,8 +124,8 @@ public class PouchData {
         }
 
         @Override
-        public CompoundNBT serializeNBT() {
-            CompoundNBT nbt = new CompoundNBT();
+        public CompoundTag serializeNBT() {
+            CompoundTag nbt = new CompoundTag();
 
             nbt.putString("firstPlayer", firstAccessedPlayer);
             nbt.putLong("firstTime", firstAccessedTime);
@@ -136,7 +136,7 @@ public class PouchData {
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT nbt) {
+        public void deserializeNBT(CompoundTag nbt) {
             firstAccessedPlayer = nbt.getString("firstPlayer");
             firstAccessedTime = nbt.getLong("firstTime");
             lastAccessedPlayer = nbt.getString("lastPlayer");

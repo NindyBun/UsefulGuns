@@ -2,19 +2,15 @@ package com.nindybun.usefulguns.data;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.items.BoreKit;
-import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModItems;
-import com.nindybun.usefulguns.util.Util;
+import com.nindybun.usefulguns.util.UtilMethods;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
-import javax.jws.soap.SOAPBinding;
 
 public class ItemModels extends ItemModelProvider {
     public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper){
@@ -58,25 +54,25 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.TORCH_BULLET.get());
 
         for (BoreKit.Kit kit : BoreKit.Kit.values()){
-            String name = Util.createBore(kit).getRegistryName().getPath();
+            String name = UtilMethods.createBore(kit).getRegistryName().getPath();
             withExistingParent(name, mcLoc("item/generated"))
                     .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
-                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0).model(
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.0f).model(
                             withExistingParent(name+"_0", mcLoc("item/generated"))
                                     .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))).end()
-                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 1).model(
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.1f).model(
                             withExistingParent(name+"_1", mcLoc("item/generated"))
                                     .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
                                     .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune1_overlay"))).end()
-                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 2).model(
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.2f).model(
                             withExistingParent(name+"_2", mcLoc("item/generated"))
                                     .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
                                     .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune2_overlay"))).end()
-                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 3).model(
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.3f).model(
                             withExistingParent(name+"_3", mcLoc("item/generated"))
                                     .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
                                     .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune3_overlay"))).end()
-                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 4).model(
+                    .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.4f).model(
                             withExistingParent(name+"_4", mcLoc("item/generated"))
                                     .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
                                     .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/silktouch_overlay"))).end()
@@ -119,24 +115,6 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.OMEGA_POUCH.get());
     }
 
-    private void registerGuns(){
-        simpleItem(ModItems.IRON_GUN.get()).transforms()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).translation(0, 0.5f, -1).rotation(0, -90, 0).scale(1).end()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).translation(0, 0.5f, -1).rotation(0, 90, 0).scale(1).end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).translation(0, 2.5f, 0).rotation(0, -90, 0).scale(1).end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).translation(0, 2.5f, 0).rotation(0, 90, 0).scale(1).end();
-        simpleItem(ModItems.GOLD_GUN.get()).transforms()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).translation(0, 0.5f, -1).rotation(0, -90, 0).scale(1).end()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).translation(0, 0.5f, -1).rotation(0, 90, 0).scale(1).end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).translation(0, 2.5f, 0).rotation(0, -90, 0).scale(1).end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).translation(0, 2.5f, 0).rotation(0, 90, 0).scale(1).end();
-        simpleItem(ModItems.DIAMOND_SNIPER.get()).transforms()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).translation(0, 0.5f, -6).rotation(0, -90, 0).scale(2, 2, 1).end()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).translation(0, 0.5f, -6).rotation(0, 90, 0).scale(2, 2, 1).end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).translation(0, 3.0f, 0).rotation(0, -90, 0).scale(2, 2, 1).end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).translation(0, 3.0f, 0).rotation(0, 90, 0).scale(2, 2, 1).end()
-                .transform(ModelBuilder.Perspective.GUI).rotation(0, -30, 0).scale(2, 2, 1).end();
-    }
 
     private ItemModelBuilder simpleItem(Item item){
         String name = item.getRegistryName().getPath();

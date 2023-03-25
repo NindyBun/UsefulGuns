@@ -1,14 +1,10 @@
 package com.nindybun.usefulguns.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.events.ClientEvents;
-import com.nindybun.usefulguns.inventory.PouchData;
-import com.nindybun.usefulguns.inventory.PouchHandler;
 import com.nindybun.usefulguns.items.AbstractPouch;
-import com.nindybun.usefulguns.items.PouchTypes;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.items.bullets.MiningBullet;
 import com.nindybun.usefulguns.items.bullets.ShotgunBullet;
@@ -16,56 +12,46 @@ import com.nindybun.usefulguns.items.guns.AbstractGun;
 import com.nindybun.usefulguns.items.guns.AbstractShotgun;
 import com.nindybun.usefulguns.network.PacketHandler;
 import com.nindybun.usefulguns.network.packets.PacketSaveSelection;
-import com.nindybun.usefulguns.util.Util;
-import javafx.scene.shape.VertexFormat;
-import net.minecraft.advancements.criterion.ItemDurabilityTrigger;
+import com.nindybun.usefulguns.util.UtilMethods;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.CallbackI;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = UsefulGuns.MOD_ID, value = Dist.CLIENT)
 public class BulletRadialMenu extends Screen {
     private int selected;
     private ItemStack selectedItem;
-    private PlayerEntity player;
+    private Player player;
     private ItemStack gun;
     private List<ItemStack> containedItems = new ArrayList<>();
     private List<Integer> containedAmount = new ArrayList<>();
     int[] ringSize = {4, 6, 8};
     //int[] ringSize = {9, 12, 16, 21, 23};
 
-    public BulletRadialMenu(PlayerEntity player){
-        super(new StringTextComponent("Title"));
+    public BulletRadialMenu(Player player){
+        super(new TextComponent("Title"));
         this.player = player;
         this.gun = !(player.getMainHandItem().getItem() instanceof AbstractGun) ? player.getOffhandItem(): player.getMainHandItem();
         this.selected = -1;
         this.selectedItem = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
-        ItemStack pouch = Util.locateAndGetPouch(player);
+        ItemStack pouch = UtilMethods.locateAndGetPouch(player);
         if (pouch.isEmpty())
             return;
         collectBullets(gun, pouch);
@@ -140,7 +126,7 @@ public class BulletRadialMenu extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float ticks_) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float ticks_) {
         super.render(matrixStack, mouseX, mouseY, ticks_);
         int numberOfSlices = containedItems.size();
         if (numberOfSlices == 0)
@@ -167,7 +153,7 @@ public class BulletRadialMenu extends Screen {
         matrixStack.popPose();
 
         matrixStack.pushPose();
-        drawItem(allocateSizes, x, y, radiusIn, radiusOut);
+        drawItem(matrixStack, allocateSizes, x, y, radiusIn, radiusOut);
         matrixStack.popPose();
 
         matrixStack.pushPose();
@@ -175,7 +161,7 @@ public class BulletRadialMenu extends Screen {
         matrixStack.popPose();
     }
 
-    public void drawToolTip(MatrixStack matrixStack, List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
+    public void drawToolTip(PoseStack matrixStack, List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
         int numberOfRings = allocateSizes.size();
         for (int i = 0; i < numberOfRings; i++) {
             //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
@@ -195,13 +181,13 @@ public class BulletRadialMenu extends Screen {
         }
     }
 
-    public void drawItem(List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
-        RenderHelper.turnBackOn();
-        RenderSystem.enableDepthTest();
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(-8, -8, 0);
-        MatrixStack matrixStack = new MatrixStack();
-        matrixStack.translate(0, 0, this.itemRenderer.blitOffset+200);
+    public void drawItem(PoseStack matrix, List<Integer> allocateSizes, int x, int y, float radiusIn, float radiusOut){
+        PoseStack poseStack = RenderSystem.getModelViewStack();
+        poseStack.pushPose();
+        poseStack.mulPoseMatrix(matrix.last().pose());
+        poseStack.translate(-8, -8, 0);
+        RenderSystem.applyModelViewMatrix();
+        poseStack.translate(0, 0, this.itemRenderer.blitOffset+200);
         int numberOfRings = allocateSizes.size();
         for (int i = 0; i < numberOfRings; i++) {
             //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
@@ -220,22 +206,23 @@ public class BulletRadialMenu extends Screen {
                 String string = String.valueOf(value);
                 this.itemRenderer.renderAndDecorateItem(stack, (int)midX, (int)midY);
                 this.itemRenderer.renderGuiItemDecorations(this.font, stack, (int)midX, (int)midY, "");
-                this.font.draw(matrixStack, value > 1 ? string : "", midX+17-font.width(string), midY+9, Color.WHITE.getRGB());
+                this.font.draw(poseStack, value > 1 ? string : "", midX+17-font.width(string), midY+9, Color.WHITE.getRGB());
             }
         }
-        RenderSystem.popMatrix();
-        RenderHelper.turnOff();
+        poseStack.popPose();
+        RenderSystem.applyModelViewMatrix();
     }
 
     public void drawBackground(List<Integer> allocateSizes, int mouseX, int mouseY, int x, int y, float radiusIn, float radiusOut){
-        RenderSystem.disableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        Tessellator tesselator = Tessellator.getInstance();
+        Tesselator tesselator = Tesselator.getInstance();
         BufferBuilder buffer = tesselator.getBuilder();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         int numberOfRings = allocateSizes.size();
         for (int i = 0; i < numberOfRings; i++) {
@@ -279,7 +266,6 @@ public class BulletRadialMenu extends Screen {
         }
 
         tesselator.end();
-        RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();
     }
@@ -316,9 +302,9 @@ public class BulletRadialMenu extends Screen {
     }
 
     @SubscribeEvent
-    public static void overlayEvent(RenderGameOverlayEvent.Pre event){
+    public static void overlayEvent(RenderGameOverlayEvent.PreLayer event){
         if (Minecraft.getInstance().screen instanceof BulletRadialMenu) {
-            if (event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS){
+            if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT){
                 event.setCanceled(true);
             }
         }

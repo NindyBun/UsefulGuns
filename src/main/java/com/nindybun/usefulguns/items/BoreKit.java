@@ -2,29 +2,20 @@ package com.nindybun.usefulguns.items;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.modRegistries.ModItems;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.WorldWorkerManager;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
-import javax.jws.soap.SOAPBinding;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class BoreKit extends Item {
     private final Kit kit;
@@ -38,12 +29,12 @@ public class BoreKit extends Item {
     }
 
     @Override
-    public void onCraftedBy(ItemStack stack, World p_77622_2_, PlayerEntity p_77622_3_) {
+    public void onCraftedBy(ItemStack stack, Level p_77622_2_, Player p_77622_3_) {
         stack.getOrCreateTag().putInt(USES, this.kit.getUses());
     }
 
     @Override
-    public void fillItemCategory(ItemGroup p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
+    public void fillItemCategory(CreativeModeTab p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
         if (this.allowdedIn(p_150895_1_)){
             ItemStack uses = new ItemStack(this);
             uses.getOrCreateTag().putInt(USES, this.kit.uses);
@@ -57,8 +48,8 @@ public class BoreKit extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World p_77624_2_, List<ITextComponent> tooltip, ITooltipFlag p_77624_4_) {
-        tooltip.add(new TranslationTextComponent("tooltip."+UsefulGuns.MOD_ID+".kit_uses", stack.getOrCreateTag().getInt(USES), ((BoreKit)stack.getItem()).kit.getUses()));
+    public void appendHoverText(ItemStack stack, @Nullable Level p_77624_2_, List<Component> tooltip, TooltipFlag p_77624_4_) {
+        tooltip.add(new TranslatableComponent("tooltip."+UsefulGuns.MOD_ID+".kit_uses", stack.getOrCreateTag().getInt(USES), ((BoreKit)stack.getItem()).kit.getUses()));
     }
 
     @Override
@@ -74,15 +65,22 @@ public class BoreKit extends Item {
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public int getBarColor(ItemStack stack) {
+        float max = ((BoreKit)stack.getItem()).kit.getUses();
+        float current = stack.getOrCreateTag().getInt(USES);
+        return Mth.hsvToRgb( Math.max(0.0f, current*13f/max) / 3.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public boolean isBarVisible(ItemStack stack) {
         return true;
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
-        double max = ((BoreKit)stack.getItem()).kit.getUses();
-        double current = stack.getOrCreateTag().getInt(USES);
-        return 1d-current/max;
+    public int getBarWidth(ItemStack stack) {
+        float max = ((BoreKit)stack.getItem()).kit.getUses();
+        float current = stack.getOrCreateTag().getInt(USES);
+        return Math.round((current*13f)/max);
     }
 
     @Override
@@ -97,12 +95,12 @@ public class BoreKit extends Item {
     }
 
     public enum Kit{
-        WOOD(ItemTier.WOOD.getUses()),
-        STONE(ItemTier.STONE.getUses()),
-        IRON(ItemTier.IRON.getUses()),
-        GOLD(ItemTier.GOLD.getUses()),
-        DIAMOND(ItemTier.DIAMOND.getUses()),
-        NETHERITE((int)(ItemTier.NETHERITE.getUses()*1.5), true)
+        WOOD(Tiers.WOOD.getUses()),
+        STONE(Tiers.STONE.getUses()),
+        IRON(Tiers.IRON.getUses()),
+        GOLD(Tiers.GOLD.getUses()),
+        DIAMOND(Tiers.DIAMOND.getUses()),
+        NETHERITE((int)(Tiers.NETHERITE.getUses()*1.5), true)
         ;
 
         private int uses;

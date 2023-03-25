@@ -1,28 +1,29 @@
 package com.nindybun.usefulguns.crafting;
 
+
 import com.google.gson.JsonObject;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public class WrappedRecipe implements IFinishedRecipe {
-    final IFinishedRecipe inner;
-    IRecipeSerializer<?> serializerOverride;
+public class WrappedRecipe implements FinishedRecipe {
+    final FinishedRecipe inner;
+    RecipeSerializer<?> serializerOverride;
 
-    public WrappedRecipe(IFinishedRecipe inner){
+    public WrappedRecipe(FinishedRecipe inner){
         this.inner = inner;
     }
 
-    public WrappedRecipe(IFinishedRecipe inner, IRecipeSerializer<?> serializerOverride){
+    public WrappedRecipe(FinishedRecipe inner, RecipeSerializer<?> serializerOverride){
         this.inner = inner;
         this.serializerOverride = serializerOverride;
     }
 
-    public static Consumer<IFinishedRecipe> Inject(Consumer<IFinishedRecipe> consumer, IRecipeSerializer<?> serializer) {
+    public static Consumer<FinishedRecipe> Inject(Consumer<FinishedRecipe> consumer, RecipeSerializer<?> serializer) {
         return iFinishedRecipe -> consumer.accept(new WrappedRecipe(iFinishedRecipe, serializer));
     }
 
@@ -52,7 +53,7 @@ public class WrappedRecipe implements IFinishedRecipe {
 
     @Override
     @Nonnull
-    public IRecipeSerializer<?> getType() {
+    public RecipeSerializer<?> getType() {
         return serializerOverride != null? serializerOverride:inner.getType();
     }
 

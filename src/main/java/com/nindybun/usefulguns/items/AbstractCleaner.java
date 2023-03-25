@@ -3,23 +3,21 @@ package com.nindybun.usefulguns.items;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
 import com.nindybun.usefulguns.modRegistries.ModItems;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import org.lwjgl.system.CallbackI;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class AbstractCleaner extends Item {
     public AbstractCleaner(int durability) {
@@ -47,32 +45,32 @@ public class AbstractCleaner extends Item {
     }
 
     @Override
-    public void onUseTick(World world, LivingEntity livingEntity, ItemStack cleaner, int tick) {
-        if (livingEntity instanceof PlayerEntity){
-            PlayerEntity player = (PlayerEntity) livingEntity;
+    public void onUsingTick(ItemStack cleaner, LivingEntity livingEntity, int tick) {
+        if (livingEntity instanceof Player){
+            Player player = (Player) livingEntity;
             ItemStack gun = player.getOffhandItem();
             int used = getUseDuration(cleaner) - tick;
-            if (used > 0 && !player.level.isClientSide && gun.getOrCreateTag().getInt(AbstractGun.DIRTYNESS) != 0){
+            if (used > 0 && !player.level.isClientSide && gun.getOrCreateTag().getInt(AbstractGun.DIRTINESS) != 0){
                 if (cleaner.getItem() != ModItems.ULTIMATE_CLEANER.get()) cleaner.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(player.getUsedItemHand()));
-                gun.getOrCreateTag().putInt(AbstractGun.DIRTYNESS, gun.getOrCreateTag().getInt(AbstractGun.DIRTYNESS)-1);
+                gun.getOrCreateTag().putInt(AbstractGun.DIRTINESS, gun.getOrCreateTag().getInt(AbstractGun.DIRTINESS)-1);
             }
         }
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack cleaner = player.getItemInHand(hand);
         ItemStack gun = player.getOffhandItem();
         if (!(gun.getItem() instanceof AbstractGun))
-            return ActionResult.fail(cleaner);
+            return InteractionResultHolder.fail(cleaner);
 
         player.startUsingItem(hand);
-        return ActionResult.consume(cleaner);
+        return InteractionResultHolder.consume(cleaner);
     }
 
     @Override
-    public void appendHoverText(ItemStack p_77624_1_, @Nullable World p_77624_2_, List<ITextComponent> p_77624_3_, ITooltipFlag p_77624_4_) {
-        if (p_77624_1_.getItem() == ModItems.ULTIMATE_CLEANER.get()) p_77624_3_.add(new TranslationTextComponent("tooltip." + UsefulGuns.MOD_ID + ".unbreakable").withStyle(TextFormatting.GOLD));
+    public void appendHoverText(ItemStack p_77624_1_, @Nullable Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_) {
+        if (p_77624_1_.getItem() == ModItems.ULTIMATE_CLEANER.get()) p_77624_3_.add(new TranslatableComponent("tooltip." + UsefulGuns.MOD_ID + ".unbreakable").withStyle(ChatFormatting.GOLD));
     }
 
     @Override

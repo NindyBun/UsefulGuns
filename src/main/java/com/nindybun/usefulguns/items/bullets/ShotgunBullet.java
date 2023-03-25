@@ -1,13 +1,9 @@
 package com.nindybun.usefulguns.items.bullets;
 
 import com.nindybun.usefulguns.entities.BulletEntity;
-import com.nindybun.usefulguns.modRegistries.ModItems;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.DragonFireballEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import org.lwjgl.system.CallbackI;
-
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class ShotgunBullet extends AbstractBullet{
     private int amount;
@@ -27,7 +23,7 @@ public class ShotgunBullet extends AbstractBullet{
     }
 
     @Override
-    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter, ItemStack gun) {
+    public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter, ItemStack gun) {
         BulletEntity entity = super.createProjectile(world, stack, shooter, gun);
         entity.setIgnoreInvulnerability(amount > 1 ? true : false);
         return entity;

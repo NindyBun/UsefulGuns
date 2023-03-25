@@ -1,32 +1,31 @@
 package com.nindybun.usefulguns.data;
 
-import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
-import com.nindybun.usefulguns.util.Util;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import com.nindybun.usefulguns.util.UtilMethods;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class BoreBulletRecipe extends SpecialRecipe {
+public class BoreBulletRecipe extends CustomRecipe {
     public BoreBulletRecipe(ResourceLocation p_i48169_1_) {
         super(p_i48169_1_);
     }
 
     @Override
-    public boolean matches(CraftingInventory p_77569_1_, World p_77569_2_) {
+    public boolean matches(CraftingContainer p_77569_1_, Level p_77569_2_) {
         List<ItemStack> list = new ArrayList<>();
 
         for (int i = 0; i < p_77569_1_.getContainerSize(); i++) {
@@ -47,7 +46,7 @@ public class BoreBulletRecipe extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInventory p_77569_1_) {
+    public ItemStack assemble(CraftingContainer p_77569_1_) {
         List<ItemStack> list = new ArrayList<>();
 
         for (int i = 0; i < p_77569_1_.getContainerSize(); i++) {
@@ -76,7 +75,7 @@ public class BoreBulletRecipe extends SpecialRecipe {
     }
 
     private ItemStack craft(ItemStack stack){
-        ItemStack bore = new ItemStack(Util.createBore(((BoreKit)stack.getItem()).getKit()));
+        ItemStack bore = new ItemStack(UtilMethods.createBore(((BoreKit)stack.getItem()).getKit()));
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
         if (enchantments.containsKey(Enchantments.BLOCK_FORTUNE))
             bore.enchant(Enchantments.BLOCK_FORTUNE, enchantments.get(Enchantments.BLOCK_FORTUNE));
@@ -90,8 +89,9 @@ public class BoreBulletRecipe extends SpecialRecipe {
         return p_194133_1_ >= 2 && p_194133_2_ >= 2;
     }
 
+
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return ModRecipes.BORE_BULLET_RECIPE.get();
     }
 }

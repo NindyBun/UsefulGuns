@@ -9,11 +9,11 @@ import com.nindybun.usefulguns.items.bullets.*;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
 import com.nindybun.usefulguns.items.guns.AbstractMachineGun;
 import com.nindybun.usefulguns.items.guns.AbstractShotgun;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ModItems {
     public static final Item.Properties ITEM_GROUP = (new Item.Properties()).tab(UsefulGuns.itemGroup);

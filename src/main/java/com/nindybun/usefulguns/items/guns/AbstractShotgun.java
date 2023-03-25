@@ -5,14 +5,11 @@ import com.nindybun.usefulguns.entities.BulletEntity;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.items.bullets.MiningBullet;
 import com.nindybun.usefulguns.items.bullets.ShotgunBullet;
-import com.nindybun.usefulguns.modRegistries.ModItems;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
@@ -29,7 +26,7 @@ public class AbstractShotgun extends AbstractGun{
     }
 
     @Override
-    public int shoot(IItemHandler handler, ItemStack ammo, World world, PlayerEntity player, ItemStack gun){
+    public int shoot(IItemHandler handler, ItemStack ammo, Level world, Player player, ItemStack gun){
         for (int i = 0; i < handler.getSlots(); i++){
             ItemStack stack = handler.getStackInSlot(i).copy().split(1);
             if (ammo.equals(stack, false)) {
@@ -57,7 +54,7 @@ public class AbstractShotgun extends AbstractGun{
     }
 
     @Override
-    protected void addExtraTooltip(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip) {
-        tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID + ".shotgun.shoot"));
+    protected void addExtraTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
+        tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".shotgun.shoot"));
     }
 }

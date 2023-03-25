@@ -1,29 +1,27 @@
 package com.nindybun.usefulguns.data;
 
-import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.items.BoreKit;
-import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
-import com.nindybun.usefulguns.util.Util;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import com.nindybun.usefulguns.util.UtilMethods;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoreKitRecipe extends SpecialRecipe {
+public class BoreKitRecipe extends CustomRecipe {
     public BoreKitRecipe(ResourceLocation p_i48169_1_) {
         super(p_i48169_1_);
     }
 
     @Override
-    public boolean matches(CraftingInventory p_77569_1_, World p_77569_2_) {
+    public boolean matches(CraftingContainer p_77569_1_, Level p_77569_2_) {
         List<ItemStack> list = new ArrayList<>();
         if (p_77569_1_.getWidth() == 3 && p_77569_1_.getHeight() >= 2){
             for (int i = 0; i < p_77569_1_.getContainerSize(); i++) {
@@ -39,8 +37,8 @@ public class BoreKitRecipe extends SpecialRecipe {
                     ItemStack stack4 = list.get(4);
                     ItemStack stack5 = list.get(5);
 
-                    if (    stack1.getItem() == Items.FLINT && Tags.Items.STONE.contains(stack3.getItem())
-                            && Tags.Items.STONE.contains(stack4.getItem()) && Tags.Items.STONE.contains(stack5.getItem())) {
+                    if (    stack1.getItem() == Items.FLINT && UtilMethods.doesItemContainInItemTags(Tags.Items.STONE, stack3.getItem())
+                            && UtilMethods.doesItemContainInItemTags(Tags.Items.STONE, stack4.getItem()) && UtilMethods.doesItemContainInItemTags(Tags.Items.STONE, stack5.getItem())) {
                     }else
                         return false;
 
@@ -48,7 +46,7 @@ public class BoreKitRecipe extends SpecialRecipe {
                     ItemStack stack2 = list.get(2);
                     boolean found = false;
                     for (BoreKit.Kit kit : BoreKit.Kit.values()){
-                        if (Util.getMaterial(kit, stack0) == Util.getMaterial(kit, stack2) && Util.getMaterial(kit, stack0) == kit.ordinal())
+                        if (UtilMethods.getMaterial(kit, stack0) == UtilMethods.getMaterial(kit, stack2) && UtilMethods.getMaterial(kit, stack0) == kit.ordinal())
                             found = true;
                     }
                     if (!found)
@@ -61,7 +59,7 @@ public class BoreKitRecipe extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInventory p_77569_1_) {
+    public ItemStack assemble(CraftingContainer p_77569_1_) {
         List<ItemStack> list = new ArrayList<>();
         if (p_77569_1_.getWidth() == 3 && p_77569_1_.getHeight() >= 2){
             for (int i = 0; i < p_77569_1_.getContainerSize(); i++) {
@@ -77,8 +75,8 @@ public class BoreKitRecipe extends SpecialRecipe {
                     ItemStack stack4 = list.get(4);
                     ItemStack stack5 = list.get(5);
 
-                    if (    stack1.getItem() == Items.FLINT && Tags.Items.STONE.contains(stack3.getItem())
-                            && Tags.Items.STONE.contains(stack4.getItem()) && Tags.Items.STONE.contains(stack5.getItem())) {
+                    if (    stack1.getItem() == Items.FLINT && UtilMethods.doesItemContainInItemTags(Tags.Items.STONE, stack3.getItem())
+                            && UtilMethods.doesItemContainInItemTags(Tags.Items.STONE, stack4.getItem()) && UtilMethods.doesItemContainInItemTags(Tags.Items.STONE, stack5.getItem())) {
                     }else
                         return ItemStack.EMPTY;
 
@@ -86,7 +84,7 @@ public class BoreKitRecipe extends SpecialRecipe {
                     ItemStack stack2 = list.get(2);
                     boolean found = false;
                     for (BoreKit.Kit kit : BoreKit.Kit.values()){
-                        if (Util.getMaterial(kit, stack0) == Util.getMaterial(kit, stack2) && Util.getMaterial(kit, stack0) == kit.ordinal())
+                        if (UtilMethods.getMaterial(kit, stack0) == UtilMethods.getMaterial(kit, stack2) && UtilMethods.getMaterial(kit, stack0) == kit.ordinal())
                             found = true;
                     }
                     if (!found)
@@ -108,8 +106,8 @@ public class BoreKitRecipe extends SpecialRecipe {
             ItemStack stack2 = list.get(2);
 
             for (BoreKit.Kit kit : BoreKit.Kit.values()){
-                if (/*Util.getMaterial(kit, stack0) == Util.getMaterial(kit, stack2) && */Util.getMaterial(kit, stack0) == kit.ordinal()){
-                    ItemStack borekit = new ItemStack(Util.createKit(kit));
+                if (/*Util.getMaterial(kit, stack0) == Util.getMaterial(kit, stack2) && */UtilMethods.getMaterial(kit, stack0) == kit.ordinal()){
+                    ItemStack borekit = new ItemStack(UtilMethods.createKit(kit));
                     borekit.getOrCreateTag().putInt(BoreKit.USES, kit.getUses());
                     return borekit;
                 }
@@ -124,7 +122,7 @@ public class BoreKitRecipe extends SpecialRecipe {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return ModRecipes.BOREKIT_RECIPE.get();
     }
 }

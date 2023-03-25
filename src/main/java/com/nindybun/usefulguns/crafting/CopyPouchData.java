@@ -3,14 +3,14 @@ package com.nindybun.usefulguns.crafting;
 import com.google.gson.JsonObject;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -27,7 +27,7 @@ public class CopyPouchData extends ShapedRecipe {
 
     @Override
     @Nonnull
-    public ItemStack assemble(@Nonnull CraftingInventory inv) {
+    public ItemStack assemble(@Nonnull CraftingContainer inv) {
         final ItemStack craftingResult = super.assemble(inv);
         TargetNBTIngredient donorIngredient = null;
         ItemStack dataSource = ItemStack.EMPTY;
@@ -57,22 +57,22 @@ public class CopyPouchData extends ShapedRecipe {
 
     @Override
     @Nonnull
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return ModRecipes.COPY_RECIPE.get();
     }
 
-    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<CopyPouchData> {
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<CopyPouchData> {
         @Nullable
         @Override
-        public CopyPouchData fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull PacketBuffer buffer) {
-            return new CopyPouchData(IRecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer));
+        public CopyPouchData fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
+            return new CopyPouchData(RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer));
         }
 
         @Override
         @Nonnull
         public CopyPouchData fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
             try {
-                return new CopyPouchData(IRecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json));
+                return new CopyPouchData(RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json));
             }
             catch (Exception exception) {
                 UsefulGuns.LOGGER.info("Error reading CopyPouch Recipe from packet: ", exception);
@@ -81,9 +81,9 @@ public class CopyPouchData extends ShapedRecipe {
         }
 
         @Override
-        public void toNetwork(@Nonnull PacketBuffer buffer, @Nonnull CopyPouchData recipe) {
+        public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull CopyPouchData recipe) {
             try {
-                IRecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe);
+                RecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe);
             }
             catch (Exception exception) {
                 UsefulGuns.LOGGER.info("Error writing CopyPouch Recipe to packet: ", exception);

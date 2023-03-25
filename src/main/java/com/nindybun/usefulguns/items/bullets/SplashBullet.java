@@ -2,17 +2,17 @@ package com.nindybun.usefulguns.items.bullets;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.entities.BulletEntity;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,7 +28,7 @@ public class SplashBullet extends AbstractBullet{
     }
 
     @Override
-    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter, ItemStack gun) {
+    public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter, ItemStack gun) {
         BulletEntity entity = super.createProjectile(world, stack, shooter, gun);
         entity.setEffectsFromItem(stack);
         return entity;
@@ -40,9 +40,9 @@ public class SplashBullet extends AbstractBullet{
     }
 
     @Override
-    public void fillItemCategory(ItemGroup p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
+    public void fillItemCategory(CreativeModeTab p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
         if (this.allowdedIn(p_150895_1_)) {
-            for(Potion potion : ForgeRegistries.POTION_TYPES) {
+            for(Potion potion : ForgeRegistries.POTIONS) {
                 if (potion != Potions.EMPTY) {
                     p_150895_2_.add(PotionUtils.setPotion(new ItemStack(this), potion));
                 }
@@ -57,9 +57,9 @@ public class SplashBullet extends AbstractBullet{
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack p_77624_1_, @Nullable World p_77624_2_, List<ITextComponent> tooltip, ITooltipFlag p_77624_4_) {
+    public void appendHoverText(ItemStack p_77624_1_, @Nullable Level p_77624_2_, List<Component> tooltip, TooltipFlag p_77624_4_) {
         PotionUtils.addPotionTooltip(p_77624_1_, tooltip, 0.25F);
-        tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.damage", ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(this.damage)));
+        tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.damage", ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(this.damage)));
 
     }
 

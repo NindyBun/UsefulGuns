@@ -4,20 +4,15 @@ import com.google.gson.JsonObject;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.crafting.TargetNBTIngredient;
 import com.nindybun.usefulguns.crafting.WrappedRecipe;
-import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModRecipes;
-import com.nindybun.usefulguns.util.Util;
-import net.minecraft.advancements.criterion.InventoryChangeTrigger;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.ShapelessRecipe;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
@@ -32,19 +27,20 @@ public class Recipes extends RecipeProvider {
     }
 
     @Override
-    protected void saveAdvancement(DirectoryCache p_208310_0_, JsonObject p_208310_1_, Path p_208310_2_) {
+    protected void saveAdvancement(HashCache p_126014_, JsonObject p_126015_, Path p_126016_) {
+        super.saveAdvancement(p_126014_, p_126015_, p_126016_);
     }
 
     @Override
-    protected void buildShapelessRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
-        InventoryChangeTrigger.Instance nul = has(Items.AIR);
+    protected void buildCraftingRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
+        InventoryChangeTrigger.TriggerInstance nul = has(Items.AIR);
 
-        CustomRecipe.special(ModRecipes.TIPPED_BULLET_RECIPE.get()).save(consumer, "tipped_bullet");
-        CustomRecipe.special(ModRecipes.SPLASH_BULLET_RECIPE.get()).save(consumer, "splash_bullet");
-        CustomRecipe.special(ModRecipes.LINGERING_BULLET_RECIPE.get()).save(consumer, "lingering_bullet");
-        CustomRecipe.special(ModRecipes.BORE_BULLET_RECIPE.get()).save(consumer, "bore_bullet");
-        CustomRecipe.special(ModRecipes.BOREKIT_REPAIR_RECIPE.get()).save(consumer, "borekit_repair");
-        CustomRecipe.special(ModRecipes.BOREKIT_RECIPE.get()).save(consumer, "borekit");
+        CustomRecipeHandler.special(ModRecipes.TIPPED_BULLET_RECIPE.get()).save(consumer, "tipped_bullet");
+        CustomRecipeHandler.special(ModRecipes.SPLASH_BULLET_RECIPE.get()).save(consumer, "splash_bullet");
+        CustomRecipeHandler.special(ModRecipes.LINGERING_BULLET_RECIPE.get()).save(consumer, "lingering_bullet");
+        CustomRecipeHandler.special(ModRecipes.BORE_BULLET_RECIPE.get()).save(consumer, "bore_bullet");
+        CustomRecipeHandler.special(ModRecipes.BOREKIT_REPAIR_RECIPE.get()).save(consumer, "borekit_repair");
+        CustomRecipeHandler.special(ModRecipes.BOREKIT_RECIPE.get()).save(consumer, "borekit");
 
         ShapelessRecipeBuilder.shapeless(Items.GUNPOWDER, 8)
                 .requires(Items.CHARCOAL)
@@ -378,24 +374,24 @@ public class Recipes extends RecipeProvider {
 
 }
 
-class CustomRecipe {
-    private final SpecialRecipeSerializer<?> serializer;
+class CustomRecipeHandler {
+    private final RecipeSerializer<?> serializer;
 
-    public CustomRecipe(SpecialRecipeSerializer<?> p_i50786_1_) {
+    public CustomRecipeHandler(RecipeSerializer<?> p_i50786_1_) {
         this.serializer = p_i50786_1_;
     }
 
-    public static CustomRecipe special(SpecialRecipeSerializer<?> p_218656_0_) {
-        return new CustomRecipe(p_218656_0_);
+    public static CustomRecipeHandler special(RecipeSerializer<?> p_218656_0_) {
+        return new CustomRecipeHandler(p_218656_0_);
     }
 
-    public void save(Consumer<IFinishedRecipe> p_200499_1_, final String p_200499_2_) {
-        p_200499_1_.accept(new IFinishedRecipe() {
+    public void save(Consumer<FinishedRecipe> p_200499_1_, final String p_200499_2_) {
+        p_200499_1_.accept(new FinishedRecipe() {
             public void serializeRecipeData(JsonObject p_218610_1_) {
             }
 
-            public IRecipeSerializer<?> getType() {
-                return CustomRecipe.this.serializer;
+            public RecipeSerializer<?> getType() {
+                return CustomRecipeHandler.this.serializer;
             }
 
             public ResourceLocation getId() {

@@ -2,22 +2,22 @@ package com.nindybun.usefulguns.jeiPlugin;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.modRegistries.ModItems;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.ICraftingRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.stream.Stream;
 
 public class LingeringBulletRecipeMaker {
-    public static Stream<ICraftingRecipe> createRecipes() {
+    public static Stream<CraftingRecipe> createRecipes() {
         String group = "jei.lingering.bullet";
-        return ForgeRegistries.POTION_TYPES.getValues().stream()
+        return ForgeRegistries.POTIONS.getValues().stream()
                 .map(potion -> {
                     ItemStack bulletStack = new ItemStack(ModItems.GLASS_BULLET.get());
                     ItemStack lingeringPotion = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), potion);

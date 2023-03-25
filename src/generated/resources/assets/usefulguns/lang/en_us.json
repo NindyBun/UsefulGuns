@@ -136,6 +136,7 @@
   "tooltip.usefulguns.gun.ignore_invulnerability": "Projectiles ignore invulnerability time",
   "tooltip.usefulguns.kit_uses": "\u00A77Uses: \u00A7f%s / %s\u00A7r",
   "tooltip.usefulguns.machinegun.shoot": "Slows down the user",
+  "tooltip.usefulguns.pouch.container.max": "Unique Bullet Types Exceed \u00A7%s! Cannot Insert Anymore!",
   "tooltip.usefulguns.selected_bullet": "\u00A73Selected bullet: ",
   "tooltip.usefulguns.shift": "\u00A77Hold \u00A7fSHIFT\u00A77 for stats\u00A7r",
   "tooltip.usefulguns.shotgun.shoot": "Shoots multiple projectiles",

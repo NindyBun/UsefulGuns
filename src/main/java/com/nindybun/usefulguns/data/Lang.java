@@ -6,7 +6,6 @@ import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModSounds;
 import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -149,6 +148,7 @@ public class Lang extends LanguageProvider {
         add(ModItems.LINGERING_BULLET.get().getDescriptionId()+".effect.turtle_master", "Lingering Bullet of the Turtle Master");
         add(ModItems.LINGERING_BULLET.get().getDescriptionId()+".effect.slow_falling", "Lingering Bullet of Slow Falling");
 
+        add("tooltip.usefulguns.pouch.container.max", "Unique Bullet Types Exceed \u00A7%s! Cannot Insert Anymore!");
         add("tooltip.usefulguns.shotgun.shoot", "Shoots multiple projectiles");
         add("tooltip.usefulguns.machinegun.shoot", "Slows down the user");
         add("tooltip.usefulguns.shift", "\u00A77Hold \u00A7fSHIFT\u00A77 for stats\u00A7r");

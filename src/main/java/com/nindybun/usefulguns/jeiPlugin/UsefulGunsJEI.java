@@ -5,32 +5,25 @@ import com.nindybun.usefulguns.data.*;
 import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.items.bullets.MiningBullet;
 import com.nindybun.usefulguns.modRegistries.ModItems;
-import com.nindybun.usefulguns.modRegistries.ModRecipes;
-import com.nindybun.usefulguns.util.Util;
+import com.nindybun.usefulguns.util.UtilMethods;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.constants.VanillaRecipeCategoryUid;
-import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.helpers.IJeiHelpers;
+import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
-import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
-import mezz.jei.api.registration.IModIngredientRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.EnchantmentNameParts;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -54,8 +47,8 @@ public class UsefulGunsJEI implements IModPlugin {
             Potion potionType = PotionUtils.getPotion(itemStack);
             String potionTypeString = potionType.getName("");
             StringBuilder stringBuilder = new StringBuilder(potionTypeString);
-            List<EffectInstance> effects = PotionUtils.getMobEffects(itemStack);
-            for (EffectInstance effect : effects) {
+            List<MobEffectInstance> effects = PotionUtils.getMobEffects(itemStack);
+            for (MobEffectInstance effect : effects) {
                 stringBuilder.append(";").append(effect);
             }
             return stringBuilder.toString();
@@ -84,19 +77,19 @@ public class UsefulGunsJEI implements IModPlugin {
             return level+"";
         };
 
-        registration.registerSubtypeInterpreter(ModItems.TIPPED_BULLET.get(), potionProvider);
-        registration.registerSubtypeInterpreter(ModItems.SPLASH_BULLET.get(), potionProvider);
-        registration.registerSubtypeInterpreter(ModItems.LINGERING_BULLET.get(), potionProvider);
+        registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.TIPPED_BULLET.get(), potionProvider);
+        registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.SPLASH_BULLET.get(), potionProvider);
+        registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.LINGERING_BULLET.get(), potionProvider);
         for (BoreKit.Kit kit : BoreKit.Kit.values()) {
-            registration.registerSubtypeInterpreter(Util.createKit(kit), borekitProvider);
-            registration.registerSubtypeInterpreter(Util.createBore(kit), boreEnchantmentProvider);
+            registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, UtilMethods.createKit(kit), borekitProvider);
+            registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, UtilMethods.createBore(kit), boreEnchantmentProvider);
         }
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        Map<Class<? extends ICraftingRecipe>, Supplier<Stream<ICraftingRecipe>>> replacers = new IdentityHashMap<>();
-        Collection<ICraftingRecipe> recipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(IRecipeType.CRAFTING);
+        Map<Class<? extends CraftingRecipe>, Supplier<Stream<CraftingRecipe>>> replacers = new IdentityHashMap<>();
+        Collection<CraftingRecipe> recipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
         replacers.put(TippedBulletRecipe.class, TippedBulletRecipeMaker::createRecipes);
         replacers.put(SplashBulletRecipe.class, SplashBulletRecipeMaker::createRecipes);
         replacers.put(LingeringBulletRecipe.class, LingeringBulletRecipeMaker::createRecipes);
@@ -104,15 +97,15 @@ public class UsefulGunsJEI implements IModPlugin {
         replacers.put(BoreKitRepairRecipe.class, BoreKitRepairRecipeMaker::createRecipes);
         replacers.put(BoreKitRecipe.class, BoreKitRecipeMaker::createRecipes);
 
-        List<ICraftingRecipe> recipeList = recipes.stream()
-                                                .map(ICraftingRecipe::getClass)
+        List<CraftingRecipe> recipeList = recipes.stream()
+                                                .map(CraftingRecipe::getClass)
                                                 .distinct()
                                                 .filter(replacers::containsKey)
                                                 .limit(replacers.size())
                                                 .map(replacers::get)
                                                 .flatMap(Supplier::get)
                                                 .collect(Collectors.toList());
-        registration.addRecipes(recipeList, VanillaRecipeCategoryUid.CRAFTING);
+        registration.addRecipes(RecipeTypes.CRAFTING, recipeList);
     }
 
 }

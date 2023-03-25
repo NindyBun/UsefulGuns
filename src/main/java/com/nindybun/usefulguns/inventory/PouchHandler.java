@@ -1,16 +1,12 @@
 package com.nindybun.usefulguns.inventory;
 
-import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.items.AbstractCleaner;
 import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.modRegistries.ModItems;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.NonNullList;
-import net.minecraftforge.common.util.Constants;
+import com.nindybun.usefulguns.network.PacketHandler;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;

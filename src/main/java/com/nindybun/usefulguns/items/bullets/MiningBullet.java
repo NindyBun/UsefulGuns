@@ -1,20 +1,15 @@
 package com.nindybun.usefulguns.items.bullets;
 
 import com.nindybun.usefulguns.entities.BulletEntity;
-import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
-import com.nindybun.usefulguns.items.guns.AbstractMachineGun;
-import com.nindybun.usefulguns.items.guns.AbstractShotgun;
-import com.nindybun.usefulguns.modRegistries.ModItems;
-import com.nindybun.usefulguns.util.Util;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -31,7 +26,7 @@ public class MiningBullet extends AbstractBullet{
     }
 
     @Override
-    public void fillItemCategory(ItemGroup p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
+    public void fillItemCategory(CreativeModeTab p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
         if (this.allowdedIn(p_150895_1_)){
                 ItemStack stack0 = new ItemStack(this);
                 p_150895_2_.add(stack0);
@@ -69,20 +64,20 @@ public class MiningBullet extends AbstractBullet{
     }
 
     @Override
-    public BulletEntity createProjectile(World world, ItemStack stack, LivingEntity shooter, ItemStack gun) {
+    public BulletEntity createProjectile(Level world, ItemStack stack, LivingEntity shooter, ItemStack gun) {
         BulletEntity entity = super.createProjectile(world, stack, shooter, gun);
         entity.setPierce(1);
         entity.setMiningArea(((AbstractGun)gun.getItem()).getType().getSize());
         return entity;
     }
 
-    public static float getEnchantmentID(ItemStack stack, @Nullable World world, @Nullable LivingEntity livingEntity){
+    public static float getEnchantmentID(ItemStack stack, @Nullable Level world, @Nullable LivingEntity livingEntity, int entityid){
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
-        int id = 0;
+        float id = 0.0f;
         if (enchantments.containsKey(Enchantments.BLOCK_FORTUNE))
-            id = enchantments.get(Enchantments.BLOCK_FORTUNE);
+            id = ((float)enchantments.get(Enchantments.BLOCK_FORTUNE))/10f;
         else if (enchantments.containsKey(Enchantments.SILK_TOUCH))
-            id = 4;
+            id = 0.4f;
         return id;
     }
 }

@@ -2,44 +2,30 @@ package com.nindybun.usefulguns.items.guns;
 
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.entities.BulletEntity;
-import com.nindybun.usefulguns.inventory.PouchData;
-import com.nindybun.usefulguns.inventory.PouchHandler;
-import com.nindybun.usefulguns.inventory.PouchManager;
 import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
-import com.nindybun.usefulguns.items.bullets.ShotgunBullet;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModSounds;
-import com.nindybun.usefulguns.util.Util;
-import net.minecraft.block.SoundType;
-import net.minecraft.client.audio.SoundSource;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.*;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import com.nindybun.usefulguns.util.UtilMethods;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AbstractGun extends Item {
@@ -53,7 +39,7 @@ public class AbstractGun extends Item {
     private final boolean ignoreInvulnerability = false;
     protected Supplier<SoundEvent> fireSound = ModSounds.PISTOL::get;
     protected Supplier<SoundEvent> drySound = ModSounds.DRY_FIRED::get;
-    public static final String DIRTYNESS = "Durability";
+    public static final String DIRTINESS = "Durability";
 
     public enum Type{
         /*
@@ -86,19 +72,20 @@ public class AbstractGun extends Item {
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public boolean isBarVisible(ItemStack stack) {
         return true;
     }
 
     @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack) {
-        return MathHelper.hsvToRgb(Math.min(this.dirtyness, (float) (getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
+    public int getBarColor(ItemStack stack) {
+        float curr = stack.getOrCreateTag().getInt(DIRTINESS);
+        return Mth.hsvToRgb(Math.min(this.dirtyness, 1-curr/(float) this.dirtyness) / 3.0F, 1.0F, 1.0F);
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
-        double curr = stack.getOrCreateTag().getInt(DIRTYNESS);
-        return 1d-curr/(double) this.dirtyness;
+    public int getBarWidth(ItemStack stack) {
+        int curr = stack.getOrCreateTag().getInt(DIRTINESS);
+        return Math.round((float)curr*13.0f/ (float)this.dirtyness);
     }
 
     public AbstractGun setType(Type type){
@@ -119,7 +106,7 @@ public class AbstractGun extends Item {
         return this;
     }
 
-    public int shoot(IItemHandler handler, ItemStack ammo, World world, PlayerEntity player, ItemStack gun){
+    public int shoot(IItemHandler handler, ItemStack ammo, Level world, Player player, ItemStack gun){
         for (int i = 0; i < handler.getSlots(); i++){
             ItemStack stack = handler.getStackInSlot(i).copy().split(1);
             if (ammo.equals(stack, false) && ammo.getItem() instanceof AbstractBullet) {
@@ -135,88 +122,90 @@ public class AbstractGun extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player playerEntity, InteractionHand hand) {
         ItemStack gun = playerEntity.getItemInHand(hand);
-        ItemStack pouch = Util.locateAndGetPouch(playerEntity);
+        ItemStack pouch = UtilMethods.locateAndGetPouch(playerEntity);
         if (pouch.isEmpty())
-            return ActionResult.fail(gun);
-        if (gun.getOrCreateTag().getInt(DIRTYNESS) == this.dirtyness && !playerEntity.level.isClientSide){
-            playerEntity.sendMessage(new StringTextComponent("Gun's dirty! Go clean it! ;-;"), net.minecraft.util.Util.NIL_UUID);
-            return ActionResult.fail(gun);
+            return InteractionResultHolder.fail(gun);
+        if (gun.getOrCreateTag().getInt(DIRTINESS) == this.dirtyness && !playerEntity.level.isClientSide){
+            playerEntity.sendMessage(new TextComponent("Gun's dirty! Go clean it! ;-;"), net.minecraft.Util.NIL_UUID);
+            return InteractionResultHolder.fail(gun);
         }
         if (!world.isClientSide){
             ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
             if (bulletInfo.getItem() == Items.AIR){
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
-                return ActionResult.fail(gun);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+                return InteractionResultHolder.fail(gun);
             }
             LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
             if (optional.isPresent()) {
                 IItemHandler handler = optional.resolve().get();
                 int shot = shoot(handler, bulletInfo, world, playerEntity, gun);
                 if (shot != -1){
-                    world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+                    world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                     handler.extractItem(shot, 1, false);
-                    gun.getOrCreateTag().putInt(DIRTYNESS, gun.getOrCreateTag().getInt(DIRTYNESS)+1);
+                    gun.getOrCreateTag().putInt(DIRTINESS, gun.getOrCreateTag().getInt(DIRTINESS)+1);
                 } else
-                    world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundCategory.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
+                    world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
             }
         }
         playerEntity.getCooldowns().addCooldown(this, getFireDelay(gun));
-        return ActionResult.consume(gun);
+        return InteractionResultHolder.consume(gun);
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean held) {
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean held) {
         //An annoying hack to update the pouch so that the radial menu can see among other classes
         super.inventoryTick(stack, world, entity, slot, held);
-        PlayerEntity player = null;
-        if (entity instanceof PlayerEntity) player = (PlayerEntity) entity;
+        Player player = null;
+        if (entity instanceof Player) player = (Player) entity;
         if (!held || player == null)
             return;
-        ItemStack pouch = Util.locateAndGetPouch(player);
-        if (pouch == null)
-            return;
-        AbstractPouch.getData(pouch);
+        if (!world.isClientSide){
+            ItemStack pouch = UtilMethods.locateAndGetPouch(player);
+            if (pouch == null)
+                return;
+            AbstractPouch.getData(pouch);
+        }
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         ItemStack bulletInfo = ItemStack.of(stack.getOrCreateTag().getCompound("Bullet_Info"));
-        if (bulletInfo.getItem() != Items.AIR) tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".selected_bullet")
-                .append(new TranslationTextComponent(bulletInfo.getHoverName().getString()).withStyle(TextFormatting.WHITE))
-                .append(new TranslationTextComponent(bulletInfo.isEnchanted() ? "tooltip."+ UsefulGuns.MOD_ID +".bullet.enchanted" : "").withStyle(TextFormatting.GOLD)));
-        tooltip.add(new TranslationTextComponent("tooltip."+UsefulGuns.MOD_ID+".dirtyness", (stack.getOrCreateTag().getInt(DIRTYNESS)*100)/this.dirtyness).append(new StringTextComponent(" \u00A77%")));
+        if (bulletInfo.getItem() != Items.AIR) tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".selected_bullet")
+                .append(new TranslatableComponent(bulletInfo.getHoverName().getString()).withStyle(ChatFormatting.WHITE))
+                .append(new TranslatableComponent(bulletInfo.isEnchanted() ? "tooltip."+ UsefulGuns.MOD_ID +".bullet.enchanted" : "").withStyle(ChatFormatting.GOLD)));
+        tooltip.add(new TranslatableComponent("tooltip."+UsefulGuns.MOD_ID+".dirtyness", (stack.getOrCreateTag().getInt(DIRTINESS)*100)/this.dirtyness).append(new TextComponent(" \u00A77%")));
 
         if (Screen.hasShiftDown()){
             double damageMultiplier = getDamageMultipier(stack);
             double damageBonus = getBonusDamage(stack);
 
             if (damageMultiplier != 1) {
-                if (damageBonus != 0) tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.both" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageMultiplier), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageBonus)));
-                else tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.mult" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageMultiplier)));
+                if (damageBonus != 0) tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.both" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageMultiplier), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageBonus)));
+                else tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.mult" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageMultiplier)));
             }
-            else if (damageBonus != 0) tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.flat" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageBonus)));
+            else if (damageBonus != 0) tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.flat" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageBonus)));
 
 
             int fireDelay = getFireDelay(stack);
-            tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID + ".gun.firerate" + (isFireDelayModified(stack) ? ".modified" : ""), (60*20)/fireDelay));
+            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".gun.firerate" + (isFireDelayModified(stack) ? ".modified" : ""), (60*20)/fireDelay));
 
             if (ignoresInvulnerability(stack))
-                tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID + ".gun.ignores_invulnerability").withStyle(TextFormatting.GRAY));
+                tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".gun.ignores_invulnerability").withStyle(ChatFormatting.GRAY));
 
         }else{
-            tooltip.add(new TranslationTextComponent("tooltip."+ UsefulGuns.MOD_ID + ".shift"));
+            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".shift"));
         }
     }
 
-    protected void addExtraTooltip(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip){
+    protected void addExtraTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip){
 
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
-        return UseAction.BOW;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BOW;
     }
 
     public static int getBonusDamage(ItemStack stack){

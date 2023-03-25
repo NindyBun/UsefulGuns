@@ -3,44 +3,36 @@ package com.nindybun.usefulguns.gui;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.inventory.PouchHandler;
 import com.nindybun.usefulguns.modRegistries.ModContainers;
-import com.nindybun.usefulguns.items.AbstractPouch;
 import com.nindybun.usefulguns.items.PouchTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraft.Util;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-public class PouchContainer extends Container {
+public class PouchContainer extends AbstractContainerMenu {
     public final PouchHandler handler;
     private final PouchTypes type;
     private final UUID uuid;
 
-    public static PouchContainer fromNetwork(int windowId, PlayerInventory playerInventory, PacketBuffer data){
+    public static PouchContainer fromNetwork(int windowId, Inventory playerInventory, FriendlyByteBuf data){
         UUID uuidIn = data.readUUID();
         PouchTypes type = PouchTypes.values()[data.readInt()];
         return new PouchContainer(windowId, playerInventory, uuidIn, type, new PouchHandler(type.slots));
     }
 
-    public PouchContainer(int windowId, PlayerInventory playerInventory, UUID uuidIn, PouchTypes type, PouchHandler handler){
+    public PouchContainer(int windowId, Inventory playerInventory, UUID uuidIn, PouchTypes type, PouchHandler handler){
         super(ModContainers.POUCH_CONTAINER.get(), windowId);
 
         this.uuid = uuidIn;
@@ -56,21 +48,21 @@ public class PouchContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
     @Override
     @Nonnull
-    public ItemStack clicked(int slot, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull PlayerEntity player) {
+    public void clicked(int slot, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull Player player) {
         if (clickTypeIn == ClickType.SWAP)
-            return ItemStack.EMPTY;
+            return;
         if (slot >= 0) getSlot(slot).container.setChanged();
-        return super.clicked(slot, dragType, clickTypeIn, player);
+        super.clicked(slot, dragType, clickTypeIn, player);
     }
 
 
-    private void addPlayerSlots(PlayerInventory playerInventory) {
+    private void addPlayerSlots(Inventory playerInventory) {
         //Hotbar
         for (int col = 0; col < 9; col++) {
             int x = type.hotbarX + col * 18;
@@ -141,22 +133,22 @@ public class PouchContainer extends Container {
 
     @Override
     @Nonnull
-    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(@Nonnull Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {
             int bagslotcount = this.slots.size();
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
-            if (index < playerIn.inventory.items.size()) { //Inserts into bag
-                if (!this.moveItemStackTo(itemstack1, playerIn.inventory.items.size(), bagslotcount, false)){
+            if (index < playerIn.getInventory().items.size()) { //Inserts into bag
+                if (!this.moveItemStackTo(itemstack1, playerIn.getInventory().items.size(), bagslotcount, false)){
                     if (checkInsert(itemstack1)) {
                     }else if (!playerIn.level.isClientSide){
-                        playerIn.sendMessage(new StringTextComponent("Unique ammo types exceed "+ PouchHandler.maxTypes +"! Cannot insert anymore!"), Util.NIL_UUID);
+                        playerIn.sendMessage(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID+".pouch.container.max", PouchHandler.maxTypes), Util.NIL_UUID);
                     }
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(itemstack1, 0, playerIn.inventory.items.size(), false)) { //Inserts into player
+            } else if (!this.moveItemStackTo(itemstack1, 0, playerIn.getInventory().items.size(), false)) { //Inserts into player
                 return ItemStack.EMPTY;
             }
             if (itemstack1.isEmpty()) slot.set(ItemStack.EMPTY); else slot.setChanged();
