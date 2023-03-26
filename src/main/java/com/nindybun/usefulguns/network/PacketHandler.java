@@ -1,9 +1,7 @@
 package com.nindybun.usefulguns.network;
 
 import com.nindybun.usefulguns.UsefulGuns;
-import com.nindybun.usefulguns.network.packets.PacketSaveSelection;
-import com.nindybun.usefulguns.network.packets.PacketSyncPouchData;
-import com.nindybun.usefulguns.network.packets.PacketSyncToClientPouchData;
+import com.nindybun.usefulguns.network.packets.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;
@@ -27,8 +25,8 @@ public class PacketHandler {
     public static void register(){
         int id = 0;
         INSTANCE.registerMessage(id++, PacketSaveSelection.class, PacketSaveSelection::encode, PacketSaveSelection::decode, PacketSaveSelection.Handler::handle);
-        INSTANCE.registerMessage(id++, PacketSyncPouchData.class, PacketSyncPouchData::encode, PacketSyncPouchData::decode, PacketSyncPouchData.Handler::handle);
-        INSTANCE.registerMessage(id++, PacketSyncToClientPouchData.class, PacketSyncToClientPouchData::encode, PacketSyncToClientPouchData::decode, PacketSyncToClientPouchData.Handler::handle);
+//        INSTANCE.registerMessage(id++, PacketSyncPouchData.class, PacketSyncPouchData::encode, PacketSyncPouchData::decode, PacketSyncPouchData.Handler::handle);
+//        INSTANCE.registerMessage(id++, PacketSyncToClientPouchData.class, PacketSyncToClientPouchData::encode, PacketSyncToClientPouchData::decode, PacketSyncToClientPouchData.Handler::handle);
 
     }
 

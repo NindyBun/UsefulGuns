@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -56,6 +57,15 @@ public class BulletRadialMenu extends Screen {
             return;
         collectBullets(gun, pouch);
     }
+
+    /*public BulletRadialMenu(ItemStack pouch, ItemStack gun){
+        super(new TextComponent("Title"));
+        this.selected = -1;
+        this.selectedItem = ItemStack.of(pouch.getOrCreateTag().getCompound("Bullet_Info"));
+        if (pouch.isEmpty())
+            return;
+        collectBullets(gun, pouch);
+    }*/
 
     public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
         if (ammo.getItem() instanceof AbstractBullet){

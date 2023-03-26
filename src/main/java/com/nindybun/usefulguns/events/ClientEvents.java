@@ -45,6 +45,7 @@ public class ClientEvents {
             if (keyIsDown && !keyWasDown){
                 while (radialMenu_key.consumeClick() && isHoldingGun) {
                     if (Minecraft.getInstance().screen == null){
+                        //PacketHandler.sendToServer(new PacketToServerOpenRadialMenu());
                         Minecraft.getInstance().setScreen(new BulletRadialMenu(player));
                     }
                 }
