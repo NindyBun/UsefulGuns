@@ -8,6 +8,7 @@ import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -27,6 +28,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -130,8 +132,21 @@ public class AbstractPouch extends Item {
         super.readShareTag(stack, nbt);
         LazyOptional<IItemHandler> optional = AbstractPouch.getData(stack).getOptional();
         if (optional.isPresent()){
-            PouchHandler handler = (PouchHandler) optional.resolve().get();
-            handler.deserializeNBT(nbt.getCompound("ClientInventory"));
+            IItemHandler handler = optional.resolve().get();
+            if (!(handler instanceof IItemHandlerModifiable))
+                throw new RuntimeException("IItemHandler instance does not implement IItemHandlerModifiable");
+            IItemHandlerModifiable itemHandlerModifiable = (IItemHandlerModifiable) handler;
+            ListTag tagList = nbt.getList("ClientInventory", Tag.TAG_COMPOUND);
+            for (int i = 0; i < tagList.size(); i++)
+            {
+                CompoundTag itemTags = tagList.getCompound(i);
+                int j = itemTags.getInt("Slot");
+
+                if (j >= 0 && j < handler.getSlots())
+                {
+                    itemHandlerModifiable.setStackInSlot(j, ItemStack.of(itemTags));
+                }
+            }
         }
     }
 
@@ -141,8 +156,21 @@ public class AbstractPouch extends Item {
         LazyOptional<IItemHandler> optional = AbstractPouch.getData(stack).getOptional();
         CompoundTag tag = super.getShareTag(stack);
         if (optional.isPresent()){
-            PouchHandler handler = (PouchHandler) optional.resolve().get();
-            tag.put("ClientInventory", handler.serializeNBT());
+            IItemHandler handler = optional.resolve().get();
+            ListTag nbtTagList = new ListTag();
+            int size = handler.getSlots();
+            for (int i = 0; i < size; i++)
+            {
+                ItemStack stack1 = handler.getStackInSlot(i);
+                if (!stack1.isEmpty())
+                {
+                    CompoundTag itemTag = new CompoundTag();
+                    itemTag.putInt("Slot", i);
+                    stack1.save(itemTag);
+                    nbtTagList.add(itemTag);
+                }
+            }
+            tag.put("ClientInventory", nbtTagList);
         }
 
         return tag;
