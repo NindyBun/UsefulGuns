@@ -131,6 +131,7 @@
   "tooltip.usefulguns.gun.damage.flat.modified": "\u00A7dDamage: \u00A7f+%s\u00A7r",
   "tooltip.usefulguns.gun.damage.mult": "\u00A72Damage: \u00A7fx%s\u00A7r",
   "tooltip.usefulguns.gun.damage.mult.modified": "\u00A7dDamage: \u00A7fx%s\u00A7r",
+  "tooltip.usefulguns.gun.dirty": "Gun's dirty! Go clean it! ;-;",
   "tooltip.usefulguns.gun.firerate": "\u00A72Fire delay: \u00A7f%d\u00A77 RPM\u00A7r",
   "tooltip.usefulguns.gun.firerate.modified": "\u00A7dFire delay: \u00A7f%d\u00A77 RPM\u00A7r",
   "tooltip.usefulguns.gun.ignore_invulnerability": "Projectiles ignore invulnerability time",
