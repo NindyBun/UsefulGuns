@@ -187,7 +187,7 @@ public class BulletRadialMenu extends Screen {
         poseStack.mulPoseMatrix(matrix.last().pose());
         poseStack.translate(-8, -8, 0);
         RenderSystem.applyModelViewMatrix();
-        poseStack.translate(0, 0, this.itemRenderer.blitOffset+200);
+        matrix.translate(0, 0, this.itemRenderer.blitOffset+200);
         int numberOfRings = allocateSizes.size();
         for (int i = 0; i < numberOfRings; i++) {
             //int slices = i < numberOfRings-1 ? 9 : numberOfSlices%9 == 0 ? 9 : numberOfSlices%9;
@@ -206,7 +206,7 @@ public class BulletRadialMenu extends Screen {
                 String string = String.valueOf(value);
                 this.itemRenderer.renderAndDecorateItem(stack, (int)midX, (int)midY);
                 this.itemRenderer.renderGuiItemDecorations(this.font, stack, (int)midX, (int)midY, "");
-                this.font.draw(poseStack, value > 1 ? string : "", midX+17-font.width(string), midY+9, Color.WHITE.getRGB());
+                this.font.draw(matrix, value > 1 ? string : "", midX+17-font.width(string), midY+9, Color.WHITE.getRGB());
             }
         }
         poseStack.popPose();
