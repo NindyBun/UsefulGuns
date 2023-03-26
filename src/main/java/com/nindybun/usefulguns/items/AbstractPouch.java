@@ -209,7 +209,7 @@ public class AbstractPouch extends Item {
 
         @Override
         public Tag serializeNBT() {
-            LazyOptional<IItemHandler> optional = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).cast();
+            LazyOptional<IItemHandler> optional = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
             ListTag nbtTagList = new ListTag();
             if (optional.isPresent()){
                 IItemHandler handler = optional.resolve().get();
@@ -231,7 +231,7 @@ public class AbstractPouch extends Item {
 
         @Override
         public void deserializeNBT(Tag nbt) {
-            LazyOptional<IItemHandler> optional = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).cast();
+            LazyOptional<IItemHandler> optional = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
             if (optional.isPresent()){
                 IItemHandler handler = optional.resolve().get();
                 if (!(handler instanceof IItemHandlerModifiable))
