@@ -25,6 +25,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -127,7 +128,7 @@ public class AbstractPouch extends Item {
             tooltip.add(new TextComponent("Fire Resistant!").withStyle(ChatFormatting.GOLD));
     }
 
-    @Override
+    /*@Override
     public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
         super.readShareTag(stack, nbt);
         LazyOptional<IItemHandler> optional = AbstractPouch.getData(stack).getOptional();
@@ -174,7 +175,7 @@ public class AbstractPouch extends Item {
         }
 
         return tag;
-    }
+    }*/
 
     @Nullable
     @Override
@@ -182,7 +183,7 @@ public class AbstractPouch extends Item {
         return new PouchCapability(stack);
     }
 
-    static class PouchCapability implements ICapabilityProvider {
+    static class PouchCapability implements ICapabilityProvider, INBTSerializable<Tag> {
         private final ItemStack stack;
         private LazyOptional<IItemHandler> optional = LazyOptional.empty();
 
@@ -199,6 +200,50 @@ public class AbstractPouch extends Item {
                 return optional.cast();
             }else{
                 return LazyOptional.empty();
+            }
+        }
+
+        @Override
+        public Tag serializeNBT() {
+            LazyOptional<IItemHandler> optional = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).cast();
+            ListTag nbtTagList = new ListTag();
+            if (optional.isPresent()){
+                IItemHandler handler = optional.resolve().get();
+                int size = handler.getSlots();
+                for (int i = 0; i < size; i++)
+                {
+                    ItemStack stack1 = handler.getStackInSlot(i);
+                    if (!stack1.isEmpty())
+                    {
+                        CompoundTag itemTag = new CompoundTag();
+                        itemTag.putInt("Slot", i);
+                        stack1.save(itemTag);
+                        nbtTagList.add(itemTag);
+                    }
+                }
+            }
+            return nbtTagList;
+        }
+
+        @Override
+        public void deserializeNBT(Tag nbt) {
+            LazyOptional<IItemHandler> optional = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).cast();
+            if (optional.isPresent()){
+                IItemHandler handler = optional.resolve().get();
+                if (!(handler instanceof IItemHandlerModifiable))
+                    throw new RuntimeException("IItemHandler instance does not implement IItemHandlerModifiable");
+                IItemHandlerModifiable itemHandlerModifiable = (IItemHandlerModifiable) handler;
+                ListTag tagList = (ListTag) nbt;
+                for (int i = 0; i < tagList.size(); i++)
+                {
+                    CompoundTag itemTags = tagList.getCompound(i);
+                    int j = itemTags.getInt("Slot");
+
+                    if (j >= 0 && j < handler.getSlots())
+                    {
+                        itemHandlerModifiable.setStackInSlot(j, ItemStack.of(itemTags));
+                    }
+                }
             }
         }
     }
