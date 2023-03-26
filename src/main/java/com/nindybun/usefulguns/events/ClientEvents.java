@@ -4,6 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.gui.BulletRadialMenu;
 import com.nindybun.usefulguns.items.guns.AbstractGun;
+import com.nindybun.usefulguns.network.PacketHandler;
+import com.nindybun.usefulguns.network.packets.PacketToServerOpenRadial;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +28,10 @@ public class ClientEvents {
 
     private static boolean keyWasDown = false;
 
+    public static void openMenu(ItemStack pouch, ItemStack gun){
+        Minecraft.getInstance().setScreen(new BulletRadialMenu(pouch, gun));
+    }
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event){
         if (event.phase != TickEvent.Phase.START)
@@ -45,8 +51,8 @@ public class ClientEvents {
             if (keyIsDown && !keyWasDown){
                 while (radialMenu_key.consumeClick() && isHoldingGun) {
                     if (Minecraft.getInstance().screen == null){
-                        //PacketHandler.sendToServer(new PacketToServerOpenRadialMenu());
-                        Minecraft.getInstance().setScreen(new BulletRadialMenu(player));
+                        PacketHandler.sendToServer(new PacketToServerOpenRadial());
+                        //Minecraft.getInstance().setScreen(new BulletRadialMenu(player));
                     }
                 }
             }

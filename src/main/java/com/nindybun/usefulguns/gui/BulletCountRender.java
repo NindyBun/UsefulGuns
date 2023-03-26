@@ -10,6 +10,7 @@ import com.nindybun.usefulguns.util.UtilMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,6 +22,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = UsefulGuns.MOD_ID, value = Dist.CLIENT)
 public class BulletCountRender {
@@ -55,21 +57,16 @@ public class BulletCountRender {
     public static void renderBulletCount(RenderGameOverlayEvent.Post event, ItemStack gun, ItemStack pouch){
         Font font = Minecraft.getInstance().font;
         ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
-        ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
+        ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound(UtilMethods.BULLET_INFO_TAG));
         if (bulletInfo.getItem() == Items.AIR)
             return;
         int selectedBulletCount = 0;
         if (!pouch.isEmpty()) {
-            PouchData data = AbstractPouch.getData(pouch);
-            if (data.getOptional().isPresent()) {
-                IItemHandler handler = data.getOptional().resolve().get();
-                for (int i = 0; i < handler.getSlots(); i++){
-                    ItemStack stack = handler.getStackInSlot(i).copy().split(1);
-                    if (bulletInfo.equals(stack, false)) {
-                        selectedBulletCount += handler.getStackInSlot(i).getCount();
-                    }
-                }
-            }
+            ItemStack itemStack = UtilMethods.getItemInList(UtilMethods.deserializeItemTagList(pouch.getOrCreateTag().getList(UtilMethods.INVENTORY_TAG, Tag.TAG_COMPOUND))
+                    .stream().filter((stack) -> UtilMethods.isValidForGun(gun, stack)).collect(Collectors.toList()), bulletInfo);
+
+            if (!itemStack.isEmpty())
+                selectedBulletCount = itemStack.getCount();
         }
         double winW = event.getWindow().getGuiScaledWidth();
         double winH = event.getWindow().getGuiScaledHeight();

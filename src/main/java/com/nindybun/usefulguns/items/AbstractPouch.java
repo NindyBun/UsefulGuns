@@ -128,13 +128,13 @@ public class AbstractPouch extends Item {
             tooltip.add(new TextComponent("Fire Resistant!").withStyle(ChatFormatting.GOLD));
     }
 
-    @Override
+   /* @Override
     public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
         super.readShareTag(stack, nbt);
         LazyOptional<IItemHandler> optional = AbstractPouch.getData(stack).getOptional();
         if (optional.isPresent()){
-            new PouchCapability(stack).deserializeNBT(nbt.get("ClientInventory"));
-            /*IItemHandler handler = optional.resolve().get();
+            new PouchCapability(stack).deserializeNBT(nbt.getList("ClientInventory", Tag.TAG_COMPOUND));
+            *//*IItemHandler handler = optional.resolve().get();
             if (!(handler instanceof IItemHandlerModifiable))
                 throw new RuntimeException("IItemHandler instance does not implement IItemHandlerModifiable");
             IItemHandlerModifiable itemHandlerModifiable = (IItemHandlerModifiable) handler;
@@ -148,7 +148,7 @@ public class AbstractPouch extends Item {
                 {
                     itemHandlerModifiable.setStackInSlot(j, ItemStack.of(itemTags));
                 }
-            }*/
+            }*//*
         }
     }
 
@@ -161,7 +161,7 @@ public class AbstractPouch extends Item {
             Tag nbt = new PouchCapability(stack).serializeNBT();
             tag.put("ClientInventory", nbt);
         }
-           /* IItemHandler handler = optional.resolve().get();
+           *//* IItemHandler handler = optional.resolve().get();
             ListTag nbtTagList = new ListTag();
             int size = handler.getSlots();
             for (int i = 0; i < size; i++)
@@ -176,10 +176,10 @@ public class AbstractPouch extends Item {
                 }
             }
             tag.put("ClientInventory", nbtTagList);
-        }*/
+        }*//*
 
         return tag;
-    }
+    }*/
 
     @Nullable
     @Override

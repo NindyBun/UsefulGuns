@@ -25,8 +25,9 @@ public class PacketHandler {
     public static void register(){
         int id = 0;
         INSTANCE.registerMessage(id++, PacketSaveSelection.class, PacketSaveSelection::encode, PacketSaveSelection::decode, PacketSaveSelection.Handler::handle);
-//        INSTANCE.registerMessage(id++, PacketSyncPouchData.class, PacketSyncPouchData::encode, PacketSyncPouchData::decode, PacketSyncPouchData.Handler::handle);
-//        INSTANCE.registerMessage(id++, PacketSyncToClientPouchData.class, PacketSyncToClientPouchData::encode, PacketSyncToClientPouchData::decode, PacketSyncToClientPouchData.Handler::handle);
+        INSTANCE.registerMessage(id++, PacketSavePouchInventory.class, PacketSavePouchInventory::encode, PacketSavePouchInventory::decode, PacketSavePouchInventory.Handler::handle);
+        INSTANCE.registerMessage(id++, PacketToServerOpenRadial.class, PacketToServerOpenRadial::encode, PacketToServerOpenRadial::decode, PacketToServerOpenRadial.Handler::handle);
+        INSTANCE.registerMessage(id++, PacketToClientOpenRadial.class, PacketToClientOpenRadial::encode, PacketToClientOpenRadial::decode, PacketToClientOpenRadial.Handler::handle);
 
     }
 

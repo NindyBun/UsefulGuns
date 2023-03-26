@@ -16,6 +16,7 @@ import com.nindybun.usefulguns.util.UtilMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -34,19 +35,21 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = UsefulGuns.MOD_ID, value = Dist.CLIENT)
 public class BulletRadialMenu extends Screen {
     private int selected;
     private ItemStack selectedItem;
-    private Player player;
+    int[] ringSize = {4, 6, 8};
+    private List<ItemStack> containedItemsAnAmount;
+
+/*    private Player player;
     private ItemStack gun;
     private List<ItemStack> containedItems = new ArrayList<>();
-    private List<Integer> containedAmount = new ArrayList<>();
-    int[] ringSize = {4, 6, 8};
-    //int[] ringSize = {9, 12, 16, 21, 23};
+    private List<Integer> containedAmount = new ArrayList<>();*/
 
-    public BulletRadialMenu(Player player){
+    /*public BulletRadialMenu(Player player){
         super(new TextComponent("Title"));
         this.player = player;
         this.gun = !(player.getMainHandItem().getItem() instanceof AbstractGun) ? player.getOffhandItem(): player.getMainHandItem();
@@ -56,18 +59,17 @@ public class BulletRadialMenu extends Screen {
         if (pouch.isEmpty())
             return;
         collectBullets(gun, pouch);
-    }
-
-    /*public BulletRadialMenu(ItemStack pouch, ItemStack gun){
-        super(new TextComponent("Title"));
-        this.selected = -1;
-        this.selectedItem = ItemStack.of(pouch.getOrCreateTag().getCompound("Bullet_Info"));
-        if (pouch.isEmpty())
-            return;
-        collectBullets(gun, pouch);
     }*/
 
-    public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
+    public BulletRadialMenu(ItemStack pouch, ItemStack gun){
+        super(new TextComponent("Title"));
+        this.selected = -1;
+        this.selectedItem = ItemStack.of(gun.getOrCreateTag().getCompound(UtilMethods.BULLET_INFO_TAG));
+        this.containedItemsAnAmount = UtilMethods.deserializeItemTagList(pouch.getOrCreateTag().getList(UtilMethods.INVENTORY_TAG, Tag.TAG_COMPOUND))
+                .stream().filter((itemStack) -> UtilMethods.isValidForGun(gun, itemStack)).collect(Collectors.toList());
+    }
+
+    /*public static boolean isValidForGun(ItemStack gun, ItemStack ammo){
         if (ammo.getItem() instanceof AbstractBullet){
             if (ammo.getItem() instanceof MiningBullet)
                 return true;
@@ -110,7 +112,7 @@ public class BulletRadialMenu extends Screen {
                 return true;
         }
         return false;
-    }
+    }*/
 
     @Override
     public boolean mouseReleased(double x, double y, int mouseButton) {
@@ -123,7 +125,7 @@ public class BulletRadialMenu extends Screen {
     }
 
     private void processSlot(){
-        if (selected != -1) PacketHandler.sendToServer(new PacketSaveSelection(containedItems.get(selected)));
+        if (selected != -1) PacketHandler.sendToServer(new PacketSaveSelection(containedItemsAnAmount.get(selected).copy().split(1)));
         onClose();
     }
 
@@ -138,7 +140,7 @@ public class BulletRadialMenu extends Screen {
     @Override
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float ticks_) {
         super.render(matrixStack, mouseX, mouseY, ticks_);
-        int numberOfSlices = containedItems.size();
+        int numberOfSlices = containedItemsAnAmount.size();
         if (numberOfSlices == 0)
             return;
         List<Integer> allocateSizes = new ArrayList<>();
@@ -186,7 +188,7 @@ public class BulletRadialMenu extends Screen {
                 float midY = y - itemRadius * (float) Math.sin(middle);
                 int current = j+(( i == 0 ? 0 : getCount(i) ));
                 if (selected == current)
-                    this.renderTooltip(matrixStack, containedItems.get(current), (int)midX, (int)midY);
+                    this.renderTooltip(matrixStack, containedItemsAnAmount.get(current), (int)midX, (int)midY);
             }
         }
     }
@@ -211,8 +213,8 @@ public class BulletRadialMenu extends Screen {
                 float midX = x - itemRadius * (float) Math.cos(middle);
                 float midY = y - itemRadius * (float) Math.sin(middle);
                 int current = j+(( i == 0 ? 0 : getCount(i) ));
-                int value = containedAmount.get(current);
-                ItemStack stack = containedItems.get(current);
+                ItemStack stack = containedItemsAnAmount.get(current);
+                int value = stack.getCount();
                 String string = String.valueOf(value);
                 this.itemRenderer.renderAndDecorateItem(stack, (int)midX, (int)midY);
                 this.itemRenderer.renderGuiItemDecorations(this.font, stack, (int)midX, (int)midY, "");
@@ -269,7 +271,7 @@ public class BulletRadialMenu extends Screen {
                 else
                     drawPieArc(buffer, x, y, 0, radiusIn + addRadius, radiusOut + addRadius, start, end, 0, 0, 0, 64);
 
-                if (selectedItem.equals(containedItems.get(current), false))
+                if (selectedItem.equals(containedItemsAnAmount.get(current).copy().split(1), false))
                     drawPieArc(buffer, x, y, 0, radiusIn+addRadius, radiusOut+addRadius, start, end, 0, 255, 0, 64);
 
             }

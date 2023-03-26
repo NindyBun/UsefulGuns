@@ -4,6 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.items.PouchTypes;
+import com.nindybun.usefulguns.network.PacketHandler;
+import com.nindybun.usefulguns.network.packets.PacketSavePouchInventory;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -46,5 +48,11 @@ public class PouchScreen extends AbstractContainerScreen<PouchContainer> {
         this.renderBackground(matrixStack);
         super.render(matrixStack, x, y, partialTicks);
         this.renderTooltip(matrixStack, x, y);
+    }
+
+    @Override
+    public void removed() {
+        PacketHandler.sendToServer(new PacketSavePouchInventory());
+        super.removed();
     }
 }

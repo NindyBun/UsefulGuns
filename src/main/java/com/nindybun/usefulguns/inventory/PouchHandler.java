@@ -4,8 +4,6 @@ import com.nindybun.usefulguns.items.AbstractCleaner;
 import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.modRegistries.ModItems;
-import com.nindybun.usefulguns.network.PacketHandler;
-import com.nindybun.usefulguns.network.packets.PacketSyncPouchData;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;

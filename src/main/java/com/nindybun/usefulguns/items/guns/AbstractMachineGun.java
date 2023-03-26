@@ -57,7 +57,7 @@ public class AbstractMachineGun extends AbstractGun{
             int used = getUseDuration(gun) - ticks;
             if (used > 0 && used % getFireDelay(gun) == 0 && !playerEntity.level.isClientSide) {
                 ItemStack pouch = UtilMethods.locateAndGetPouch(playerEntity);
-                ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
+                ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound(UtilMethods.BULLET_INFO_TAG));
                 LazyOptional<IItemHandler> optional = AbstractPouch.getData(pouch).getOptional();
                 if (optional.isPresent()) {
                     IItemHandler handler = optional.resolve().get();
@@ -65,6 +65,7 @@ public class AbstractMachineGun extends AbstractGun{
                     if (shot != -1){
                         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), fireSound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                         handler.extractItem(shot, 1, false);
+                        UtilMethods.updatePouchAfterShooting(pouch, bulletInfo);
                         gun.getOrCreateTag().putInt(DIRTINESS, gun.getOrCreateTag().getInt(DIRTINESS)+1);
                     } else{
                         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
@@ -84,14 +85,12 @@ public class AbstractMachineGun extends AbstractGun{
     public InteractionResultHolder<ItemStack> use(Level world, Player playerEntity, InteractionHand hand) {
         ItemStack gun = playerEntity.getItemInHand(hand);
         ItemStack pouch = UtilMethods.locateAndGetPouch(playerEntity);
-        if (pouch.isEmpty())
-            return InteractionResultHolder.fail(gun);
         if (gun.getOrCreateTag().getInt(DIRTINESS) == this.dirtiness && !playerEntity.level.isClientSide){
             playerEntity.sendMessage(new TextComponent("Gun's dirty! Go clean it! ;-;"), Util.NIL_UUID);
             return InteractionResultHolder.fail(gun);
         }
         ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
-        if (bulletInfo.getItem() == Items.AIR) {
+        if (bulletInfo.getItem() == Items.AIR || pouch.isEmpty()) {
             world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), drySound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
             return InteractionResultHolder.fail(gun);
         }

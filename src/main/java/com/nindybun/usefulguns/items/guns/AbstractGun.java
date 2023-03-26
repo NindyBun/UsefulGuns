@@ -125,15 +125,13 @@ public class AbstractGun extends Item {
     public InteractionResultHolder<ItemStack> use(Level world, Player playerEntity, InteractionHand hand) {
         ItemStack gun = playerEntity.getItemInHand(hand);
         ItemStack pouch = UtilMethods.locateAndGetPouch(playerEntity);
-        if (pouch.isEmpty())
-            return InteractionResultHolder.fail(gun);
-        if (gun.getOrCreateTag().getInt(DIRTINESS) == this.dirtyness && !playerEntity.level.isClientSide){
-            playerEntity.sendMessage(new TextComponent("Gun's dirty! Go clean it! ;-;"), net.minecraft.Util.NIL_UUID);
-            return InteractionResultHolder.fail(gun);
-        }
         if (!world.isClientSide){
-            ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
-            if (bulletInfo.getItem() == Items.AIR){
+            if (gun.getOrCreateTag().getInt(DIRTINESS) == this.dirtyness && !playerEntity.level.isClientSide){
+                playerEntity.sendMessage(new TranslatableComponent("tooltip."+UsefulGuns.MOD_ID+".gun.dirty"), net.minecraft.Util.NIL_UUID);
+                return InteractionResultHolder.fail(gun);
+            }
+            ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound(UtilMethods.BULLET_INFO_TAG));
+            if (bulletInfo.getItem() == Items.AIR || pouch.isEmpty()){
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                 return InteractionResultHolder.fail(gun);
             }
@@ -144,6 +142,7 @@ public class AbstractGun extends Item {
                 if (shot != -1){
                     world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.fireSound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
                     handler.extractItem(shot, 1, false);
+                    UtilMethods.updatePouchAfterShooting(pouch, bulletInfo);
                     gun.getOrCreateTag().putInt(DIRTINESS, gun.getOrCreateTag().getInt(DIRTINESS)+1);
                 } else
                     world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), this.drySound.get(), SoundSource.PLAYERS, 1.0f, world.getRandom().nextFloat() * 0.4F + 0.8F);
