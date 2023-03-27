@@ -5,7 +5,6 @@ import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.entities.BulletEntity;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -40,22 +39,10 @@ public class TippedBullet extends AbstractBullet{
         return PotionUtils.setPotion(super.getDefaultInstance(), Potions.POISON);
     }
 
-    @Override
-    public void fillItemCategory(CreativeModeTab p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
-        if (this.allowdedIn(p_150895_1_)) {
-            for(Potion potion : ForgeRegistries.POTIONS) {
-                if (!potion.getEffects().isEmpty()) {
-                    p_150895_2_.add(PotionUtils.setPotion(new ItemStack(this), potion));
-                }
-            }
-        }
-        super.fillItemCategory(p_150895_1_, p_150895_2_);
-    }
-
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack p_77624_1_, @Nullable Level p_77624_2_, List<Component> tooltip, TooltipFlag p_77624_4_) {
         PotionUtils.addPotionTooltip(p_77624_1_, tooltip, 0.125F);
-        tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.damage", ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(this.damage)));
+        tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".bullet.damage", ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(this.damage)));
 
     }
 

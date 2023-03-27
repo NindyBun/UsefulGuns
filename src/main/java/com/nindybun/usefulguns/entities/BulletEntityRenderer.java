@@ -2,9 +2,7 @@ package com.nindybun.usefulguns.entities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.nindybun.usefulguns.UsefulGuns;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -13,9 +11,12 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class BulletEntityRenderer extends EntityRenderer<BulletEntity> {
-    private final ResourceLocation TEXTURE = new ResourceLocation(UsefulGuns.MOD_ID, "textures/blocks/light.png");
+    private final ResourceLocation TEXTURE = new ResourceLocation(UsefulGuns.MOD_ID, "textures/block/light.png");
 
     public BulletEntityRenderer(EntityRendererProvider.Context p_i46179_1_) {
         super(p_i46179_1_);
@@ -27,7 +28,7 @@ public class BulletEntityRenderer extends EntityRenderer<BulletEntity> {
 
         matrixStack.scale(1f, 1f, 1f);
         matrixStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(180f));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(180f));
         PoseStack.Pose entry = matrixStack.last();
 
         Matrix4f matrix4f = entry.pose();

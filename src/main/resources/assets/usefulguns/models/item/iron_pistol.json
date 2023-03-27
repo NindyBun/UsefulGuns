@@ -1,9 +1,9 @@
 {
-  "loader": "forge:separate-perspective",
+  "loader": "forge:separate_transforms",
   "base": {
     "parent": "minecraft:item/handheld",
     "textures": {
-      "layer0": "usefulguns:items/iron_pistol"
+      "layer0": "usefulguns:item/iron_pistol"
     },
     "display": {
       "thirdperson_righthand": {
@@ -61,7 +61,7 @@
     "gui": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "usefulguns:items/iron_pistol_class_dark"
+        "layer0": "usefulguns:item/iron_pistol_class_dark"
       }
     }
   }

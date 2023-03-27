@@ -6,8 +6,7 @@ import com.nindybun.usefulguns.modRegistries.ModContainers;
 import com.nindybun.usefulguns.items.PouchTypes;
 import net.minecraft.Util;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -144,7 +143,7 @@ public class PouchContainer extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(itemstack1, playerIn.getInventory().items.size(), bagslotcount, false)){
                     if (checkInsert(itemstack1)) {
                     }else if (!playerIn.level.isClientSide){
-                        playerIn.sendMessage(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID+".pouch.container.max", PouchHandler.maxTypes), Util.NIL_UUID);
+                        playerIn.sendSystemMessage(Component.translatable("tooltip." + UsefulGuns.MOD_ID + ".pouch.container.max", PouchHandler.maxTypes));
                     }
                     return ItemStack.EMPTY;
                 }

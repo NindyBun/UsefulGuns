@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "usefulguns:items/bullet_base"
+    "layer0": "usefulguns:item/bullet_base"
   }
 }

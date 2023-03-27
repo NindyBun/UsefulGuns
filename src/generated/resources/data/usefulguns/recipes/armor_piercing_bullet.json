@@ -1,10 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "BBB",
-    "BAB",
-    "BBB"
-  ],
+  "category": "equipment",
   "key": {
     "A": {
       "tag": "forge:ingots/netherite"
@@ -13,8 +9,13 @@
       "item": "usefulguns:diamond_bullet"
     }
   },
+  "pattern": [
+    "BBB",
+    "BAB",
+    "BBB"
+  ],
   "result": {
-    "item": "usefulguns:armor_piercing_bullet",
-    "count": 8
+    "count": 8,
+    "item": "usefulguns:armor_piercing_bullet"
   }
 }

@@ -5,7 +5,6 @@ import com.nindybun.usefulguns.items.guns.AbstractGun;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -70,7 +69,7 @@ public class AbstractCleaner extends Item {
 
     @Override
     public void appendHoverText(ItemStack p_77624_1_, @Nullable Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_) {
-        if (p_77624_1_.getItem() == ModItems.ULTIMATE_CLEANER.get()) p_77624_3_.add(new TranslatableComponent("tooltip." + UsefulGuns.MOD_ID + ".unbreakable").withStyle(ChatFormatting.GOLD));
+        if (p_77624_1_.getItem() == ModItems.ULTIMATE_CLEANER.get()) p_77624_3_.add(Component.translatable("tooltip." + UsefulGuns.MOD_ID + ".unbreakable").withStyle(ChatFormatting.GOLD));
     }
 
     @Override

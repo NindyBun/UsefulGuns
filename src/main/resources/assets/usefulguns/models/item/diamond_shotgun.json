@@ -1,9 +1,9 @@
 {
-  "loader": "forge:separate-perspective",
+  "loader": "forge:separate_transforms",
   "base": {
     "parent": "minecraft:item/handheld",
     "textures": {
-      "layer0": "usefulguns:items/diamond_shotgun"
+      "layer0": "usefulguns:item/diamond_shotgun"
     },
     "display": {
       "thirdperson_righthand": {
@@ -81,7 +81,7 @@
     "gui": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "usefulguns:items/diamond_shotgun_class_dark"
+        "layer0": "usefulguns:item/diamond_shotgun_class_dark"
       }
     }
   }

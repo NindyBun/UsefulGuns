@@ -25,29 +25,6 @@ public class MiningBullet extends AbstractBullet{
         return this;
     }
 
-    @Override
-    public void fillItemCategory(CreativeModeTab p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
-        if (this.allowdedIn(p_150895_1_)){
-                ItemStack stack0 = new ItemStack(this);
-                p_150895_2_.add(stack0);
-
-                stack0 = new ItemStack(this);
-                stack0.enchant(Enchantments.BLOCK_FORTUNE, 1);
-                p_150895_2_.add(stack0);
-
-                stack0 = new ItemStack(this);
-                stack0.enchant(Enchantments.BLOCK_FORTUNE, 2);
-                p_150895_2_.add(stack0);
-
-                stack0 = new ItemStack(this);
-                stack0.enchant(Enchantments.BLOCK_FORTUNE, 3);
-                p_150895_2_.add(stack0);
-
-                stack0 = new ItemStack(this);
-                stack0.enchant(Enchantments.SILK_TOUCH, 1);
-                p_150895_2_.add(stack0);
-        }
-    }
 
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {

@@ -1,18 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
   "pattern": [
     "  W",
     " M ",
     "M  "
   ],
-  "key": {
-    "W": {
-      "tag": "minecraft:wool"
-    },
-    "M": {
-      "item": "minecraft:stick"
-    }
-  },
   "result": {
     "item": "usefulguns:cleaner"
   }

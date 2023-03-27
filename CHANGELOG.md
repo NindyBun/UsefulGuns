@@ -1,5 +1,12 @@
 # Useful Guns Changelog
 
+## 1.19.3
+### v1.1.0
+- 1.19.3 release
+- Renamed `Cleaner`'s to `Cleaning Rod`
+- Adjusted some bullet recipes to use Copper
+- Increased `Bullet Casing` output recipe to 16 items
+
 ## 1.18.2
 ### v1.1.0
 - 1.18.2 release

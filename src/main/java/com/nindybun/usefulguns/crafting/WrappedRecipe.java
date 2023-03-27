@@ -5,9 +5,11 @@ import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class WrappedRecipe implements FinishedRecipe {
@@ -37,10 +39,7 @@ public class WrappedRecipe implements FinishedRecipe {
     public JsonObject serializeRecipe() {
         JsonObject jsonObject = new JsonObject();
 
-        if (serializerOverride != null)
-            jsonObject.addProperty("type", serializerOverride.getRegistryName().toString());
-        else
-            jsonObject.addProperty("type", inner.getType().getRegistryName().toString());
+        jsonObject.addProperty("type", ForgeRegistries.RECIPE_SERIALIZERS.getKey(Objects.requireNonNullElseGet(this.serializerOverride, this.inner::getType)).toString());
         serializeRecipeData(jsonObject);
         return jsonObject;
     }

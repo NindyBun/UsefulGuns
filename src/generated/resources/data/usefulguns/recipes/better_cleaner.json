@@ -1,18 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "tag": "forge:ingots/iron"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
   "pattern": [
     "  W",
     " M ",
     "M  "
   ],
-  "key": {
-    "W": {
-      "tag": "minecraft:wool"
-    },
-    "M": {
-      "tag": "forge:ingots/iron"
-    }
-  },
   "result": {
     "item": "usefulguns:better_cleaner"
   }

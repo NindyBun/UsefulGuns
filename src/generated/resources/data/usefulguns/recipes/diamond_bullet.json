@@ -1,10 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "BBB",
-    "BAB",
-    "BBB"
-  ],
+  "category": "equipment",
   "key": {
     "A": {
       "tag": "forge:gems/diamond"
@@ -13,8 +9,13 @@
       "item": "usefulguns:bullet_casing"
     }
   },
+  "pattern": [
+    "BBB",
+    "BAB",
+    "BBB"
+  ],
   "result": {
-    "item": "usefulguns:diamond_bullet",
-    "count": 8
+    "count": 8,
+    "item": "usefulguns:diamond_bullet"
   }
 }

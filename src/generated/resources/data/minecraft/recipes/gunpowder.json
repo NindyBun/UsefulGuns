@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
     {
       "item": "minecraft:charcoal"
@@ -12,7 +13,7 @@
     }
   ],
   "result": {
-    "item": "minecraft:gunpowder",
-    "count": 8
+    "count": 8,
+    "item": "minecraft:gunpowder"
   }
 }

@@ -11,8 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -24,13 +22,15 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,7 +76,7 @@ public class AbstractPouch extends Item {
     @Override
     @Nonnull
     public Component getName(@Nonnull ItemStack stack){
-        return new TranslatableComponent(this.getDescriptionId(stack)).withStyle(ChatFormatting.RESET);
+        return Component.translatable(this.getDescriptionId(stack)).withStyle(ChatFormatting.RESET);
     }
 
     public static boolean isPouch(ItemStack stack){
@@ -108,7 +108,7 @@ public class AbstractPouch extends Item {
             if (data.getType().ordinal() < itemType.ordinal())
                 data.upgrade(itemType);
 
-            NetworkHooks.openGui(((ServerPlayer) player), new SimpleMenuProvider(
+            NetworkHooks.openScreen(((ServerPlayer) player), new SimpleMenuProvider(
                     (windowId, playerInventory, playerEntity) ->
                             new PouchContainer(windowId, playerInventory, uuid, data.getType(), (PouchHandler) data.getHandler()), pouch.getHoverName()),
                     (buffer -> buffer.writeUUID(uuid).writeInt(data.getType().ordinal())));
@@ -122,10 +122,10 @@ public class AbstractPouch extends Item {
         super.appendHoverText(stack, world, tooltip, flag);
         if (flag.isAdvanced() && stack.getTag() != null && stack.getTag().contains("UUID")) {
             UUID uuid = stack.getTag().getUUID("UUID");
-            tooltip.add(new TextComponent("ID: " + uuid.toString().substring(0, 8)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+            tooltip.add(Component.literal("ID: " + uuid.toString().substring(0, 8)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
         if (stack.getItem().isFireResistant())
-            tooltip.add(new TextComponent("Fire Resistant!").withStyle(ChatFormatting.GOLD));
+            tooltip.add(Component.literal("Fire Resistant!").withStyle(ChatFormatting.GOLD));
     }
 
    /* @Override
@@ -187,7 +187,7 @@ public class AbstractPouch extends Item {
         return new PouchCapability(stack);
     }
 
-    static class PouchCapability implements ICapabilityProvider, INBTSerializable<Tag> {
+    static class PouchCapability implements ICapabilityProvider {
         private final ItemStack stack;
         private LazyOptional<IItemHandler> optional = LazyOptional.empty();
 
@@ -198,56 +198,12 @@ public class AbstractPouch extends Item {
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+            if (cap == ForgeCapabilities.ITEM_HANDLER){
                 if (!optional.isPresent())
                     optional = PouchManager.get().getCapability(stack);
                 return optional.cast();
             }else{
                 return LazyOptional.empty();
-            }
-        }
-
-        @Override
-        public Tag serializeNBT() {
-            LazyOptional<IItemHandler> optional = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-            ListTag nbtTagList = new ListTag();
-            if (optional.isPresent()){
-                IItemHandler handler = optional.resolve().get();
-                int size = handler.getSlots();
-                for (int i = 0; i < size; i++)
-                {
-                    ItemStack stack1 = handler.getStackInSlot(i);
-                    if (!stack1.isEmpty())
-                    {
-                        CompoundTag itemTag = new CompoundTag();
-                        itemTag.putInt("Slot", i);
-                        stack1.save(itemTag);
-                        nbtTagList.add(itemTag);
-                    }
-                }
-            }
-            return nbtTagList;
-        }
-
-        @Override
-        public void deserializeNBT(Tag nbt) {
-            LazyOptional<IItemHandler> optional = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-            if (optional.isPresent()){
-                IItemHandler handler = optional.resolve().get();
-                if (!(handler instanceof IItemHandlerModifiable))
-                    throw new RuntimeException("IItemHandler instance does not implement IItemHandlerModifiable");
-                IItemHandlerModifiable itemHandlerModifiable = (IItemHandlerModifiable) handler;
-                ListTag tagList = (ListTag) nbt;
-                for (int i = 0; i < tagList.size(); i++)
-                {
-                    CompoundTag itemTags = tagList.getCompound(i);
-                    int j = itemTags.getInt("Slot");
-
-                    if (j >= 0 && j < handler.getSlots())
-                    {
-                        itemHandlerModifiable.setStackInSlot(j, ItemStack.of(itemTags));
-                    }
-                }
             }
         }
     }

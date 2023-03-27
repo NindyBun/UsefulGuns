@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "usefulguns:items/best_cleaner"
+    "layer0": "usefulguns:item/best_cleaner"
   }
 }

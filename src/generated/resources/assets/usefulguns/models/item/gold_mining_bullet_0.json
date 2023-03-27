@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "usefulguns:items/gold_mining_bullet"
+    "layer0": "usefulguns:item/gold_mining_bullet"
   }
 }

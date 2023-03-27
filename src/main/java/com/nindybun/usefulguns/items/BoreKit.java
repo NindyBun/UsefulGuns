@@ -4,7 +4,6 @@ import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -33,32 +32,22 @@ public class BoreKit extends Item {
         stack.getOrCreateTag().putInt(USES, this.kit.getUses());
     }
 
-    @Override
-    public void fillItemCategory(CreativeModeTab p_150895_1_, NonNullList<ItemStack> p_150895_2_) {
-        if (this.allowdedIn(p_150895_1_)){
-            ItemStack uses = new ItemStack(this);
-            uses.getOrCreateTag().putInt(USES, this.kit.uses);
-            p_150895_2_.add(uses);
-        }
-        super.fillItemCategory(p_150895_1_, p_150895_2_);
-    }
-
     public Kit getKit(){
         return this.kit;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level p_77624_2_, List<Component> tooltip, TooltipFlag p_77624_4_) {
-        tooltip.add(new TranslatableComponent("tooltip."+UsefulGuns.MOD_ID+".kit_uses", stack.getOrCreateTag().getInt(USES), ((BoreKit)stack.getItem()).kit.getUses()));
+        tooltip.add(Component.translatable("tooltip."+UsefulGuns.MOD_ID+".kit_uses", stack.getOrCreateTag().getInt(USES), ((BoreKit)stack.getItem()).kit.getUses()));
     }
 
     @Override
-    public boolean hasContainerItem(ItemStack stack) {
+    public boolean hasCraftingRemainingItem(ItemStack stack) {
         return stack.getOrCreateTag().getInt(USES) > 0;
     }
 
     @Override
-    public ItemStack getContainerItem(ItemStack itemStack) {
+    public ItemStack getCraftingRemainingItem(ItemStack itemStack) {
         ItemStack copy = itemStack.copy();
         copy.getOrCreateTag().putInt(USES, copy.getOrCreateTag().getInt(USES)-1);
         return copy;

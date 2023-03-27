@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "usefulguns:items/gold_bore_kit"
+    "layer0": "usefulguns:item/gold_bore_kit"
   }
 }

@@ -1,38 +1,38 @@
 {
   "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "usefulguns:items/wood_mining_bullet"
-  },
   "overrides": [
     {
+      "model": "usefulguns:item/wood_mining_bullet_0",
       "predicate": {
         "usefulguns:enchantment_id": 0.0
-      },
-      "model": "usefulguns:item/wood_mining_bullet_0"
+      }
     },
     {
+      "model": "usefulguns:item/wood_mining_bullet_1",
       "predicate": {
         "usefulguns:enchantment_id": 0.1
-      },
-      "model": "usefulguns:item/wood_mining_bullet_1"
+      }
     },
     {
+      "model": "usefulguns:item/wood_mining_bullet_2",
       "predicate": {
         "usefulguns:enchantment_id": 0.2
-      },
-      "model": "usefulguns:item/wood_mining_bullet_2"
+      }
     },
     {
+      "model": "usefulguns:item/wood_mining_bullet_3",
       "predicate": {
         "usefulguns:enchantment_id": 0.3
-      },
-      "model": "usefulguns:item/wood_mining_bullet_3"
+      }
     },
     {
+      "model": "usefulguns:item/wood_mining_bullet_4",
       "predicate": {
         "usefulguns:enchantment_id": 0.4
-      },
-      "model": "usefulguns:item/wood_mining_bullet_4"
+      }
     }
-  ]
+  ],
+  "textures": {
+    "layer0": "usefulguns:item/wood_mining_bullet"
+  }
 }

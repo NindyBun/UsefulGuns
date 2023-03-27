@@ -8,7 +8,7 @@ import com.nindybun.usefulguns.modRegistries.ModEntities;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -24,14 +24,13 @@ public class ClientStuff {
     @SubscribeEvent
     public static void clientStuff(FMLClientSetupEvent event){
         EntityRenderers.register(ModEntities.BULLET.get(), BulletEntityRenderer::new);
-
     }
 
     @SubscribeEvent
-    public static void registerItemColors(ColorHandlerEvent.Item event){
-        event.getItemColors().register(new TippedBulletColor(), ModItems.TIPPED_BULLET.get());
-        event.getItemColors().register(new TippedBulletColor(), ModItems.SPLASH_BULLET.get());
-        event.getItemColors().register(new TippedBulletColor(), ModItems.LINGERING_BULLET.get());
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event){
+        event.register(new TippedBulletColor(), ModItems.TIPPED_BULLET.get());
+        event.register(new TippedBulletColor(), ModItems.SPLASH_BULLET.get());
+        event.register(new TippedBulletColor(), ModItems.LINGERING_BULLET.get());
     }
 
 }

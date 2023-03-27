@@ -1,8 +1,8 @@
 {
   "ambientocclusion": false,
   "textures": {
-    "particle": "usefulguns:blocks/light",
-    "0": "usefulguns:blocks/light"
+    "particle": "usefulguns:block/light",
+    "0": "usefulguns:block/light"
   },
   "elements": [
     {

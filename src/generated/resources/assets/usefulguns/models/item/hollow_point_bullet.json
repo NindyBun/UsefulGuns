@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "usefulguns:items/hollow_point_bullet"
+    "layer0": "usefulguns:item/hollow_point_bullet"
   }
 }

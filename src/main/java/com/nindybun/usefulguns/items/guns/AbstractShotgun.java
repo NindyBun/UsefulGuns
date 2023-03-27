@@ -6,7 +6,6 @@ import com.nindybun.usefulguns.items.bullets.AbstractBullet;
 import com.nindybun.usefulguns.items.bullets.MiningBullet;
 import com.nindybun.usefulguns.items.bullets.ShotgunBullet;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -55,6 +54,6 @@ public class AbstractShotgun extends AbstractGun{
 
     @Override
     protected void addExtraTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
-        tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".shotgun.shoot"));
+        tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID + ".shotgun.shoot"));
     }
 }

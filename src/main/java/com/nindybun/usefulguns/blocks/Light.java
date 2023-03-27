@@ -3,6 +3,7 @@ package com.nindybun.usefulguns.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -45,7 +46,7 @@ public class Light extends Block {
     }
 
     @Override
-    public void animateTick(BlockState stateIn, Level world, BlockPos pos, Random rand) {
+    public void animateTick(BlockState stateIn, Level world, BlockPos pos, RandomSource rand) {
         double d0 = (double)pos.getX() + 0.5D;
         double d1 = (double)pos.getY() + 0.7D;
         double d2 = (double)pos.getZ() + 0.5D;

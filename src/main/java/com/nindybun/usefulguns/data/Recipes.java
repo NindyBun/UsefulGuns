@@ -18,21 +18,22 @@ import net.minecraftforge.common.Tags;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 
 public class Recipes extends RecipeProvider {
     public Recipes(DataGenerator generator) {
-        super(generator);
+        super(generator.getPackOutput());
     }
 
     @Override
-    protected void saveAdvancement(HashCache p_126014_, JsonObject p_126015_, Path p_126016_) {
-        super.saveAdvancement(p_126014_, p_126015_, p_126016_);
+    protected @org.jetbrains.annotations.Nullable CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson) {
+        return super.saveAdvancement(output, finishedRecipe, advancementJson);
     }
 
     @Override
-    protected void buildCraftingRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
         InventoryChangeTrigger.TriggerInstance nul = has(Items.AIR);
 
         CustomRecipeHandler.special(ModRecipes.TIPPED_BULLET_RECIPE.get()).save(consumer, "tipped_bullet");
@@ -42,14 +43,14 @@ public class Recipes extends RecipeProvider {
         CustomRecipeHandler.special(ModRecipes.BOREKIT_REPAIR_RECIPE.get()).save(consumer, "borekit_repair");
         CustomRecipeHandler.special(ModRecipes.BOREKIT_RECIPE.get()).save(consumer, "borekit");
 
-        ShapelessRecipeBuilder.shapeless(Items.GUNPOWDER, 8)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.BREWING, Items.GUNPOWDER, 8)
                 .requires(Items.CHARCOAL)
                 .requires(Items.BLAZE_POWDER)
                 .requires(Items.FLINT)
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.CLEANER.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.CLEANER.get())
                 .pattern("  W")
                 .pattern(" M ")
                 .pattern("M  ")
@@ -58,7 +59,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.BETTER_CLEANER.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BETTER_CLEANER.get())
                 .pattern("  W")
                 .pattern(" M ")
                 .pattern("M  ")
@@ -67,7 +68,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.BEST_CLEANER.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BEST_CLEANER.get())
                 .pattern("  W")
                 .pattern(" M ")
                 .pattern("M  ")
@@ -76,7 +77,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.ULTIMATE_CLEANER.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.ULTIMATE_CLEANER.get())
                 .pattern("  W")
                 .pattern(" S ")
                 .pattern("M  ")
@@ -86,7 +87,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.FLINT_BULLET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.FLINT_BULLET.get())
                 .pattern(" A ")
                 .pattern(" A ")
                 .pattern(" B ")
@@ -95,7 +96,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.IRON_BULLET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.IRON_BULLET.get())
                 .pattern(" A ")
                 .pattern(" A ")
                 .pattern(" B ")
@@ -104,7 +105,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.DIAMOND_BULLET.get(), 8)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.DIAMOND_BULLET.get(), 8)
                 .pattern("BBB")
                 .pattern("BAB")
                 .pattern("BBB")
@@ -113,7 +114,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.ARMOR_PIERCING_BULLET.get(), 8)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.ARMOR_PIERCING_BULLET.get(), 8)
                 .pattern("BBB")
                 .pattern("BAB")
                 .pattern("BBB")
@@ -122,17 +123,18 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.HOLLOW_POINT_BULLET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.HOLLOW_POINT_BULLET.get())
                 .pattern(" I ")
-                .pattern("GGG")
+                .pattern("CGC")
                 .pattern(" B ")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('G', Tags.Items.INGOTS_GOLD)
+                .define('C', Tags.Items.INGOTS_COPPER)
                 .define('B', ModItems.BULLET_CASING.get())
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.DRAGONS_BREATH_BULLET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.DRAGONS_BREATH_BULLET.get())
                 .pattern(" A ")
                 .pattern(" A ")
                 .pattern(" B ")
@@ -141,7 +143,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.DRAGONS_FIREBALL_BULLET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.DRAGONS_FIREBALL_BULLET.get())
                 .pattern(" G ")
                 .pattern(" A ")
                 .pattern(" B ")
@@ -151,7 +153,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.BUCKSHOT_BULLET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BUCKSHOT_BULLET.get())
                 .pattern(" A ")
                 .pattern(" A ")
                 .pattern(" B ")
@@ -160,7 +162,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.BIRDSHOT_BULLET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BIRDSHOT_BULLET.get())
                 .pattern(" A ")
                 .pattern(" A ")
                 .pattern(" B ")
@@ -169,7 +171,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.SLUG_BULLET.get(), 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.SLUG_BULLET.get(), 2)
                 .pattern(" B ")
                 .pattern(" A ")
                 .pattern(" B ")
@@ -178,7 +180,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.GLASS_BULLET.get(), 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.GLASS_BULLET.get(), 4)
                 .pattern(" B ")
                 .pattern("BGB")
                 .pattern(" B ")
@@ -187,7 +189,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.EXPLOSIVE_BULLET.get(), 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.EXPLOSIVE_BULLET.get(), 2)
                 .pattern(" B ")
                 .pattern(" A ")
                 .pattern(" B ")
@@ -196,19 +198,19 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(ModItems.ENDER_BULLET.get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, ModItems.ENDER_BULLET.get())
                 .requires(ModItems.BULLET_CASING.get())
                 .requires(Items.ENDER_PEARL)
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(ModItems.TORCH_BULLET.get())
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, ModItems.TORCH_BULLET.get())
                 .requires(ModItems.BULLET_CASING.get())
                 .requires(Items.TORCH)
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.IRON_GUN.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.IRON_GUN.get())
                 .pattern("IC ")
                 .pattern("BIF")
                 .pattern(" SI")
@@ -220,7 +222,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.GOLD_GUN.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.GOLD_GUN.get())
                 .pattern("IC ")
                 .pattern("BIF")
                 .pattern(" SI")
@@ -232,7 +234,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.DIAMOND_SHOTGUN.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.DIAMOND_SHOTGUN.get())
                 .pattern("DC ")
                 .pattern("BDF")
                 .pattern(" SW")
@@ -245,7 +247,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.DIAMOND_SNIPER.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.DIAMOND_SNIPER.get())
                 .pattern("DCG")
                 .pattern("BDF")
                 .pattern(" SW")
@@ -259,7 +261,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.DIAMOND_MINIGUN.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.DIAMOND_MINIGUN.get())
                 .pattern("DCR")
                 .pattern("BDP")
                 .pattern("RFD")
@@ -272,17 +274,18 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.BULLET_CASING.get(), 12)
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BULLET_CASING.get(), 16)
                 .pattern("C C")
                 .pattern("CGC")
-                .pattern("CFC")
-                .define('C', Tags.Items.INGOTS_IRON)
+                .pattern("IFI")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('I', Tags.Items.INGOTS_IRON)
                 .define('G', Tags.Items.GUNPOWDER)
                 .define('F', Items.FLINT)
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.LEATHER_POUCH.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.LEATHER_POUCH.get())
                 .pattern("TLT")
                 .pattern("LCL")
                 .pattern("SLS")
@@ -293,7 +296,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.IRON_POUCH.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.IRON_POUCH.get())
                 .pattern("III")
                 .pattern("IPI")
                 .pattern("CBC")
@@ -304,7 +307,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
 
-        ShapedRecipeBuilder.shaped(ModItems.GOLD_POUCH.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.GOLD_POUCH.get())
                 .pattern("III")
                 .pattern("IPI")
                 .pattern("CBC")
@@ -315,7 +318,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
 
-        ShapedRecipeBuilder.shaped(ModItems.DIAMOND_POUCH.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.DIAMOND_POUCH.get())
                 .pattern("III")
                 .pattern("IPI")
                 .pattern("CBC")
@@ -326,7 +329,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
 
-        ShapedRecipeBuilder.shaped(ModItems.OBSIDIAN_POUCH.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.OBSIDIAN_POUCH.get())
                 .pattern("III")
                 .pattern("OPO")
                 .pattern("COC")
@@ -337,7 +340,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
 
-        ShapedRecipeBuilder.shaped(ModItems.NETHERITE_POUCH.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.NETHERITE_POUCH.get())
                 .pattern("III")
                 .pattern("IPI")
                 .pattern("CBC")
@@ -348,7 +351,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
 
-        ShapedRecipeBuilder.shaped(ModItems.NETHERSTAR_POUCH.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.NETHERSTAR_POUCH.get())
                 .pattern("III")
                 .pattern("IPI")
                 .pattern("CBC")
@@ -359,7 +362,7 @@ public class Recipes extends RecipeProvider {
                 .unlockedBy("", nul)
                 .save(WrappedRecipe.Inject(consumer, ModRecipes.COPY_RECIPE.get()));
 
-        ShapedRecipeBuilder.shaped(ModItems.OMEGA_POUCH.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.OMEGA_POUCH.get())
                 .pattern("IRI")
                 .pattern("RPR")
                 .pattern("CEC")

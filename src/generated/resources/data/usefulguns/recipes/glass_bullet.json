@@ -1,20 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "usefulguns:bullet_casing"
+    },
+    "G": {
+      "tag": "forge:glass"
+    }
+  },
   "pattern": [
     " B ",
     "BGB",
     " B "
   ],
-  "key": {
-    "G": {
-      "tag": "forge:glass"
-    },
-    "B": {
-      "item": "usefulguns:bullet_casing"
-    }
-  },
   "result": {
-    "item": "usefulguns:glass_bullet",
-    "count": 4
+    "count": 4,
+    "item": "usefulguns:glass_bullet"
   }
 }

@@ -11,10 +11,11 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemModels extends ItemModelProvider {
     public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper){
-        super(generator, UsefulGuns.MOD_ID, existingFileHelper);
+        super(generator.getPackOutput(), UsefulGuns.MOD_ID, existingFileHelper);
     }
 
     @Override
@@ -27,17 +28,17 @@ public class ItemModels extends ItemModelProvider {
     }
 
     private void registerBullets(){
-        withExistingParent(ModItems.TIPPED_BULLET.get().getRegistryName().getPath(), mcLoc("item/handheld"))
-                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/bullet_head"))
-                .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/bullet_base"));
-        withExistingParent(ModItems.SPLASH_BULLET.get().getRegistryName().getPath(), mcLoc("item/handheld"))
-                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/glass_bullet_head"))
-                .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/glass_bullet"));
-        withExistingParent(ModItems.LINGERING_BULLET.get().getRegistryName().getPath(), mcLoc("item/handheld"))
-                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/glass_bullet_head"))
-                .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/lingering_bullet"));
-        withExistingParent(ModItems.BULLET_CASING.get().getRegistryName().getPath(), mcLoc("item/handheld"))
-                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/bullet_base"));
+        withExistingParent(ForgeRegistries.ITEMS.getKey(ModItems.TIPPED_BULLET.get()).getPath(), mcLoc("item/handheld"))
+                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/bullet_head"))
+                .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "item/bullet_base"));
+        withExistingParent(ForgeRegistries.ITEMS.getKey(ModItems.SPLASH_BULLET.get()).getPath(), mcLoc("item/handheld"))
+                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/glass_bullet_head"))
+                .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "item/glass_bullet"));
+        withExistingParent(ForgeRegistries.ITEMS.getKey(ModItems.LINGERING_BULLET.get()).getPath(), mcLoc("item/handheld"))
+                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/glass_bullet_head"))
+                .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "item/lingering_bullet"));
+        withExistingParent(ForgeRegistries.ITEMS.getKey(ModItems.BULLET_CASING.get()).getPath(), mcLoc("item/handheld"))
+                .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/bullet_base"));
         simpleItem(ModItems.DRAGONS_FIREBALL_BULLET.get());
         simpleItem(ModItems.DRAGONS_BREATH_BULLET.get());
         simpleItem(ModItems.SLUG_BULLET.get());
@@ -54,38 +55,38 @@ public class ItemModels extends ItemModelProvider {
         simpleItem(ModItems.TORCH_BULLET.get());
 
         for (BoreKit.Kit kit : BoreKit.Kit.values()){
-            String name = UtilMethods.createBore(kit).getRegistryName().getPath();
+            String name = ForgeRegistries.ITEMS.getKey(UtilMethods.createBore(kit)).getPath();
             withExistingParent(name, mcLoc("item/generated"))
-                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
+                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/"+name))
                     .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.0f).model(
                             withExistingParent(name+"_0", mcLoc("item/generated"))
-                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))).end()
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/"+name))).end()
                     .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.1f).model(
                             withExistingParent(name+"_1", mcLoc("item/generated"))
-                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
-                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune1_overlay"))).end()
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/"+name))
+                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "item/fortune1_overlay"))).end()
                     .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.2f).model(
                             withExistingParent(name+"_2", mcLoc("item/generated"))
-                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
-                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune2_overlay"))).end()
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/"+name))
+                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "item/fortune2_overlay"))).end()
                     .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.3f).model(
                             withExistingParent(name+"_3", mcLoc("item/generated"))
-                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
-                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/fortune3_overlay"))).end()
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/"+name))
+                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "item/fortune3_overlay"))).end()
                     .override().predicate(new ResourceLocation(UsefulGuns.MOD_ID, "enchantment_id"), 0.4f).model(
                             withExistingParent(name+"_4", mcLoc("item/generated"))
-                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name))
-                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "items/silktouch_overlay"))).end()
+                                    .texture("layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/"+name))
+                                    .texture("layer1", new ResourceLocation(UsefulGuns.MOD_ID, "item/silktouch_overlay"))).end()
             ;
         }
 
 
 
-        simpleItem(ModItems.STONE_MINING_BULLET.get());
+        /*simpleItem(ModItems.STONE_MINING_BULLET.get());
         simpleItem(ModItems.IRON_MINING_BULLET.get());
         simpleItem(ModItems.GOLD_MINING_BULLET.get());
         simpleItem(ModItems.DIAMOND_MINING_BULLET.get());
-        simpleItem(ModItems.NETHERITE_MINING_BULLET.get());
+        simpleItem(ModItems.NETHERITE_MINING_BULLET.get());*/
     }
 
     private void registerCleaners(){
@@ -117,7 +118,7 @@ public class ItemModels extends ItemModelProvider {
 
 
     private ItemModelBuilder simpleItem(Item item){
-        String name = item.getRegistryName().getPath();
-        return singleTexture(name, mcLoc("item/handheld"), "layer0", new ResourceLocation(UsefulGuns.MOD_ID, "items/"+name));
+        String name = ForgeRegistries.ITEMS.getKey(item).getPath();
+        return singleTexture(name, mcLoc("item/handheld"), "layer0", new ResourceLocation(UsefulGuns.MOD_ID, "item/"+name));
     }
 }

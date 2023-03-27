@@ -1,14 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "IC ",
-    "BIF",
-    " SI"
-  ],
+  "category": "equipment",
   "key": {
-    "I": {
-      "tag": "forge:ingots/gold"
-    },
     "B": {
       "item": "minecraft:stone_button"
     },
@@ -18,10 +11,18 @@
     "F": {
       "item": "minecraft:flint_and_steel"
     },
+    "I": {
+      "tag": "forge:ingots/gold"
+    },
     "S": {
       "item": "minecraft:stick"
     }
   },
+  "pattern": [
+    "IC ",
+    "BIF",
+    " SI"
+  ],
   "result": {
     "item": "usefulguns:gold_pistol"
   }

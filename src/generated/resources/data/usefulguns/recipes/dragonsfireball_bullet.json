@@ -1,21 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " G ",
-    " A ",
-    " B "
-  ],
+  "category": "equipment",
   "key": {
-    "G": {
-      "item": "minecraft:dragon_breath"
-    },
     "A": {
       "item": "minecraft:fire_charge"
     },
     "B": {
       "item": "usefulguns:bullet_casing"
+    },
+    "G": {
+      "item": "minecraft:dragon_breath"
     }
   },
+  "pattern": [
+    " G ",
+    " A ",
+    " B "
+  ],
   "result": {
     "item": "usefulguns:dragonsfireball_bullet"
   }

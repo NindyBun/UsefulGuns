@@ -4,6 +4,7 @@ import com.nindybun.usefulguns.UsefulGuns;
 import com.nindybun.usefulguns.data.*;
 import com.nindybun.usefulguns.items.BoreKit;
 import com.nindybun.usefulguns.items.bullets.MiningBullet;
+import com.nindybun.usefulguns.items.guns.AbstractGun;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.util.UtilMethods;
 import mezz.jei.api.IModPlugin;
@@ -16,6 +17,7 @@ import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
@@ -65,6 +67,17 @@ public class UsefulGunsJEI implements IModPlugin {
             return IIngredientSubtypeInterpreter.NONE;
         };
 
+        IIngredientSubtypeInterpreter<ItemStack> gunProvider = (itemStack, id) -> {
+            if (!(itemStack.getItem() instanceof AbstractGun))
+                return IIngredientSubtypeInterpreter.NONE;
+            int uses = itemStack.getOrCreateTag().getInt(AbstractGun.DIRTINESS);
+            if (uses == 0)
+                return "clean";
+            else if (uses == ((AbstractGun)itemStack.getItem()).getMaxDirtyness())
+                return "dirty";
+            return IIngredientSubtypeInterpreter.NONE;
+        };
+
         IIngredientSubtypeInterpreter<ItemStack> boreEnchantmentProvider = (itemStack, id) -> {
             if (!(itemStack.getItem() instanceof MiningBullet))
                 return IIngredientSubtypeInterpreter.NONE;
@@ -80,6 +93,12 @@ public class UsefulGunsJEI implements IModPlugin {
         registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.TIPPED_BULLET.get(), potionProvider);
         registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.SPLASH_BULLET.get(), potionProvider);
         registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, ModItems.LINGERING_BULLET.get(), potionProvider);
+
+        ModItems.ITEMS.getEntries().forEach(itemRegistryObject -> {
+            Item item = itemRegistryObject.get();
+            if (item instanceof AbstractGun)
+                registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, item, gunProvider);
+        });
         for (BoreKit.Kit kit : BoreKit.Kit.values()) {
             registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, UtilMethods.createKit(kit), borekitProvider);
             registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, UtilMethods.createBore(kit), boreEnchantmentProvider);

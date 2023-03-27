@@ -10,8 +10,6 @@ import com.nindybun.usefulguns.util.UtilMethods;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -70,6 +68,9 @@ public class AbstractGun extends Item {
         this.fireDelay = fireDelay;
         this.enchantability = enchantability;
     }
+    public int getMaxDirtyness(){
+        return this.dirtyness;
+    }
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
@@ -127,7 +128,7 @@ public class AbstractGun extends Item {
         ItemStack pouch = UtilMethods.locateAndGetPouch(playerEntity);
         if (!world.isClientSide){
             if (gun.getOrCreateTag().getInt(DIRTINESS) == this.dirtyness && !playerEntity.level.isClientSide){
-                playerEntity.sendMessage(new TranslatableComponent("tooltip."+UsefulGuns.MOD_ID+".gun.dirty"), net.minecraft.Util.NIL_UUID);
+                playerEntity.sendSystemMessage(Component.translatable("tooltip."+UsefulGuns.MOD_ID+".gun.dirty"));
                 return InteractionResultHolder.fail(gun);
             }
             ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound(UtilMethods.BULLET_INFO_TAG));
@@ -171,30 +172,30 @@ public class AbstractGun extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         ItemStack bulletInfo = ItemStack.of(stack.getOrCreateTag().getCompound("Bullet_Info"));
-        if (bulletInfo.getItem() != Items.AIR) tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".selected_bullet")
-                .append(new TranslatableComponent(bulletInfo.getHoverName().getString()).withStyle(ChatFormatting.WHITE))
-                .append(new TranslatableComponent(bulletInfo.isEnchanted() ? "tooltip."+ UsefulGuns.MOD_ID +".bullet.enchanted" : "").withStyle(ChatFormatting.GOLD)));
-        tooltip.add(new TranslatableComponent("tooltip."+UsefulGuns.MOD_ID+".dirtyness", (stack.getOrCreateTag().getInt(DIRTINESS)*100)/this.dirtyness).append(new TextComponent(" \u00A77%")));
+        if (bulletInfo.getItem() != Items.AIR) tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".selected_bullet")
+                .append(Component.translatable(bulletInfo.getHoverName().getString()).withStyle(ChatFormatting.WHITE))
+                .append(Component.translatable(bulletInfo.isEnchanted() ? "tooltip."+ UsefulGuns.MOD_ID +".bullet.enchanted" : "").withStyle(ChatFormatting.GOLD)));
+        tooltip.add(Component.translatable("tooltip."+UsefulGuns.MOD_ID+".dirtyness", (stack.getOrCreateTag().getInt(DIRTINESS)*100)/this.dirtyness).append(Component.literal(" \u00A77%")));
 
         if (Screen.hasShiftDown()){
             double damageMultiplier = getDamageMultipier(stack);
             double damageBonus = getBonusDamage(stack);
 
             if (damageMultiplier != 1) {
-                if (damageBonus != 0) tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.both" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageMultiplier), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageBonus)));
-                else tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.mult" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageMultiplier)));
+                if (damageBonus != 0) tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.both" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageMultiplier), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageBonus)));
+                else tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.mult" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageMultiplier)));
             }
-            else if (damageBonus != 0) tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.flat" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageBonus)));
+            else if (damageBonus != 0) tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".gun.damage.flat" + (isDamageModified(stack) ? ".modified" : ""), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(damageBonus)));
 
 
             int fireDelay = getFireDelay(stack);
-            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".gun.firerate" + (isFireDelayModified(stack) ? ".modified" : ""), (60*20)/fireDelay));
+            tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID + ".gun.firerate" + (isFireDelayModified(stack) ? ".modified" : ""), (60*20)/fireDelay));
 
             if (ignoresInvulnerability(stack))
-                tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".gun.ignores_invulnerability").withStyle(ChatFormatting.GRAY));
+                tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID + ".gun.ignores_invulnerability").withStyle(ChatFormatting.GRAY));
 
         }else{
-            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".shift"));
+            tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID + ".shift"));
         }
     }
 

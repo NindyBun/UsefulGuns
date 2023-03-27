@@ -8,10 +8,11 @@ import com.nindybun.usefulguns.network.PacketHandler;
 import com.nindybun.usefulguns.network.packets.PacketToServerOpenRadial;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientRegistryLayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,10 +22,6 @@ import org.lwjgl.glfw.GLFW;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = UsefulGuns.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ClientEvents {
     public static KeyMapping radialMenu_key;
-
-    public static void init(){
-        ClientRegistry.registerKeyBinding(radialMenu_key = new KeyMapping("key."+ UsefulGuns.MOD_ID +".radialmenu_key", GLFW.GLFW_KEY_V, "key.categories."+UsefulGuns.MOD_ID));
-    }
 
     private static boolean keyWasDown = false;
 
@@ -76,5 +73,13 @@ public class ClientEvents {
 
     public static void wipeOpen(){
         while(radialMenu_key.consumeClick()){}
+    }
+
+    @Mod.EventBusSubscriber(modid = UsefulGuns.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class BusEvents{
+        @SubscribeEvent
+        public static void init(RegisterKeyMappingsEvent event){
+            event.register(radialMenu_key = new KeyMapping("key."+ UsefulGuns.MOD_ID +".radialmenu_key", GLFW.GLFW_KEY_V, "key.categories."+UsefulGuns.MOD_ID));
+        }
     }
 }

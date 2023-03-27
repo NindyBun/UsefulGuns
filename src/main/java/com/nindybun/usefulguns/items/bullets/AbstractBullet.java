@@ -5,7 +5,6 @@ import com.nindybun.usefulguns.entities.BulletEntity;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -41,17 +40,17 @@ public class AbstractBullet extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level p_77624_2_, List<Component> tooltip, TooltipFlag p_77624_4_) {
         super.appendHoverText(stack, p_77624_2_, tooltip, p_77624_4_);
         if (stack.getItem() == ModItems.ARMOR_PIERCING_BULLET.get())
-            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.armor_piercing").withStyle(ChatFormatting.YELLOW));
+            tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".bullet.armor_piercing").withStyle(ChatFormatting.YELLOW));
         if (stack.getItem() == ModItems.HOLLOW_POINT_BULLET.get())
-            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.hollow_point").withStyle(ChatFormatting.YELLOW));
+            tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".bullet.hollow_point").withStyle(ChatFormatting.YELLOW));
         if (stack.getItem() == ModItems.DRAGONS_BREATH_BULLET.get())
-            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.dragonsbreath").withStyle(ChatFormatting.YELLOW));
+            tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".bullet.dragonsbreath").withStyle(ChatFormatting.YELLOW));
         if (stack.getItem() == ModItems.DRAGONS_FIREBALL_BULLET.get())
-            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.dragonsfireball").withStyle(ChatFormatting.YELLOW));
+            tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".bullet.dragonsfireball").withStyle(ChatFormatting.YELLOW));
         if (stack.getItem() == ModItems.GLASS_BULLET.get())
-            tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.glass").withStyle(ChatFormatting.YELLOW));
+            tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".bullet.glass").withStyle(ChatFormatting.YELLOW));
 
 
-        tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID +".bullet.damage", ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(this.damage)));
+        tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID +".bullet.damage", ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(this.damage)));
     }
 }

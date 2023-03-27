@@ -1,21 +1,25 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " I ",
-    "GGG",
-    " B "
-  ],
+  "category": "equipment",
   "key": {
-    "I": {
-      "tag": "forge:ingots/iron"
+    "B": {
+      "item": "usefulguns:bullet_casing"
+    },
+    "C": {
+      "tag": "forge:ingots/copper"
     },
     "G": {
       "tag": "forge:ingots/gold"
     },
-    "B": {
-      "item": "usefulguns:bullet_casing"
+    "I": {
+      "tag": "forge:ingots/iron"
     }
   },
+  "pattern": [
+    " I ",
+    "CGC",
+    " B "
+  ],
   "result": {
     "item": "usefulguns:hollow_point_bullet"
   }

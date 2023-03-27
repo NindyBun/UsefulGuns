@@ -1,10 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " A ",
-    " A ",
-    " B "
-  ],
+  "category": "equipment",
   "key": {
     "A": {
       "tag": "forge:sand"
@@ -13,6 +9,11 @@
       "item": "usefulguns:bullet_casing"
     }
   },
+  "pattern": [
+    " A ",
+    " A ",
+    " B "
+  ],
   "result": {
     "item": "usefulguns:birdshot_bullet"
   }

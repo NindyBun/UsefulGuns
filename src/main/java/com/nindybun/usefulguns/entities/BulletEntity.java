@@ -18,6 +18,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -62,6 +63,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -313,7 +315,6 @@ public class BulletEntity extends AbstractArrow {
 
     @Override
     protected void onHitBlock(BlockHitResult rayTrace) {
-        super.onHitBlock(rayTrace);
         BlockPos blockPos = rayTrace.getBlockPos();
         BlockState blockState = this.level.getBlockState(blockPos);
         SoundType soundType = blockState.getSoundType(this.level, blockPos, null);
@@ -477,7 +478,7 @@ public class BulletEntity extends AbstractArrow {
             if (rayTrace.getType() == HitResult.Type.BLOCK)
                 direction = UtilMethods.getLookingAt(this.level, (Player)this.getOwner(), this.shotPos, this.shotAngle, ClipContext.Fluid.NONE, this.shotPos.distanceTo(rayTrace.getLocation()) * 1.2).getDirection().getNormal();
             if (!this.level.isClientSide){
-                this.level.explode(this, rayTrace.getLocation().x+direction.getX(), rayTrace.getLocation().y+direction.getY(), rayTrace.getLocation().z+direction.getZ(), 2.5F, Explosion.BlockInteraction.BREAK);
+                this.level.explode(this, rayTrace.getLocation().x+direction.getX(), rayTrace.getLocation().y+direction.getY(), rayTrace.getLocation().z+direction.getZ(), 2.5F, Level.ExplosionInteraction.TNT);
                 this.discard();
             }
         }else if (this.bullet.getItem() == ModItems.ENDER_BULLET.get()){
@@ -794,7 +795,7 @@ public class BulletEntity extends AbstractArrow {
         nbt.put("bullet", this.bullet.serializeNBT());
         
         if (this.potion != Potions.EMPTY && this.potion != null) {
-            nbt.putString("Potion", Registry.POTION.getKey(this.potion).toString());
+            nbt.putString("Potion", ForgeRegistries.POTIONS.getKey(this.potion).toString());
         }
 
         if (this.fixedColor) {
@@ -860,7 +861,7 @@ public class BulletEntity extends AbstractArrow {
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return new NetworkHooks().getEntitySpawningPacket(this);
     }
 }

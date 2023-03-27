@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "usefulguns:items/buckshot_bullet"
+    "layer0": "usefulguns:item/buckshot_bullet"
   }
 }

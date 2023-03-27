@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.common.WorldWorkerManager;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.WorldCapabilityData;
 import net.minecraftforge.fml.util.thread.SidedThreadGroups;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.server.ServerLifecycleHooks;

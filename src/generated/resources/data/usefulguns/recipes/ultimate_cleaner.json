@@ -1,21 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "tag": "forge:ingots/netherite"
+    },
+    "S": {
+      "tag": "forge:nether_stars"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
   "pattern": [
     "  W",
     " S ",
     "M  "
   ],
-  "key": {
-    "W": {
-      "tag": "minecraft:wool"
-    },
-    "S": {
-      "tag": "forge:nether_stars"
-    },
-    "M": {
-      "tag": "forge:ingots/netherite"
-    }
-  },
   "result": {
     "item": "usefulguns:ultimate_cleaner"
   }

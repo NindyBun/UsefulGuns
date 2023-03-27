@@ -6,6 +6,7 @@ import com.nindybun.usefulguns.util.UtilMethods;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -14,9 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoreKitRepairRecipe extends CustomRecipe {
-    public BoreKitRepairRecipe(ResourceLocation p_i48169_1_) {
-        super(p_i48169_1_);
+    public BoreKitRepairRecipe(ResourceLocation p_i48169_1_, CraftingBookCategory category) {
+        super(p_i48169_1_, category);
     }
+
 
     @Override
     public boolean matches(CraftingContainer p_77569_1_, Level p_77569_2_) {

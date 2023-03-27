@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "usefulguns:items/leather_pouch"
+    "layer0": "usefulguns:item/leather_pouch"
   }
 }

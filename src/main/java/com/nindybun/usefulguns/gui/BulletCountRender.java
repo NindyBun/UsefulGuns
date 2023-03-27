@@ -15,7 +15,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandler;
@@ -40,8 +41,8 @@ public class BulletCountRender {
     }
 
     @SubscribeEvent
-    public static void renderOverlay(@Nonnull RenderGameOverlayEvent.Post event){
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL){
+    public static void renderOverlay(@Nonnull RenderGuiOverlayEvent.Post event){
+        if (event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type()){
             Minecraft mc = Minecraft.getInstance();
             Player player = mc.player;
             ItemStack gun = getGun(player);
@@ -54,7 +55,7 @@ public class BulletCountRender {
         }
     }
 
-    public static void renderBulletCount(RenderGameOverlayEvent.Post event, ItemStack gun, ItemStack pouch){
+    public static void renderBulletCount(RenderGuiOverlayEvent.Post event, ItemStack gun, ItemStack pouch){
         Font font = Minecraft.getInstance().font;
         ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
         ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound(UtilMethods.BULLET_INFO_TAG));
@@ -70,7 +71,7 @@ public class BulletCountRender {
         }
         double winW = event.getWindow().getGuiScaledWidth();
         double winH = event.getWindow().getGuiScaledHeight();
-        PoseStack poseStack = event.getMatrixStack();
+        PoseStack poseStack = event.getPoseStack();
         poseStack.pushPose();
 
         PoseStack poseStack2 = RenderSystem.getModelViewStack();
@@ -86,6 +87,6 @@ public class BulletCountRender {
         RenderSystem.applyModelViewMatrix();
 
         poseStack.popPose();
-        font.draw(event.getMatrixStack(), ">> " + selectedBulletCount, (float) xoffset+12, (float) (winH-yoffset-3), Color.WHITE.getRGB());
+        font.draw(event.getPoseStack(), ">> " + selectedBulletCount, (float) xoffset+12, (float) (winH-yoffset-3), Color.WHITE.getRGB());
     }
 }

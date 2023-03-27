@@ -8,21 +8,21 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CopyPouchData extends ShapedRecipe {
-    public CopyPouchData(ResourceLocation id, String group, int recipeWidth, int recipeHeight, NonNullList<Ingredient> ingredients, ItemStack recipeOutput){
-        super(id, group, recipeWidth, recipeHeight, ingredients, recipeOutput);
+    public CopyPouchData(ResourceLocation id, String group, CraftingBookCategory category, int recipeWidth, int recipeHeight, NonNullList<Ingredient> ingredients, ItemStack recipeOutput){
+        super(id, group, category, recipeWidth, recipeHeight, ingredients, recipeOutput);
     }
 
     public CopyPouchData(ShapedRecipe shapedRecipe){
-        super(shapedRecipe.getId(), shapedRecipe.getGroup(), shapedRecipe.getRecipeWidth(), shapedRecipe.getRecipeHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem());
+        super(shapedRecipe.getId(), shapedRecipe.getGroup(), shapedRecipe.category(), shapedRecipe.getRecipeWidth(), shapedRecipe.getRecipeHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class CopyPouchData extends ShapedRecipe {
         return ModRecipes.COPY_RECIPE.get();
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<CopyPouchData> {
+    public static class Serializer implements RecipeSerializer<CopyPouchData> {
         @Nullable
         @Override
         public CopyPouchData fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {

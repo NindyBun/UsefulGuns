@@ -5,7 +5,6 @@ import com.nindybun.usefulguns.events.ClientEvents;
 import com.nindybun.usefulguns.modRegistries.ModBlocks;
 import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.modRegistries.ModSounds;
-import io.netty.handler.codec.http.cookie.ClientCookieEncoder;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -13,7 +12,7 @@ import javax.swing.text.JTextComponent;
 
 public class Lang extends LanguageProvider {
     public Lang(DataGenerator gen, String locale) {
-        super(gen, UsefulGuns.MOD_ID, locale);
+        super(gen.getPackOutput(), UsefulGuns.MOD_ID, locale);
     }
 
     @Override
@@ -65,10 +64,10 @@ public class Lang extends LanguageProvider {
         add(ModItems.DIAMOND_MINING_BULLET.get(), "Diamond Bore");
         add(ModItems.NETHERITE_MINING_BULLET.get(), "Netherite Bore");
 
-        add(ModItems.CLEANER.get(), "Cleaner");
-        add(ModItems.BETTER_CLEANER.get(), "Better Cleaner");
-        add(ModItems.BEST_CLEANER.get(), "Best Cleaner");
-        add(ModItems.ULTIMATE_CLEANER.get(), "Ultimate Cleaner");
+        add(ModItems.CLEANER.get(), "Cleaning Rod");
+        add(ModItems.BETTER_CLEANER.get(), "Better Cleaning Rod");
+        add(ModItems.BEST_CLEANER.get(), "Best Cleaning Rod");
+        add(ModItems.ULTIMATE_CLEANER.get(), "Ultimate Cleaning Rod");
 
         add(ModItems.WOOD_BORE_KIT.get(), "Wood Bore Kit");
         add(ModItems.STONE_BORE_KIT.get(), "Stone Bore Kit");

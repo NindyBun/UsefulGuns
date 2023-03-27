@@ -17,15 +17,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -62,7 +61,7 @@ public class BulletRadialMenu extends Screen {
     }*/
 
     public BulletRadialMenu(ItemStack pouch, ItemStack gun){
-        super(new TextComponent("Title"));
+        super(Component.literal("Title"));
         this.selected = -1;
         this.selectedItem = ItemStack.of(gun.getOrCreateTag().getCompound(UtilMethods.BULLET_INFO_TAG));
         this.containedItemsAnAmount = UtilMethods.deserializeItemTagList(pouch.getOrCreateTag().getList(UtilMethods.INVENTORY_TAG, Tag.TAG_COMPOUND))
@@ -314,9 +313,9 @@ public class BulletRadialMenu extends Screen {
     }
 
     @SubscribeEvent
-    public static void overlayEvent(RenderGameOverlayEvent.PreLayer event){
+    public static void overlayEvent(RenderGuiOverlayEvent.Pre event){
         if (Minecraft.getInstance().screen instanceof BulletRadialMenu) {
-            if (event.getOverlay() == ForgeIngameGui.CROSSHAIR_ELEMENT){
+            if (event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type()){
                 event.setCanceled(true);
             }
         }

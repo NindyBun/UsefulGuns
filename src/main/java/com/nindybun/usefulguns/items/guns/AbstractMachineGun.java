@@ -8,8 +8,6 @@ import com.nindybun.usefulguns.modRegistries.ModItems;
 import com.nindybun.usefulguns.util.UtilMethods;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -86,7 +84,7 @@ public class AbstractMachineGun extends AbstractGun{
         ItemStack gun = playerEntity.getItemInHand(hand);
         ItemStack pouch = UtilMethods.locateAndGetPouch(playerEntity);
         if (gun.getOrCreateTag().getInt(DIRTINESS) == this.dirtiness && !playerEntity.level.isClientSide){
-            playerEntity.sendMessage(new TextComponent("Gun's dirty! Go clean it! ;-;"), Util.NIL_UUID);
+            playerEntity.sendSystemMessage(Component.translatable("tooltip."+UsefulGuns.MOD_ID+".gun.dirty"));
             return InteractionResultHolder.fail(gun);
         }
         ItemStack bulletInfo = ItemStack.of(gun.getOrCreateTag().getCompound("Bullet_Info"));
@@ -105,6 +103,6 @@ public class AbstractMachineGun extends AbstractGun{
 
     @Override
     protected void addExtraTooltip(ItemStack stack, @Nullable Level world, List<Component> tooltip) {
-        tooltip.add(new TranslatableComponent("tooltip."+ UsefulGuns.MOD_ID + ".machinegun.shoot"));
+        tooltip.add(Component.translatable("tooltip."+ UsefulGuns.MOD_ID + ".machinegun.shoot"));
     }
 }

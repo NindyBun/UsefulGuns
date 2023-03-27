@@ -1,25 +1,26 @@
 {
   "type": "usefulguns:pouch_upgrade",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "O": {
+      "tag": "forge:obsidian"
+    },
+    "P": {
+      "type": "usefulguns:nbt_target",
+      "item": "usefulguns:diamond_pouch"
+    }
+  },
   "pattern": [
     "III",
     "OPO",
     "COC"
   ],
-  "key": {
-    "C": {
-      "tag": "forge:chests"
-    },
-    "P": {
-      "item": "usefulguns:diamond_pouch",
-      "type": "usefulguns:nbt_target"
-    },
-    "O": {
-      "tag": "forge:obsidian"
-    },
-    "I": {
-      "item": "minecraft:iron_bars"
-    }
-  },
   "result": {
     "item": "usefulguns:obsidian_pouch"
   }

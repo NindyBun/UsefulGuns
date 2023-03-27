@@ -8,14 +8,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class TippedBulletRecipe extends CustomRecipe {
-    public TippedBulletRecipe(ResourceLocation p_i48169_1_) {
-        super(p_i48169_1_);
+    public TippedBulletRecipe(ResourceLocation p_i48169_1_, CraftingBookCategory category) {
+        super(p_i48169_1_, category);
     }
+
 
     public boolean matches(CraftingContainer p_77569_1_, Level p_77569_2_) {
         if (p_77569_1_.getWidth() == 3 && p_77569_1_.getHeight() == 3) {

@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 
 public class ModContainers {
-    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, UsefulGuns.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, UsefulGuns.MOD_ID);
 
     public static final RegistryObject<MenuType<PouchContainer>> POUCH_CONTAINER = CONTAINERS.register("pouch_container", () -> IForgeMenuType.create(PouchContainer::fromNetwork));
 }

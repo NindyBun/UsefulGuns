@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -31,7 +32,7 @@ public class BoreKitRecipeMaker {
                     ItemStack output = new ItemStack(UtilMethods.createKit(kit));
                     output.getOrCreateTag().putInt(BoreKit.USES, kit.getUses());
                     ResourceLocation id = new ResourceLocation(UsefulGuns.MOD_ID, "jei.borekit." + output.getDescriptionId());
-                    return new ShapedRecipe(id, group, 3, 2, inputs, output);
+                    return new ShapedRecipe(id, group, CraftingBookCategory.MISC, 3, 2, inputs, output);
                 });
     }
 
